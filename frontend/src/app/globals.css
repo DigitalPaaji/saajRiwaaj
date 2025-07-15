@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Neumorphism base */
+.neumorphic-btn {
+  background: #e0e0e0;
+  box-shadow: 6px 6px 12px #bebebe, -6px -6px 12px #ffffff;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.neumorphic-btn:hover {
+  box-shadow: inset 4px 4px 10px #bebebe, inset -4px -4px 10px #ffffff;
+}
