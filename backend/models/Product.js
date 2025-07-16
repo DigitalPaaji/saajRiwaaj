@@ -31,11 +31,15 @@ const productSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    colorVariants:[{
-        colorName:{type:String,required:true},
-        price:{type:Number,required:true},
+    price:{
+        type:Number,
+        required:true
+    },
         discount:{type:Number,default:0},
         finalPrice:{type:Number,default:0},
+
+    colorVariants:[{
+        colorName:{type:String,required:true},
         quantity:{type:Number,default:1},
         images:[{type:String}],
     }]

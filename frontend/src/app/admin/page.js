@@ -1,4 +1,5 @@
 // app/admin/page.js
+import ConfirmPopup from '../components/admin/ConfirmPopup'
 export default function AdminDashboard() {
   return (
     <div>

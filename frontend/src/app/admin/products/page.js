@@ -1,43 +1,53 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import PopupModal from "../../components/admin/ConfirmPopup";
+import Image from "next/image";
 
 const ProductsList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDeletePopup , setShowDeletePopup] = useState(false)
+  const [productToDelete, setProductToDelete] = useState("")
+  const [IdToDelete, setIdToDelete] = useState("")
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
+
+    const fetchProducts = useCallback(async () => {
       try {
         // const res = await fetch(`${Apiurl}/products`);
         const res = await fetch('http://localhost:5000/product/');
         const data = await res.json();
         setProducts(data);
+        console.log(data)
       } catch (err) {
         console.error("Error fetching products:", err);
       } finally {
         setLoading(false);
       }
-    };
+    },[])
 
-    fetchProducts();
-  }, []);
+    const handleDelete = (product)=>{
+      setShowDeletePopup(true)
+      setIdToDelete(product._id)
+      setProductToDelete(product.name)
 
-  const deleteProduct = async (productId)=>{
+
+    }
+    const deleteProduct = useCallback( async ()=>{
     try{
-      const res = await fetch(`http://localhost:5000/product/id/${productId}`,{
+      const res = await fetch(`http://localhost:5000/product/id/${IdToDelete}`,{
         method:'DELETE',
       })
       if(res.ok){
         toast.success('Product Deleted Successfully!');
-        router.push('/admin/products')
+      
       }else{
         const data = await res.json();
         console.log(data)
@@ -48,9 +58,19 @@ const ProductsList = () => {
         toast.error('Something went wrong.')
 
     }
+    setShowDeletePopup(false)
+    fetchProducts()
   }
+,[fetchProducts,IdToDelete])
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+
   return (
    <div className=" w-full">
+    <ToastContainer className={'z-[9999]'}/>
       <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
         <h2 className="text-2xl font-bold text-[#4d4c4b] drop-shadow-sm">
           All Products
@@ -63,7 +83,7 @@ const ProductsList = () => {
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded-lg shadow">
+      <div className="overflow-x-auto rounded-lg ">
         {loading ? (
           <Skeleton count={5} height={40} className="mb-2 rounded" />
         ) : (
@@ -85,6 +105,7 @@ const ProductsList = () => {
               {products.map((product, idx) => (
                 <tr key={product._id} className=" rounded-xl hover:bg-[#d6d6d6]  transition">
                   <td className="px-4 py-3">{idx + 1}</td>
+                  <td className="px-4 py-3"><Image alt='' width={40} height={40}  src={product.colorVariants?.[0]?.images?.[0] || "/placeholder.png"} className="w-full h-auto object-cover"/></td>
                   <td className="px-4 py-3">{product.name}</td>
                   <td className="px-4 py-3 capitalize">{product.category}</td>
                   <td className="px-4 py-3 capitalize">
@@ -106,19 +127,19 @@ const ProductsList = () => {
                   </td> */}
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                       <Link href={`/admin/product/view/${product._id}`}
+                       <Link href={`/admin/products/view/${product._id}`}
                           className="bg-[#5f5e5e] text-white px-3 py-1 rounded hover:bg-[#333232] transition"
                       >
                         View
                       </Link>
-                      <Link  href={`/admin/product/edit/${product._id}`}
+                      <Link  href={`/admin/products/edit/${product._id}`}
                         className="bg-[#ddb461c9] text-black px-3 py-1 rounded hover:bg-[#e8b858] transition"
                       >
                         Edit
                       </Link>
                       <button 
-                        onClick={() => deleteProduct(product._id)}
-                        className="bg-[#db5757e7] text-white cursor-pointer px-3 py-1 rounded hover:bg-[#ec4242e7] transition"
+                        onClick={() => handleDelete(product)}
+                        className="bg-[#dd4747e7] text-white cursor-pointer px-3 py-1 rounded hover:bg-[#ec4242e7] transition"
                       >
                         Delete
                       </button>
@@ -130,6 +151,20 @@ const ProductsList = () => {
           </table>
         )}
       </div>
+
+      {
+        showDeletePopup && (
+          <PopupModal  title = {`Are you sure you want to delete product -'${productToDelete}'`}
+  message = {""}
+  onCancel={()=>{setShowDeletePopup(false)}}
+  onConfirm={()=>{deleteProduct()}}
+  confirmText = {"Delete"}
+  cancelText = {"Cancel"}
+  type = {"delete"} // options: default | delete | warning | info
+  showCancel = {true}
+  />
+        )
+      }
     </div>
   );
 };
