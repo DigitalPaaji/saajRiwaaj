@@ -37,11 +37,11 @@ const productSchema = new mongoose.Schema({
     },
         discount:{type:Number,default:0},
         finalPrice:{type:Number,default:0},
-
-    colorVariants:[{
+        images:[{type:String}],
+        colorVariants:[{
         colorName:{type:String,required:true},
         quantity:{type:Number,default:1},
-        images:[{type:String}],
+        
     }]
 
 })

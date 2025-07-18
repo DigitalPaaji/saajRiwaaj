@@ -36,7 +36,7 @@ useEffect(() => {
   return () => window.removeEventListener('resize', handleResize);
 }, []);
   return (
-    <div className="flex min-h-screen bg-[#e0e0e0] transition-all duration-300 text-[#333] font-sans ">
+    <div className="flex h-full md:min-h-screen bg-[#e0e0e0] transition-all duration-300 text-[#333] font-sans ">
       {/* Sidebar */}
   <aside
   className={`
