@@ -24,10 +24,19 @@ const ProductsList = () => {
         // const res = await fetch(`${Apiurl}/products`);
         const res = await fetch('http://localhost:5000/product/');
         const data = await res.json();
+         // Check if data is array
+      if (Array.isArray(data)) {
         setProducts(data);
-        console.log(data)
+      } else if (data.products && Array.isArray(data.products)) {
+        setProducts(data.products);
+      } else {
+        console.error("Unexpected response format:", data);
+        setProducts([]);
+      }
+       
       } catch (err) {
         console.error("Error fetching products:", err);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -102,7 +111,13 @@ const ProductsList = () => {
               </tr>
             </thead>
             <tbody className="text-sm font-medium ">
-              {products.map((product, idx) => (
+              {products.length === 0 ? (
+    <tr>
+      <td colSpan={6} className="text-center py-6 text-gray-500">
+        No products found.
+      </td>
+    </tr>
+  ) :(products.map((product, idx) => (
                 <tr key={product._id} className=" rounded-xl hover:bg-[#d6d6d6]  transition">
                   <td className="px-4 py-3">{idx + 1}</td>
                   <td className="px-4 py-3"><Image alt='' width={40} height={40}  src={product.images?.[0]} className="w-16 h-16 object-cover"/></td>
@@ -146,7 +161,7 @@ const ProductsList = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         )}

@@ -16,6 +16,8 @@ const navItems = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'All Products', href: '/admin/products', icon: Package },
   { name: 'Add Product', href: '/admin/products/add', icon: PlusSquare },
+   { name: 'Tags', href: '/admin/tags', icon: Package },
+  { name: 'Categories', href: '/admin/categories', icon: PlusSquare },
 ]
 
 export default function AdminLayout({ children }) {

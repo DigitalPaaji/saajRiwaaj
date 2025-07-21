@@ -3,6 +3,9 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 require('dotenv').config()
 const Product = require('./routes/productRoutes')
+const Tags = require('./routes/TagRoutes')
+const Categories = require('./routes/CategoryRoutes')
+
 
 
 const app = express()
@@ -18,7 +21,10 @@ app.get('/',(req,res)=>{
 })
 
 
-app.use('/product',Product)
+app.use('/product',Product) 
+app.use('/tag',Tags)
+app.use('/category',Categories)
+
 
 
 

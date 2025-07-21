@@ -7,21 +7,23 @@ const productSchema = new mongoose.Schema({
         trim:true
     },
     category:{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-        enum:['modern','oxidised', 'weddding'],
-        lowercase:true
+        ref :'Category',
+        // enum:['modern','oxidised', 'weddding'],
+        // lowercase:true
     },
     subCategory:{
           type: String,
-        default:null
+        default:''
     },
     description:{
           type: String,
     default: '',
     },
     tags:[{
-        type:String,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Tag'
     }],
     isFeatured:{
         type:Boolean,

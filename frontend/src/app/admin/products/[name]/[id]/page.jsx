@@ -2,11 +2,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { UploadCloud, X, Loader2, Tag } from 'lucide-react';
 import Image from 'next/image';
-import { FaPlus } from 'react-icons/fa';
-import { useParams } from 'next/navigation';
+import { FaPlus, FaRupeeSign } from 'react-icons/fa';
+import { useParams,useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast, ToastContainer } from "react-toastify";
-import { useRouter } from 'next/router';
 
 // IMPORTANT: Replace with your Cloudinary details
 const CLOUDINARY_CLOUD_NAME = "dj0z0q0ut";
@@ -97,8 +96,39 @@ const ImageUploader = ({ onUpload, onRemove, images, uploaderId, maxFiles = 5, i
 
 
 export default function AddProductPage() {
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
+     const fetchCategories = useCallback(async () => {
+      try {
+        const res = await fetch("http://localhost:5000/category/");
+        const data = await res.json();
+        // console.log(data)
+        setCategories(data.cats || []);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      } 
+    }, []);
   
-    // --- State Management ---
+  
+    const fetchTags = useCallback(async () => {
+      try {
+        const res = await fetch("http://localhost:5000/tag/");
+        const data = await res.json();
+      //   console.log(data)
+        setTags(data.tags || []);
+      } catch (err) {
+        console.error("Error fetching tags:", err);
+      }
+    }, []);
+
+  useEffect(() => {
+    fetchTags();
+    fetchCategories();
+  }, [fetchTags, fetchCategories]);
+
+
+ const router = useRouter() 
+
     const [product, setProduct] = useState({
         name: '', category: '', subCategory: '', description: '', tags: [],
         isFeatured: false, isNewArrival: false, price: '', discount: '',
@@ -193,7 +223,6 @@ export default function AddProductPage() {
             });
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             toast.success('Product updated successfully!');
-const router = useRouter()
            
             router.push(`/admin/products/view/${id}`) 
         } catch (error) {
@@ -201,7 +230,6 @@ const router = useRouter()
             console.error('Submission Error:', error);
         } finally {
             setIsUpdating(false);
-
         }
     };
 
@@ -298,27 +326,7 @@ const isEditMode = name === 'edit'
 </div> }
 {!isViewMode && 
  <div className="flex gap-2 items-start flex-wrap"> 
-    {product.images?.length > 0 ? (
-  <div className="flex gap-2 items-start flex-wrap">
 
-
-    {product.images.length < 5 && (
-      <ImageUploader
-      
-        onUpload={(files) => handleFileUpload(files, 'main')}
-        onRemove={(idx) =>
-          setProduct((p) => ({
-            ...p,
-            images: p.images.filter((_, i) => i !== idx),
-          }))
-        }
-        images={product.images}
-        uploaderId="main-uploader"
-        isUploading={isMainUploading}
-      />
-    )}
-  </div>
-) : (
   <ImageUploader
     onUpload={(files) => handleFileUpload(files, 'main')}
     onRemove={(idx) =>
@@ -331,7 +339,7 @@ const isEditMode = name === 'edit'
     uploaderId="main-uploader"
     isUploading={isMainUploading}
   />
-)}
+
 
 
 </div> }
@@ -342,13 +350,14 @@ const isEditMode = name === 'edit'
                             
                            <div className={cardClasses}>
                                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Color Variants</h3>
-                                {/* <div className="space-y-4 p-4 border rounded-lg">
+                                {!isViewMode && (
+                                    <div className="space-y-4 p-4 border rounded-lg">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div><label htmlFor="colorName" className={labelClasses}>Color Name</label><input id="colorName" placeholder="e.g., Rose Gold" value={product.colorName} onChange={(e) => setVariant(v => ({...v, colorName: e.target.value}))} className={inputClasses} /></div>
+                                        <div><label htmlFor="colorName" className={labelClasses}>Color Name</label><input id="colorName" placeholder="e.g., Rose Gold" value={variant.colorName} onChange={(e) => setVariant(v => ({...v, colorName: e.target.value}))} className={inputClasses} /></div>
                                         <div><label htmlFor="quantity" className={labelClasses}>Quantity</label><input id="quantity" type="number" placeholder="1" value={variant.quantity} onChange={(e) => setVariant(v => ({...v, quantity: parseInt(e.target.value, 10) || 1}))} min="1" className={inputClasses} /></div>
                                     </div>
                                     <button type="button" onClick={handleAddVariant} className={buttonClasses.primary + " w-full"}>Add Variant</button>
-                                </div> */}
+                                </div>)}
                                 {product.colorVariants.length > 0 && 
                                 <div className="space-y-2 pt-4">
                                    {!isViewMode &&  <label className={labelClasses}>Added Variants</label>}
@@ -363,9 +372,9 @@ const isEditMode = name === 'edit'
                         <div className="space-y-8">
                             <div className={cardClasses + " space-y-4"}>
                                 <h3 className="text-lg font-semibold text-gray-800">Pricing</h3>
-                                <div><label htmlFor="price" className={labelClasses}>Price ($)</label><input disabled={isViewMode} id="price" name="price" type="number" value={product.price} onChange={handleInputChange} placeholder="0.00" required className={inputClasses} /></div>
+                                <div><label htmlFor="price" className={'labelClasses flex items-center'} >Price (<FaRupeeSign className='w-3 h-3 '/>)</label><input disabled={isViewMode} id="price" name="price" type="number" value={product.price} onChange={handleInputChange} placeholder="0.00" required className={inputClasses} /></div>
                                 <div><label htmlFor="discount" className={labelClasses}>Discount (%)</label><input disabled={isViewMode} id="discount" name="discount" type="number" value={product.discount} onChange={handleInputChange} placeholder="0" className={inputClasses} /></div>
-                                <div><label className={labelClasses}>Final Price ($)</label><div className="p-2 mt-1 rounded-md bg-gray-100 font-semibold text-gray-700">${finalPrice}</div></div>
+                                <div><label className={'labelClasses flex items-center'}>Final Price (<FaRupeeSign className='w-3 h-3 '/>)</label><div className="p-2 mt-1 rounded-md bg-gray-100 font-semibold text-gray-700 flex items-center"><FaRupeeSign className='w-3 h-3'/>{finalPrice}</div></div>
                             </div>
 
                              <div className={cardClasses + " space-y-3"}>
@@ -376,20 +385,38 @@ const isEditMode = name === 'edit'
 
                               <div>
                                         <label htmlFor="tags" className={labelClasses}>Tags</label>
-                                     {!isViewMode && 
-                                     <input id="tags"  placeholder="Type a tag and press Enter" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleTagInput} className={inputClasses} />
-                                     }   
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {product.tags.map(tag => (
-                                                <div key={tag} className="flex items-center bg-gray-200 text-gray-800 text-sm font-medium p-2 rounded-md">
-                                                    {tag}
-                                                       {!isViewMode && 
-                                                    <button type="button" onClick={() => removeTag(tag)} className="ml-1 rounded-full p-0.5 hover:bg-gray-300"><X className="h-3 w-3" /></button>
-                                                       }
-                                                </div>
-                                            ))}
-                                        </div>
+                                <div className={cardClasses + " space-y-3"}>
+                                    {tags.map((tag) => {
+                                        const tagId = String(tag._id); // convert to string to avoid mismatch
+                                        return (
+                                        <label key={tagId} className="flex items-center space-x-3 cursor-pointer">
+                                            <input
+                                            type="checkbox"
+                                            value={tagId}
+                                            checked={product.tags.includes(tagId)}
+                                            onChange={(e) => {
+                                                const checked = e.target.checked;
+                                                setProduct((prev) => ({
+                                                ...prev,
+                                                tags: checked
+                                                    ? [...prev.tags, tagId]
+                                                    : prev.tags.filter((id) => id !== tagId),
+                                                }));
+                                            }}
+                                            className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            />
+                                            <span>{tag.name}</span>
+                                        </label>
+                                        );
+                                    })}
                                     </div>
+                                </div>
+
+
+
+
+
+
                         </div>
                     </div>
                 </form>

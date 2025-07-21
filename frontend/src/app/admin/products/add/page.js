@@ -96,7 +96,38 @@ const ImageUploader = ({ onUpload, onRemove, images, uploaderId, maxFiles = 5, i
 
 
 export default function AddProductPage() {
-    // --- State Management ---
+      const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
+
+    const fetchCategories = useCallback(async () => {
+    try {
+      const res = await fetch("http://localhost:5000/category/");
+      const data = await res.json();
+    //   console.log(data)
+      setCategories(data.cats || []);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    }
+  }, []);
+
+
+  const fetchTags = useCallback(async () => {
+    try {
+      const res = await fetch("http://localhost:5000/tag/");
+      const data = await res.json();
+    //   console.log(data)
+      setTags(data.tags || []);
+    } catch (err) {
+      console.error("Error fetching tags:", err);
+    }
+  }, []);
+
+
+  useEffect(() => {
+    fetchTags();
+    fetchCategories();
+  }, [fetchTags, fetchCategories]);
+
     const [product, setProduct] = useState({
         name: '', category: '', subCategory: '', description: '', tags: [],
         isFeatured: false, isNewArrival: false, price: '', discount: '',
@@ -128,19 +159,22 @@ export default function AddProductPage() {
         setProduct(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     };
 
-    const handleTagInput = (e) => {
-        if (e.key === 'Enter' && tagInput.trim()) {
-            e.preventDefault();
-            if (!product.tags.includes(tagInput.trim())) {
-                setProduct(prev => ({ ...prev, tags: [...prev.tags, tagInput.trim()] }));
-            }
-            setTagInput('');
-        }
-    };
+//     const handleTagInput = (e) => {
+//         if (e.key === 'Enter' && tagInput.trim()) {
+//             e.preventDefault();
+//             if (!product.tags.includes(tagInput.trim())) {
+//                 setProduct(prev => ({ ...prev, tags: [...prev.tags, tagInput.trim()] }));
+//             }
+//             setTagInput('');
+//         }
+//     };
     
-    const removeTag = (tagToRemove) => {
-        setProduct(prev => ({ ...prev, tags: prev.tags.filter(tag => tag !== tagToRemove) }));
-    };
+// const removeTag = (tagToRemoveId) => {
+//   setProduct(prev => ({
+//     ...prev,
+//     tags: prev.tags.filter(tagId => tagId !== tagToRemoveId),
+//   }));
+// };
 
     const handleFileUpload = useCallback(async (files, type) => {
         const setIsLoading = type === 'main' ? setIsMainUploading : setIsVariantUploading;
@@ -224,13 +258,24 @@ export default function AddProductPage() {
                                         <input id="name" name="name" value={product.name} onChange={handleInputChange} placeholder="e.g., Elegant Diamond Necklace" required className={inputClasses} />
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div>
-                                            <label htmlFor="category" className={labelClasses}>Category</label>
-                                            <select name="category" value={product.category} onChange={handleInputChange} required className={inputClasses}>
-                                                <option value="" disabled>Select a category</option>
-                                                <option value="modern">Modern</option><option value="oxidised">Oxidised</option><option value="weddding">Wedding</option>
-                                            </select>
-                                        </div>
+                                     <div>
+  <label htmlFor="category" className={labelClasses}>Category</label>
+  <select
+    name="category"
+    value={product.category}
+    onChange={handleInputChange}
+    required
+    className={inputClasses}
+  >
+    <option value="" disabled>Select a category</option>
+    {categories.map((cat) => (
+      <option key={cat._id} value={cat._id}>
+        {cat.name}
+      </option>
+    ))}
+  </select>
+</div>
+
                                         <div>
                                             <label htmlFor="subCategory" className={labelClasses}>Sub-category (Optional)</label>
                                             <input id="subCategory" name="subCategory" value={product.subCategory} onChange={handleInputChange} placeholder="e.g., Pendants" className={inputClasses} />
@@ -278,18 +323,36 @@ export default function AddProductPage() {
                                  <label className="flex items-center space-x-3 cursor-pointer"><input type="checkbox" name="isFeatured" checked={product.isFeatured} onChange={handleInputChange} className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" /><span>Featured Product</span></label>
                                   <label className="flex items-center space-x-3 cursor-pointer"><input type="checkbox" name="isNewArrival" checked={product.isNewArrival} onChange={handleInputChange} className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" /><span>New Arrival</span></label>
                             </div>
+                         <div>
+  <label htmlFor="tags" className={labelClasses}>Tags</label>
+<div className={cardClasses + " space-y-3"}>
+  {tags.map((tag) => {
+    const tagId = String(tag._id); // convert to string to avoid mismatch
+    return (
+      <label key={tagId} className="flex items-center space-x-3 cursor-pointer">
+        <input
+          type="checkbox"
+          value={tagId}
+          checked={product.tags.includes(tagId)}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setProduct((prev) => ({
+              ...prev,
+              tags: checked
+                ? [...prev.tags, tagId]
+                : prev.tags.filter((id) => id !== tagId),
+            }));
+          }}
+          className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        />
+        <span>{tag.name}</span>
+      </label>
+    );
+  })}
+</div>
 
-                              <div>
-                                        <label htmlFor="tags" className={labelClasses}>Tags</label>
-                                        <input id="tags" placeholder="Type a tag and press Enter" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleTagInput} className={inputClasses} />
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {product.tags.map(tag => (
-                                                <div key={tag} className="flex items-center bg-gray-200 text-gray-800 text-sm font-medium pl-2 pr-1 py-0.5 rounded-full">
-                                                    {tag}<button type="button" onClick={() => removeTag(tag)} className="ml-1 rounded-full p-0.5 hover:bg-gray-300"><X className="h-3 w-3" /></button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
+</div>
+
                         </div>
                     </div>
                 </form>
