@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { UploadCloud, X, Loader2, Tag } from 'lucide-react';
 import Image from 'next/image';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaRupeeSign } from 'react-icons/fa';
 import { toast, ToastContainer } from "react-toastify";
 
 
@@ -98,6 +98,7 @@ const ImageUploader = ({ onUpload, onRemove, images, uploaderId, maxFiles = 5, i
 export default function AddProductPage() {
       const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  
 
     const fetchCategories = useCallback(async () => {
     try {
@@ -198,14 +199,14 @@ export default function AddProductPage() {
             const results = await Promise.all(uploadPromises);
             onComplete(results.map(r => r.secure_url).filter(Boolean));
         } catch (error) {
-            alert("Image upload failed. Please check credentials and try again.");
+            toast.error("Image upload failed. Please check credentials and try again.");
         } finally {
             setIsLoading(false);
         }
     }, []);
 
     const handleAddVariant = () => {
-        if (!variant.colorName) return alert('Please enter a color name.');
+        if (!variant.colorName) return toast.warning('Please enter a color name.');
         setProduct(prev => ({ ...prev, colorVariants: [...prev.colorVariants, variant]}));
         setVariant({ colorName: '', quantity: 1, images: [] }); // Reset for next variant
     };
@@ -216,6 +217,10 @@ export default function AddProductPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+          if (product.images.length === 0) {
+    toast.error("Please upload at least one product image.");
+    return;
+  }
         setIsSubmitting(true);
         try {
             const response = await fetch('http://localhost:5000/product/add', {
@@ -224,22 +229,31 @@ export default function AddProductPage() {
                 body: JSON.stringify({ ...product, finalPrice: parseFloat(finalPrice) }),
             });
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            alert('Product added successfully!');
+            toast.success('Product added successfully!');
+        
+          
+
         } catch (error) {
-            alert('Failed to add product. Check console for details.');
+            toast.error('Failed to add product. Check console for details.');
             console.error('Submission Error:', error);
         } finally {
             setIsSubmitting(false);
+              setProduct({
+        name: '', category: '', subCategory: '', description: '', tags: [],
+        isFeatured: false, isNewArrival: false, price: '', discount: '',
+        images: [], colorVariants: []
+    })
         }
     };
 
     return (
         <div className="">
+            <ToastContainer position="top-right" autoClose={2000} />
             <div className=" ">
                 <form onSubmit={handleSubmit}>
                 
                    
-                    <div className="flex items-center justify-between mb-8 flex-wrap">
+                    <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
                         <h1 className="text-2xl font-bold text-[#4d4c4b] drop-shadow-sm">Add New Product</h1>
                         <button type="submit" disabled={isSubmitting} className='cursor-pointer bg-[#4d4c4b] hover:bg-[#272625] text-white px-4 py-2 rounded-xl shadow transition duration-300 flex items-center'>
                          <FaPlus className="mr-2" />     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -313,9 +327,9 @@ export default function AddProductPage() {
                         <div className="space-y-8">
                             <div className={cardClasses + " space-y-4"}>
                                 <h3 className="text-lg font-semibold text-gray-800">Pricing</h3>
-                                <div><label htmlFor="price" className={labelClasses}>Price ($)</label><input id="price" name="price" type="number" value={product.price} onChange={handleInputChange} placeholder="0.00" required className={inputClasses} /></div>
-                                <div><label htmlFor="discount" className={labelClasses}>Discount (%)</label><input id="discount" name="discount" type="number" value={product.discount} onChange={handleInputChange} placeholder="0" className={inputClasses} /></div>
-                                <div><label className={labelClasses}>Final Price ($)</label><div className="p-2 mt-1 rounded-md bg-gray-100 font-semibold text-gray-700">${finalPrice}</div></div>
+                                <div><label htmlFor="price" className={'labelClasses + flex items-center'}>Price (<FaRupeeSign className='w-3 h-3 '/>)</label><input id="price" name="price" type="number" value={product.price} onChange={handleInputChange} placeholder="0.00" required className={inputClasses} /></div>
+                                <div><label htmlFor="discount" className={'labelClasses + flex items-center'}>Discount (%)</label><input id="discount" name="discount" type="number" value={product.discount ?? 0} onChange={handleInputChange} placeholder="0" className={inputClasses} /></div>
+                                <div><label className={'labelClasses + flex items-center'}>Final Price (<FaRupeeSign className='w-3 h-3 '/>)</label><div className="p-2 mt-1 rounded-md bg-gray-100 font-semibold text-gray-700 flex items-center"><FaRupeeSign className='w-3 h-3 '/> {finalPrice}</div></div>
                             </div>
 
                              <div className={cardClasses + " space-y-3"}>

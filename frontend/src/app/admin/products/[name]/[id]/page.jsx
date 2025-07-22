@@ -96,35 +96,39 @@ const ImageUploader = ({ onUpload, onRemove, images, uploaderId, maxFiles = 5, i
 
 
 export default function AddProductPage() {
-  const [categories, setCategories] = useState([]);
+
+   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
-     const fetchCategories = useCallback(async () => {
-      try {
-        const res = await fetch("http://localhost:5000/category/");
-        const data = await res.json();
-        // console.log(data)
-        setCategories(data.cats || []);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-      } 
-    }, []);
-  
-  
-    const fetchTags = useCallback(async () => {
-      try {
-        const res = await fetch("http://localhost:5000/tag/");
-        const data = await res.json();
-      //   console.log(data)
-        setTags(data.tags || []);
-      } catch (err) {
-        console.error("Error fetching tags:", err);
-      }
-    }, []);
+
+    const fetchCategories = useCallback(async () => {
+    try {
+      const res = await fetch("http://localhost:5000/category/");
+      const data = await res.json();
+    //   console.log(data)
+      setCategories(data.cats || []);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    }
+  }, []);
+
+
+  const fetchTags = useCallback(async () => {
+    try {
+      const res = await fetch("http://localhost:5000/tag/");
+      const data = await res.json();
+    //   console.log(data)
+      setTags(data.tags || []);
+    } catch (err) {
+      console.error("Error fetching tags:", err);
+    }
+  }, []);
+
 
   useEffect(() => {
     fetchTags();
     fetchCategories();
   }, [fetchTags, fetchCategories]);
+
 
 
  const router = useRouter() 
@@ -221,6 +225,7 @@ export default function AddProductPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...product, finalPrice: parseFloat(finalPrice) }),
             });
+            // console.log(...product, finalPrice)
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             toast.success('Product updated successfully!');
            
@@ -244,7 +249,7 @@ const isEditMode = name === 'edit'
         const res = await fetch(`http://localhost:5000/product/id/${id}`);
         const data = await res.json();
         setProduct(data);
-        console.log(data)
+        // console.log(data)
       } catch (err) {
         console.error("Error fetching products:", err);
       } 
@@ -265,7 +270,7 @@ const isEditMode = name === 'edit'
 
                    
                    
-                    <div className="flex items-center justify-between mb-8 flex-wrap">
+                    <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
                         <h1 className="text-2xl font-bold text-[#4d4c4b] drop-shadow-sm">Product Information</h1>
                      {isViewMode ?  <Link href={`/admin/products/edit/${id}`} className=' bg-[#4d4c4b] hover:bg-[#272625] text-white px-4 py-2 rounded-xl shadow transition duration-300 flex items-center'>
                           
@@ -292,10 +297,28 @@ const isEditMode = name === 'edit'
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label htmlFor="category" className={labelClasses}>Category</label>
-                                            <select disabled={isViewMode} name="category" value={product.category} onChange={handleInputChange} required className={inputClasses}>
-                                                <option value="" disabled>Select a category</option>
-                                                <option value="modern">Modern</option><option value="oxidised">Oxidised</option><option value="weddding">Wedding</option>
-                                            </select>
+                                         
+
+  
+                                    <select
+                                        name="category"
+                                        value={product.category}
+                                        onChange={handleInputChange}   
+                                        disabled={isViewMode}
+                                        className={inputClasses}
+                                    >
+                                        <option value="" disabled>Select a category</option>
+                                         <option >
+                                            {product.category.name}
+                                        </option>
+                                       {!isViewMode && (
+                                        
+                                      categories.map((cat) => (
+                                        <option key={cat._id} value={cat._id}>
+                                            {cat.name}
+                                        </option>
+                                        )) )} 
+                                    </select>
                                         </div>
                                         <div>
                                             <label htmlFor="subCategory" className={labelClasses}>Sub-category (Optional)</label>
@@ -373,7 +396,7 @@ const isEditMode = name === 'edit'
                             <div className={cardClasses + " space-y-4"}>
                                 <h3 className="text-lg font-semibold text-gray-800">Pricing</h3>
                                 <div><label htmlFor="price" className={'labelClasses flex items-center'} >Price (<FaRupeeSign className='w-3 h-3 '/>)</label><input disabled={isViewMode} id="price" name="price" type="number" value={product.price} onChange={handleInputChange} placeholder="0.00" required className={inputClasses} /></div>
-                                <div><label htmlFor="discount" className={labelClasses}>Discount (%)</label><input disabled={isViewMode} id="discount" name="discount" type="number" value={product.discount} onChange={handleInputChange} placeholder="0" className={inputClasses} /></div>
+                                <div><label htmlFor="discount" className={labelClasses}>Discount (%)</label><input disabled={isViewMode} id="discount" name="discount" type="number" value={product.discount ?? 0} onChange={handleInputChange} placeholder="0" className={inputClasses} /></div>
                                 <div><label className={'labelClasses flex items-center'}>Final Price (<FaRupeeSign className='w-3 h-3 '/>)</label><div className="p-2 mt-1 rounded-md bg-gray-100 font-semibold text-gray-700 flex items-center"><FaRupeeSign className='w-3 h-3'/>{finalPrice}</div></div>
                             </div>
 
@@ -383,34 +406,46 @@ const isEditMode = name === 'edit'
                                   <label className="flex items-center space-x-3 cursor-pointer"><input disabled={isViewMode} type="checkbox" name="isNewArrival" checked={product.isNewArrival} onChange={handleInputChange} className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" /><span>New Arrival</span></label>
                             </div>
 
-                              <div>
-                                        <label htmlFor="tags" className={labelClasses}>Tags</label>
-                                <div className={cardClasses + " space-y-3"}>
-                                    {tags.map((tag) => {
-                                        const tagId = String(tag._id); // convert to string to avoid mismatch
-                                        return (
-                                        <label key={tagId} className="flex items-center space-x-3 cursor-pointer">
-                                            <input
-                                            type="checkbox"
-                                            value={tagId}
-                                            checked={product.tags.includes(tagId)}
-                                            onChange={(e) => {
-                                                const checked = e.target.checked;
-                                                setProduct((prev) => ({
-                                                ...prev,
-                                                tags: checked
-                                                    ? [...prev.tags, tagId]
-                                                    : prev.tags.filter((id) => id !== tagId),
-                                                }));
-                                            }}
-                                            className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                            />
-                                            <span>{tag.name}</span>
-                                        </label>
-                                        );
-                                    })}
-                                    </div>
-                                </div>
+<div>
+  <label htmlFor="tags" className={labelClasses}>Tags</label>
+
+  <div className={cardClasses + " space-y-3"}>
+    {tags.map((tag) => {
+      const tagId = String(tag._id);
+      const selectedTags = Array.isArray(product.tags)
+        ? product.tags.map(t => (typeof t === 'object' ? t._id : t))
+        : [];
+
+      return (
+        <label key={tagId} className="flex items-center space-x-3 cursor-pointer">
+          <input
+            type="checkbox"
+            value={tagId}
+            disabled={isViewMode}
+            checked={selectedTags.includes(tagId)}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              setProduct((prev) => {
+                const currentTags = Array.isArray(prev.tags) ? prev.tags.map(t => (typeof t === 'object' ? t._id : t)) : [];
+
+                return {
+                  ...prev,
+                  tags: checked
+                    ? [...currentTags, tagId]
+                    : currentTags.filter((id) => id !== tagId),
+                };
+              });
+            }}
+            className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span>{tag.name}</span>
+        </label>
+      );
+    })}
+  </div>
+</div>
+
+
 
 
 

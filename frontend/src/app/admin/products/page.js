@@ -33,6 +33,7 @@ const ProductsList = () => {
         console.error("Unexpected response format:", data);
         setProducts([]);
       }
+      console.log(data)
        
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -100,10 +101,12 @@ const ProductsList = () => {
             <thead className="bg-[#4d4c4b] text-white text-xl font-medium">
               <tr className="text-sm ">
                 <th className="px-4 py-3">#</th>
+                <th className="px-4 py-3">Image</th>
+
                 <th className="px-4 py-3">NAME</th>
                 <th className="px-4 py-3">CATEGORY</th>
-                <th className="px-4 py-3">SUB-CATEGORY</th>
-                <th className="px-4 py-3">Tags</th>
+                <th className="px-4 py-3">TAGS</th>
+                {/* <th className="px-4 py-3">Tags</th> */}
                 {/* <th className="px-4 py-3">Featured</th> */}
                 {/* <th className="px-4 py-3">New Arrival</th> */}
                 {/* <th className="px-4 py-3">Color Variants</th> */}
@@ -122,9 +125,12 @@ const ProductsList = () => {
                   <td className="px-4 py-3">{idx + 1}</td>
                   <td className="px-4 py-3"><Image alt='' width={40} height={40}  src={product.images?.[0]} className="w-16 h-16 object-cover"/></td>
                   <td className="px-4 py-3">{product.name}</td>
-                  <td className="px-4 py-3 capitalize">{product.category}</td>
+                  <td className="px-4 py-3 capitalize">{product.category?.name}</td>
                   <td className="px-4 py-3 capitalize">
-                    {product.subCategory || '—'}
+                    {Array.isArray(product.tags) && product.tags.length > 0
+  ? product.tags.map(tag => tag.name).join(', ')
+  : '—'}
+
                   </td>
                   {/* <td className="px-4 py-3">
                     {product.tags?.length > 0

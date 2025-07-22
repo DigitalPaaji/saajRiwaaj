@@ -78,7 +78,7 @@ const TagsPage = () => {
            <h2 className="text-2xl font-bold mb-6 text-[#4d4c4b] drop-shadow-sm">Manage Categories</h2>
 
       <div className=" my-6 ">
-        <form onSubmit={handleAddTag} className="flex gap-2 justify-between">
+        <form onSubmit={handleAddTag} className="flex gap-2 justify-between flex-wrap">
           <input
             type="text"
             value={newTag}
