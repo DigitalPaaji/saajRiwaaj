@@ -5,6 +5,8 @@ require('dotenv').config()
 const Product = require('./routes/productRoutes')
 const Tags = require('./routes/TagRoutes')
 const Categories = require('./routes/CategoryRoutes')
+const SubCategories = require('./routes/SubCategoryRoute')
+
 
 
 
@@ -24,6 +26,8 @@ app.get('/',(req,res)=>{
 app.use('/product',Product) 
 app.use('/tag',Tags)
 app.use('/category',Categories)
+app.use('/subcategory',SubCategories)
+
 
 
 

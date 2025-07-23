@@ -295,6 +295,7 @@ const isEditMode = name === 'edit'
                                         <input disabled={isViewMode} id="name" name="name" value={product.name} onChange={handleInputChange} placeholder="e.g., Elegant Diamond Necklace" required className={inputClasses} />
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {(categories.length > 0 || product.category) && (
                                         <div>
                                             <label htmlFor="category" className={labelClasses}>Category</label>
                                          
@@ -302,15 +303,18 @@ const isEditMode = name === 'edit'
   
                                     <select
                                         name="category"
-                                        value={product.category}
+                                        value={product.category || ''}
                                         onChange={handleInputChange}   
                                         disabled={isViewMode}
                                         className={inputClasses}
                                     >
                                         <option value="" disabled>Select a category</option>
-                                         <option >
-                                            {product.category.name}
+                                        {product.category?.name && 
+                                        (<option >
+                                            {product.category?.name || null}
                                         </option>
+                                        )
+                                        } 
                                        {!isViewMode && (
                                         
                                       categories.map((cat) => (
@@ -320,6 +324,7 @@ const isEditMode = name === 'edit'
                                         )) )} 
                                     </select>
                                         </div>
+                                        )}
                                         <div>
                                             <label htmlFor="subCategory" className={labelClasses}>Sub-category (Optional)</label>
                                             <input disabled={isViewMode} id="subCategory" name="subCategory" value={product.subCategory} onChange={handleInputChange} placeholder="e.g., Pendants" className={inputClasses} />
@@ -405,7 +410,7 @@ const isEditMode = name === 'edit'
                                  <label className="flex items-center space-x-3 cursor-pointer"><input disabled={isViewMode} type="checkbox" name="isFeatured" checked={product.isFeatured} onChange={handleInputChange} className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" /><span>Featured Product</span></label>
                                   <label className="flex items-center space-x-3 cursor-pointer"><input disabled={isViewMode} type="checkbox" name="isNewArrival" checked={product.isNewArrival} onChange={handleInputChange} className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" /><span>New Arrival</span></label>
                             </div>
-
+{tags.length > 0 && (
 <div>
   <label htmlFor="tags" className={labelClasses}>Tags</label>
 
@@ -444,6 +449,7 @@ const isEditMode = name === 'edit'
     })}
   </div>
 </div>
+)}
 
 
 

@@ -18,6 +18,8 @@ const navItems = [
   { name: 'Add Product', href: '/admin/products/add', icon: PlusSquare },
    { name: 'Tags', href: '/admin/tags', icon: Package },
   { name: 'Categories', href: '/admin/categories', icon: PlusSquare },
+  { name: 'Sub Categories', href: '/admin/subcategories', icon: PlusSquare },
+
 ]
 
 export default function AdminLayout({ children }) {

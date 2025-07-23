@@ -1,4 +1,5 @@
 const Category = require('../models/CategoryModel');
+const ProductModel = require('../models/ProductModel');
 
 exports.createCategory = async (req, res) => {
     try {
@@ -17,5 +18,7 @@ exports.getCategories = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
     await Category.findByIdAndDelete(req.params.id);
+    await ProductModel.updateMany({category:categoryId},{$unset:{category:""}})
     res.json({ message: "Category Deleted successfully" });
 };
+        

@@ -9,6 +9,10 @@ import {
   X,
   Heart,
   ChevronDown,
+    Sparkles,
+  Leaf,
+  HeartHandshake,
+  CalendarHeart,
 } from "lucide-react";
 import MegaMenu from "./MegaMenu";
 
@@ -24,10 +28,10 @@ export default function Navbar() {
   }, [isMobileMenuOpen]);
 
   const navLinks = [
-    { name: "Modern", path: "/Modern", hasMegaMenu: true },
-    { name: "Oxidized", path: "/Oxidized" },
-    { name: "Wedding", path: "/Wedding" },
-    { name: "Occasions", path: "/Occasions" },
+    { key:'earrings', name: "Earrings", path: "/earrings", hasMegaMenu: true,icon: Sparkles, },
+    { key:'neckwear', name: "Neckwear", path: "/neckwear", hasMegaMenu: true,icon: Leaf, },
+    { key:'collections', name: "Collections", path: "/collections", hasMegaMenu: true, icon: HeartHandshake, },
+    { key:'exclusive', name: "Saaj Riwaaj Exclusive", path: "/exclusive", hasMegaMenu: true, icon: CalendarHeart, },
   ];
 
   return (
@@ -48,7 +52,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 group">
             <img
-              src="/logo.png"
+              src="/Images/logo.webp"
               alt="Saaj Riwaaj Logo"
               className="h-10 w-auto lg:h-12 transition-transform group-hover:scale-105"
             />
@@ -56,10 +60,10 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-10">
-            {navLinks.map(({ name, path, hasMegaMenu }) => (
+            {navLinks.map(({key, name, path, hasMegaMenu }) => (
               <div
-                key={name}
-                onMouseEnter={() => hasMegaMenu && setActiveMegaMenu(name.toLowerCase())}
+                key={key}
+                onMouseEnter={() => hasMegaMenu && setActiveMegaMenu(key.toLowerCase())}
               >
                 <Link
                   href={path}
@@ -99,8 +103,30 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mega Menu */}
-      {activeMegaMenu === "modern" && <MegaMenu onClose={() => setActiveMegaMenu(null)} />}
+ {/* Mega Menus (Dynamic) */}
+     
+      {/* {activeMegaMenu === "modern" && <MegaMenu onClose={() => setActiveMegaMenu(null)} />} */}
+
+{/* {navLinks.map(({ name }) =>
+  activeMegaMenu === name.toLowerCase() ? (
+    <MegaMenu key={name} type={name.toLowerCase()} onClose={() => setActiveMegaMenu(null)} />
+  ) : null
+)} */}
+
+
+{navLinks.map(({ key }) =>
+  activeMegaMenu === key ? (
+    <MegaMenu
+      key={key}
+      type={key}   
+     
+      onClose={() => setActiveMegaMenu(null)}
+    />
+  ) : null
+)}
+
+
+
 
       {/* Mobile Sidebar Menu */}
       <div
@@ -121,30 +147,18 @@ export default function Navbar() {
             </button>
           </div>
           <nav className="flex-grow  p-4 space-y-2">
-            {navLinks.map(({ name, path }) => (
+            {navLinks.map(({ name, path,icon:Icon }) => (
               <Link
-            key={name}
+               key={name}
                href={path}
                 onClick={() => setIsMobileMenuOpen(false)}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all
-              ${
-                active
-                  ? 'bg-[#d1d1d1] text-black'
-                  : 'neumorphic-btn hover:bg-[#d6d6d6]'
-              }`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all`}
+      
           >
             <Icon size={18} />
             {name}
           </Link>
-
-             <Link
-                key={name}
-                href={path}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-2 px-3 rounded hover:bg-amber-50 transition"
-              >
-                {name}
-              </Link>
+        
             ))}
           </nav>
         </div>

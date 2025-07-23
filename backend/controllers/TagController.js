@@ -1,3 +1,4 @@
+const ProductModel = require('../models/ProductModel');
 const Tag = require('../models/TagModel');
 
 exports.createTag = async (req, res) => {
@@ -14,16 +15,8 @@ exports.getTags = async (req, res) => {
     res.json({tags});
 };
 
-exports.updateTag = async (req, res) => {
-    try {
-        const tag = await Tag.findByIdAndUpdate(req.params.id, { name: req.body.name }, { new: true });
-        res.json(tag);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
-};
-
 exports.deleteTag = async (req, res) => {
     await Tag.findByIdAndDelete(req.params.id);
+    await ProductModel.updateMany({tags:tagId},{$pull:tagId}) 
     res.json({ message: "Tag deleted" });
 };

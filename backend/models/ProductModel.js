@@ -13,9 +13,10 @@ const productSchema = new mongoose.Schema({
         // enum:['modern','oxidised', 'weddding'],
         // lowercase:true
     },
-    subCategory:{
-          type: String,
-        default:''
+    subcategory:{
+         type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref :'SubCategory',
     },
     description:{
           type: String,
