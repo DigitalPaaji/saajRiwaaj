@@ -98,7 +98,10 @@ const ImageUploader = ({ onUpload, onRemove, images, uploaderId, maxFiles = 5, i
 export default function AddProductPage() {
 
    const [categories, setCategories] = useState([]);
+  
   const [tags, setTags] = useState([]);
+      const [subCategories, setSubCategories] = useState([]);
+
 
     const fetchCategories = useCallback(async () => {
     try {
@@ -110,6 +113,19 @@ export default function AddProductPage() {
       console.error("Error fetching categories:", err);
     }
   }, []);
+
+
+const fetchSubCategoriesByCategory = useCallback(async (categoryId) => {
+  try {
+    const res = await fetch(`http://localhost:5000/subcategory/category/${categoryId}`); 
+    const data = await res.json();
+   
+    setSubCategories(data || []);
+  } catch (err) {
+    console.error("Error fetching subcategories:", err);
+    setSubCategories([]);
+  }
+}, []);
 
 
   const fetchTags = useCallback(async () => {
@@ -127,6 +143,7 @@ export default function AddProductPage() {
   useEffect(() => {
     fetchTags();
     fetchCategories();
+
   }, [fetchTags, fetchCategories]);
 
 
@@ -134,7 +151,7 @@ export default function AddProductPage() {
  const router = useRouter() 
 
     const [product, setProduct] = useState({
-        name: '', category: '', subCategory: '', description: '', tags: [],
+        name: '', category: '', subcategory: '', description: '', tags: [],
         isFeatured: false, isNewArrival: false, price: '', discount: '',
         images: [], colorVariants: []
     });
@@ -158,25 +175,23 @@ export default function AddProductPage() {
         setFinalPrice(final.toFixed(2));
     }, [product.price, product.discount]);
 
+
     // --- Handlers ---
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setProduct(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+        const newValue = type === 'checkbox' ? checked : value;
+     setProduct(prev => ({
+    ...prev,
+    [name]: newValue,
+    ...(name === 'category' ? { subCategory: '' } : {})
+  }))
+
+  if (name === 'category') {
+    fetchSubCategoriesByCategory(value); 
+  }
     };
 
-    const handleTagInput = (e) => {
-        if (e.key === 'Enter' && tagInput.trim()) {
-            e.preventDefault();
-            if (!product.tags.includes(tagInput.trim())) {
-                setProduct(prev => ({ ...prev, tags: [...prev.tags, tagInput.trim()] }));
-            }
-            setTagInput('');
-        }
-    };
-    
-    const removeTag = (tagToRemove) => {
-        setProduct(prev => ({ ...prev, tags: prev.tags.filter(tag => tag !== tagToRemove) }));
-    };
+
 
     const handleFileUpload = useCallback(async (files, type) => {
         const setIsLoading = type === 'main' ? setIsMainUploading : setIsVariantUploading;
@@ -309,12 +324,13 @@ const isEditMode = name === 'edit'
                                         className={inputClasses}
                                     >
                                         <option value="" disabled>Select a category</option>
-                                        {product.category?.name && 
+                                        {isViewMode && (    product.category?.name && 
                                         (<option >
                                             {product.category?.name || null}
                                         </option>
                                         )
-                                        } 
+                                        
+                                         )}
                                        {!isViewMode && (
                                         
                                       categories.map((cat) => (
@@ -325,10 +341,58 @@ const isEditMode = name === 'edit'
                                     </select>
                                         </div>
                                         )}
+                                          {(subCategories.length > 0 || product.subcategory) && (
                                         <div>
-                                            <label htmlFor="subCategory" className={labelClasses}>Sub-category (Optional)</label>
-                                            <input disabled={isViewMode} id="subCategory" name="subCategory" value={product.subCategory} onChange={handleInputChange} placeholder="e.g., Pendants" className={inputClasses} />
+                                            <label htmlFor="subcategory" className={labelClasses}>Sub Category</label>
+                                         
+
+  {/* <select
+    name="subCategory"
+    value={product.subCategory}
+    onChange={handleInputChange}
+    required
+    disabled={!product.category}
+    className={inputClasses}
+  >
+    <option value="" disabled>
+          {product.category ? "Select a Sub Category" : "Select category first"}
+    </option>
+    {subCategories.map((cat) => (
+      <option key={cat._id} value={cat._id}>
+        {cat.name}
+      </option>
+    ))}
+  </select> */}
+
+
+
+
+  <select
+      name="subcategory"
+      value={product.subcategory || ''}
+      onChange={handleInputChange}   
+      disabled={!product.category}
+      className={inputClasses}
+  >
+      <option value="" disabled>
+        {product.category ? "Select a Sub Category" : "Select category first"}
+      </option>
+      {product.subcategory?.name && 
+      (<option >
+          {product.subcategory?.name || null}
+      </option>
+      )
+      } 
+      {!isViewMode && (
+      
+    subCategories.map((cat) => (
+      <option key={cat._id} value={cat._id}>
+          {cat.name}
+      </option>
+      )) )} 
+  </select>
                                         </div>
+                                        )}
                                     </div>
                                     <div>
                                         <label htmlFor="description" className={labelClasses}>Description</label>

@@ -13,6 +13,18 @@ const TagsPage = () => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [tagToDelete, setTagToDelete] = useState(null);
 
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
+         const fetchCategories = useCallback(async () => {
+      try {
+        const res = await fetch("http://localhost:5000/category/");
+        const data = await res.json();
+      //   console.log(data)
+        setCategories(data.cats || []);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    }, []);
   const fetchTags = useCallback(async () => {
     try {
       const res = await fetch("http://localhost:5000/subcategory/");
@@ -25,30 +37,39 @@ const TagsPage = () => {
       setLoading(false);
     }0
   }, []);
+
   useEffect(() => {
     fetchTags();
-  }, [fetchTags]);
+    fetchCategories();
+  }, [fetchTags,fetchCategories]);
   const handleAddTag = async (e) => {
     e.preventDefault();
-    if (!newTag.trim()) return toast.warn("Please enter a tag name.");
+    if (!newTag.trim()) return toast.warn("Please enter a sub category name.");
+   if (!selectedCategory) return toast.warn("Please select a category.");
+
     try {
       const res = await fetch("http://localhost:5000/subcategory/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newTag }),
+        body: JSON.stringify({ name: newTag, category: selectedCategory }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        toast.success("subcategory added successfully!");
+        toast.success("Sub Category added successfully!");
         setNewTag("");
         fetchTags();
       } else {
-        toast.error(data.message || "Failed to add subcategory.");
+         // Show specific MongoDB duplicate error
+  if (data.error?.includes("duplicate") || data.error?.includes("E11000")) {
+    toast.error("This subcategory already exists.");
+  } else {
+    toast.error(data.error || "Failed to add Sub Category.");
+  }
       }
     } catch (err) {
       console.error(err);
-      toast.error("Error adding subcategory.");
+      toast.error("Error adding Sub Category.");
     }
   };
 
@@ -73,12 +94,26 @@ const TagsPage = () => {
 
   return (
     <div className="w-full">
-      <ToastContainer className="z-[9999]" />
+      <ToastContainer className="z-[9999]" autoClose={2000} />
 
            <h2 className="text-2xl font-bold mb-6 text-[#4d4c4b] drop-shadow-sm">Manage subcategories</h2>
 
       <div className=" my-6 ">
         <form onSubmit={handleAddTag} className="flex gap-2 justify-between flex-wrap">
+         <select
+  value={selectedCategory}
+  onChange={(e) => setSelectedCategory(e.target.value)}
+  className="border px-3 py-2 w-full rounded-xl mb-2"
+>
+  <option value="">Select Category</option>
+  {categories.map((cat) => (
+    <option key={cat._id} value={cat._id}>
+      {cat.name}
+    </option>
+  ))}
+</select>
+
+         
           <input
             type="text"
             value={newTag}
@@ -100,7 +135,10 @@ const TagsPage = () => {
           <thead className="bg-[#4d4c4b] text-white text-xl font-medium">
             <tr className="text-sm">
               <th className="px-4 py-3">#</th>
-              <th className="px-4 py-3">subcategory Name</th>
+              <th className="px-4 py-3">Sub Category</th>
+              <th className="px-4 py-3">Category</th>
+
+              
               <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
@@ -119,6 +157,9 @@ const TagsPage = () => {
                 >
                   <td className="px-4 py-3">{index + 1}</td>
                   <td className="px-4 py-3 capitalize">{tag.name}</td>
+                  <td className="px-4 py-3 capitalize">
+  {categories.find((c) => c._id === tag.category)?.name || "—"}
+</td>
                   <td className="px-4 py-3">
                     <button
                       onClick={() => {

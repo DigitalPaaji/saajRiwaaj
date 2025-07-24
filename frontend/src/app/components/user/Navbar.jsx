@@ -31,7 +31,7 @@ export default function Navbar() {
     { key:'earrings', name: "Earrings", path: "/earrings", hasMegaMenu: true,icon: Sparkles, },
     { key:'neckwear', name: "Neckwear", path: "/neckwear", hasMegaMenu: true,icon: Leaf, },
     { key:'collections', name: "Collections", path: "/collections", hasMegaMenu: true, icon: HeartHandshake, },
-    { key:'exclusive', name: "Saaj Riwaaj Exclusive", path: "/exclusive", hasMegaMenu: true, icon: CalendarHeart, },
+    { key:'exclusive', name: "Saaj Riwaaj Exclusive", path: "/exclusive", hasMegaMenu: false , icon: CalendarHeart, },
   ];
 
   return (

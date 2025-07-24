@@ -81,7 +81,7 @@ const ProductsList = () => {
   return (
    <div className=" w-full">
     <ToastContainer className={'z-[9999]'}/>
-      <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
+      <div className="  flex justify-between items-center mb-6 flex-wrap gap-4">
         <h2 className="text-2xl font-bold text-[#4d4c4b] drop-shadow-sm">
           All Products
         </h2>
@@ -105,7 +105,7 @@ const ProductsList = () => {
 
                 <th className="px-4 py-3">NAME</th>
                 <th className="px-4 py-3">CATEGORY</th>
-                <th className="px-4 py-3">TAGS</th>
+                <th className="px-4 py-3">SUB CATEGORY</th>
                 {/* <th className="px-4 py-3">Tags</th> */}
                 {/* <th className="px-4 py-3">Featured</th> */}
                 {/* <th className="px-4 py-3">New Arrival</th> */}
@@ -113,6 +113,9 @@ const ProductsList = () => {
                 <th className="px-4 py-3">ACTIONS</th>
               </tr>
             </thead>
+
+
+
             <tbody className="text-sm font-medium ">
               {products.length === 0 ? (
     <tr>
@@ -127,10 +130,10 @@ const ProductsList = () => {
                   <td className="px-4 py-3">{product.name}</td>
                   <td className="px-4 py-3 capitalize">{product.category?.name}</td>
                   <td className="px-4 py-3 capitalize">
-                    {Array.isArray(product.tags) && product.tags.length > 0
+                    {/* {Array.isArray(product.tags) && product.tags.length > 0
   ? product.tags.map(tag => tag.name).join(', ')
-  : '—'}
-
+  : '—'} */}
+{product.subcategory?.name}
                   </td>
                   {/* <td className="px-4 py-3">
                     {product.tags?.length > 0

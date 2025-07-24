@@ -18,7 +18,7 @@ exports.getCategories = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
     await Category.findByIdAndDelete(req.params.id);
-    await ProductModel.updateMany({category:categoryId},{$unset:{category:""}})
+    await ProductModel.updateMany({category:req.params.id},{$unset:{category:""}})
     res.json({ message: "Category Deleted successfully" });
 };
         

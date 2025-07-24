@@ -15,6 +15,8 @@ exports.getAllProducts = async (req,res)=>{
         const products = await Product.find()
         .populate('category','name')
         .populate('tags','name')
+        .populate('subcategory','name')
+
 
         res.status(200).json({products})
     }
@@ -28,7 +30,9 @@ exports.getProductById = async (req,res)=>{
       try{
         const product = await Product.findById(req.params.id)
          .populate('category', 'name')
-      .populate('tags', 'name');
+      .populate('tags', 'name')
+        .populate('subcategory','name')
+
         if(!product) return res.status(404).json({message:'Not Found'})
         res.status(200).json(product)
     }

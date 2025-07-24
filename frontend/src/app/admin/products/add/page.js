@@ -97,8 +97,22 @@ const ImageUploader = ({ onUpload, onRemove, images, uploaderId, maxFiles = 5, i
 
 export default function AddProductPage() {
       const [categories, setCategories] = useState([]);
+
   const [tags, setTags] = useState([]);
-  
+      const [subCategories, setSubCategories] = useState([]);
+
+const fetchSubCategoriesByCategory = useCallback(async (categoryId) => {
+  try {
+    const res = await fetch(`http://localhost:5000/subcategory/category/${categoryId}`); 
+    const data = await res.json();
+   
+    setSubCategories(data || []);
+  } catch (err) {
+    console.error("Error fetching subcategories:", err);
+    setSubCategories([]);
+  }
+}, []);
+
 
     const fetchCategories = useCallback(async () => {
     try {
@@ -110,6 +124,8 @@ export default function AddProductPage() {
       console.error("Error fetching categories:", err);
     }
   }, []);
+
+
 
 
   const fetchTags = useCallback(async () => {
@@ -130,7 +146,7 @@ export default function AddProductPage() {
   }, [fetchTags, fetchCategories]);
 
     const [product, setProduct] = useState({
-        name: '', category: '', subCategory: '', description: '', tags: [],
+        name: '', category: '', subcategory: '', description: '', tags: [],
         isFeatured: false, isNewArrival: false, price: '', discount: '',
         images: [], colorVariants: []
     });
@@ -155,27 +171,23 @@ export default function AddProductPage() {
     }, [product.price, product.discount]);
 
     // --- Handlers ---
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setProduct(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-    };
+const handleInputChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  const newValue = type === 'checkbox' ? checked : value;
 
-//     const handleTagInput = (e) => {
-//         if (e.key === 'Enter' && tagInput.trim()) {
-//             e.preventDefault();
-//             if (!product.tags.includes(tagInput.trim())) {
-//                 setProduct(prev => ({ ...prev, tags: [...prev.tags, tagInput.trim()] }));
-//             }
-//             setTagInput('');
-//         }
-//     };
-    
-// const removeTag = (tagToRemoveId) => {
-//   setProduct(prev => ({
-//     ...prev,
-//     tags: prev.tags.filter(tagId => tagId !== tagToRemoveId),
-//   }));
-// };
+  setProduct(prev => ({
+    ...prev,
+    [name]: newValue,
+    ...(name === 'category' ? { subcategory: '' } : {})
+  }));
+
+  if (name === 'category') {
+    fetchSubCategoriesByCategory(value); 
+  }
+};
+
+
+
 
     const handleFileUpload = useCallback(async (files, type) => {
         const setIsLoading = type === 'main' ? setIsMainUploading : setIsVariantUploading;
@@ -228,21 +240,23 @@ export default function AddProductPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...product, finalPrice: parseFloat(finalPrice) }),
             });
+            const result = await response.json(); // log this to debug
+console.log("API Response:", result);
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             toast.success('Product added successfully!');
         
-          
+              setProduct({
+        name: '', category: '', subcategory: '', description: '', tags: [],
+        isFeatured: false, isNewArrival: false, price: '', discount: '',
+        images: [], colorVariants: []
+    })
 
         } catch (error) {
             toast.error('Failed to add product. Check console for details.');
             console.error('Submission Error:', error);
         } finally {
             setIsSubmitting(false);
-              setProduct({
-        name: '', category: '', subCategory: '', description: '', tags: [],
-        isFeatured: false, isNewArrival: false, price: '', discount: '',
-        images: [], colorVariants: []
-    })
+          
         }
     };
 
@@ -290,10 +304,26 @@ export default function AddProductPage() {
   </select>
 </div>
 
-                                        <div>
-                                            <label htmlFor="subCategory" className={labelClasses}>Sub-category (Optional)</label>
-                                            <input id="subCategory" name="subCategory" value={product.subCategory} onChange={handleInputChange} placeholder="e.g., Pendants" className={inputClasses} />
-                                        </div>
+                                                                             <div>
+  <label htmlFor="subcategory" className={labelClasses}>Sub Category</label>
+  <select
+    name="subcategory"
+    value={product.subcategory}
+    onChange={handleInputChange}
+    required
+    disabled={!product.category}
+    className={inputClasses}
+  >
+    <option value="" disabled>
+          {product.category ? "Select a Sub Category" : "Select category first"}
+    </option>
+    {subCategories.map((cat) => (
+      <option key={cat._id} value={cat._id}>
+        {cat.name}
+      </option>
+    ))}
+  </select>
+</div>
                                     </div>
                                     <div>
                                         <label htmlFor="description" className={labelClasses}>Description</label>
