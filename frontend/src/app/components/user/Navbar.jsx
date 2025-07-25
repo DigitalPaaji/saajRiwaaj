@@ -9,31 +9,46 @@ import {
   X,
   Heart,
   ChevronDown,
+  CalendarHeart,
     Sparkles,
   Leaf,
   HeartHandshake,
-  CalendarHeart,
+  Gem,
+  Flower,
+  HandHeart,
+
 } from "lucide-react";
+const iconOptions = [
+    Sparkles,
+    Gem,
+   Flower,
+    HandHeart,
+];
 import MegaMenu from "./MegaMenu";
+import { useGlobalContext } from "../context/GlobalContext";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
-
+  const { categories, subCategoriesMap } = useGlobalContext();
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [isMobileMenuOpen]);
+ 
+function formatCategoryPath(name) {
+  return name.trim().toLowerCase().replace(/\s+/g, '-'); // e.g., Saaj Riwaaj Exclusive → saaj-riwaaj-exclusive
+}
 
-  const navLinks = [
-    { key:'earrings', name: "Earrings", path: "/earrings", hasMegaMenu: true,icon: Sparkles, },
-    { key:'neckwear', name: "Neckwear", path: "/neckwear", hasMegaMenu: true,icon: Leaf, },
-    { key:'collections', name: "Collections", path: "/collections", hasMegaMenu: true, icon: HeartHandshake, },
-    { key:'exclusive', name: "Saaj Riwaaj Exclusive", path: "/exclusive", hasMegaMenu: false , icon: CalendarHeart, },
-  ];
-
+function formatCategoryLabel(name) {
+  return name
+  .trim()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' '); // e.g., saaj riwaaj → Saaj Riwaaj
+}
   return (
     <header
       className="bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm"
@@ -44,7 +59,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="md:hidden p-2 text-stone-700 hover:text-amber-700"
+            className="lg:hidden p-2 text-stone-700 hover:text-amber-700"
           >
             <Menu className="w-6 h-6" />
           </button>
@@ -59,28 +74,44 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-10">
-            {navLinks.map(({key, name, path, hasMegaMenu }) => (
-              <div
-                key={key}
-                onMouseEnter={() => hasMegaMenu && setActiveMegaMenu(key.toLowerCase())}
-              >
-                <Link
-                  href={path}
-                  className="flex items-center text-stone-700 hover:text-amber-700 font-medium transition"
-                >
-                  {name}
-                  {hasMegaMenu && (
-                    <ChevronDown
-                      className={`w-4 h-4 ml-1 transition-transform ${
-                        activeMegaMenu === name.toLowerCase() ? "rotate-180" : ""
-                      }`}
-                    />
-                  )}
-                </Link>
-              </div>
-            ))}
-          </nav>
+          <nav className="hidden lg:flex items-center space-x-10">
+  {categories.map((cat) => {
+    const hasSubCats = subCategoriesMap[cat._id]?.length > 0;
+    const categoryPath = `/${formatCategoryPath(cat.name)}`;
+    const categoryLabel = formatCategoryLabel(cat.name);
+    return (
+      <div
+        key={cat._id}
+        onMouseEnter={() => hasSubCats && setActiveMegaMenu(cat.name.toLowerCase())}
+        // onMouseLeave={() => setActiveMegaMenu(null)}
+      >
+        <Link
+           href={categoryPath}
+          className="flex items-center text-stone-700 hover:text-amber-700 font-medium transition"
+        >
+          {categoryLabel}
+          {hasSubCats && (
+            <ChevronDown
+              className={`w-4 h-4 ml-1 transition-transform ${
+                activeMegaMenu === cat.name.toLowerCase() ? "rotate-180" : ""
+              }`}
+            />
+          )}
+        </Link>
+
+        {/* MegaMenu dropdown */}
+        {activeMegaMenu === cat.name.toLowerCase() && hasSubCats && (
+          <MegaMenu
+            onClose={() => setActiveMegaMenu(null)}
+            category={cat}
+            
+            subcategories={subCategoriesMap[cat._id]}
+          />
+        )}
+      </div>
+    );
+  })}
+</nav>
 
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
@@ -105,32 +136,21 @@ export default function Navbar() {
 
  {/* Mega Menus (Dynamic) */}
      
-      {/* {activeMegaMenu === "modern" && <MegaMenu onClose={() => setActiveMegaMenu(null)} />} */}
-
-{/* {navLinks.map(({ name }) =>
-  activeMegaMenu === name.toLowerCase() ? (
-    <MegaMenu key={name} type={name.toLowerCase()} onClose={() => setActiveMegaMenu(null)} />
-  ) : null
-)} */}
-
-
-{navLinks.map(({ key }) =>
-  activeMegaMenu === key ? (
-    <MegaMenu
-      key={key}
-      type={key}   
-     
-      onClose={() => setActiveMegaMenu(null)}
-    />
-  ) : null
-)}
+{/* 
+ {activeMegaMenu === cat.name.toLowerCase() && hasSubCats && (
+          <MegaMenu
+            onClose={() => setActiveMegaMenu(null)}
+            category={cat}
+            subcategories={subCategoriesMap[cat._id]}
+          />
+        )} */}
 
 
 
 
       {/* Mobile Sidebar Menu */}
       <div
-        className={`fixed inset-0 z-50 transition-transform md:hidden ${{
+        className={`fixed inset-0 z-50 transition-transform lg:hidden ${{
           true: "translate-x-0",
           false: "-translate-x-full",
         }[isMobileMenuOpen]}`}
@@ -141,25 +161,36 @@ export default function Navbar() {
         ></div>
         <div className="relative w-4/5 max-w-sm h-screen bg-white shadow-xl flex flex-col">
           <div className="flex justify-between items-center p-4 border-b">
-            <h2 className="font-semibold text-lg">Menu</h2>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2">
+              <Link href="/" className="flex-shrink-0 group">
+            <img
+              src="/Images/logo.webp"
+              alt="Saaj Riwaaj Logo"
+              className="h-10 w-auto lg:h-12 transition-transform group-hover:scale-105"
+            />
+          </Link>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="cursor-pointer p-2">
               <X className="w-6 h-6" />
             </button>
           </div>
           <nav className="flex-grow  p-4 space-y-2">
-            {navLinks.map(({ name, path,icon:Icon }) => (
+            {categories.map((cat) =>{
+              const Icon = iconOptions[categories.indexOf(cat) % iconOptions.length];
+
+                const categoryPath = `/${formatCategoryPath(cat.name)}`;
+                const categoryLabel = formatCategoryLabel(cat.name);
+              return(
               <Link
-               key={name}
-               href={path}
+               key={cat._id}
+               href={categoryPath}
                 onClick={() => setIsMobileMenuOpen(false)}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all`}
       
           >
             <Icon size={18} />
-            {name}
+            {categoryLabel}
           </Link>
         
-            ))}
+            )})}
           </nav>
         </div>
       </div>

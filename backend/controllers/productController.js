@@ -42,6 +42,20 @@ exports.getProductById = async (req,res)=>{
     }
 }
 
+exports.getProductsByCategory = async (req, res) => {
+  try {
+    const products = await Product.find({ category: req.params.categoryId })
+      .populate('category', 'name')
+      .populate('subcategory', 'name')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 exports.deleteProductById = async (req,res)=>{
       try{
         const deleted = await Product.findByIdAndDelete(req.params.id)

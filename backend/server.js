@@ -6,6 +6,7 @@ const Product = require('./routes/productRoutes')
 const Tags = require('./routes/TagRoutes')
 const Categories = require('./routes/CategoryRoutes')
 const SubCategories = require('./routes/SubCategoryRoute')
+const bannerRoutes = require('./routes/BannerRoute')
 
 
 
@@ -27,7 +28,7 @@ app.use('/product',Product)
 app.use('/tag',Tags)
 app.use('/category',Categories)
 app.use('/subcategory',SubCategories)
-
+app.use('/banner', bannerRoutes); 
 
 
 

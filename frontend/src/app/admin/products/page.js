@@ -9,6 +9,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import PopupModal from "../../components/admin/ConfirmPopup";
 import Image from "next/image";
+import { useGlobalContext } from "../../components/context/GlobalContext";
 
 const ProductsList = () => {
   const [products, setProducts] = useState([]);
@@ -17,31 +18,43 @@ const ProductsList = () => {
   const [productToDelete, setProductToDelete] = useState("")
   const [IdToDelete, setIdToDelete] = useState("")
   const router = useRouter();
+  const { categories, subCategoriesMap, allProducts, refetchAllProducts } = useGlobalContext();
 
 
-    const fetchProducts = useCallback(async () => {
-      try {
-        // const res = await fetch(`${Apiurl}/products`);
-        const res = await fetch('http://localhost:5000/product/');
-        const data = await res.json();
-         // Check if data is array
-      if (Array.isArray(data)) {
-        setProducts(data);
-      } else if (data.products && Array.isArray(data.products)) {
-        setProducts(data.products);
-      } else {
-        console.error("Unexpected response format:", data);
-        setProducts([]);
-      }
-      console.log(data)
+    // const fetchProducts = useCallback(async () => {
+    //   try {
+    //     // const res = await fetch(`${Apiurl}/products`);
+    //     const res = await fetch('http://localhost:5000/product/');
+    //     const data = await res.json();
+    //      // Check if data is array
+    //   if (Array.isArray(data)) {
+    //     setProducts(data);
+    //   } else if (data.products && Array.isArray(data.products)) {
+    //     setProducts(data.products);
+    //   } else {
+    //     console.error("Unexpected response format:", data);
+    //     setProducts([]);
+    //   }
+    //   console.log(data)
        
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    },[])
+    //   } catch (err) {
+    //     console.error("Error fetching products:", err);
+    //     setProducts([]);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // },[])
+
+  useEffect(() => {
+    // Trigger refetch on page load
+    const loadData = async () => {
+      setLoading(true);
+      await refetchAllProducts();
+      setLoading(false);
+    };
+
+    loadData();
+  }, [refetchAllProducts]);
 
     const handleDelete = (product)=>{
       setShowDeletePopup(true)
@@ -57,7 +70,7 @@ const ProductsList = () => {
       })
       if(res.ok){
         toast.success('Product Deleted Successfully!');
-      
+      await refetchAllProducts()
       }else{
         const data = await res.json();
         console.log(data)
@@ -69,13 +82,11 @@ const ProductsList = () => {
 
     }
     setShowDeletePopup(false)
-    fetchProducts()
+ 
   }
-,[fetchProducts,IdToDelete])
+,[refetchAllProducts, IdToDelete])
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+
 
 
   return (
@@ -117,13 +128,13 @@ const ProductsList = () => {
 
 
             <tbody className="text-sm font-medium ">
-              {products.length === 0 ? (
+              {allProducts.length === 0 ? (
     <tr>
       <td colSpan={6} className="text-center py-6 text-gray-500">
         No products found.
       </td>
     </tr>
-  ) :(products.map((product, idx) => (
+  ) :(allProducts.map((product, idx) => (
                 <tr key={product._id} className=" rounded-xl hover:bg-[#d6d6d6]  transition">
                   <td className="px-4 py-3">{idx + 1}</td>
                   <td className="px-4 py-3"><Image alt='' width={40} height={40}  src={product.images?.[0]} className="w-16 h-16 object-cover"/></td>

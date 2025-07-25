@@ -19,6 +19,7 @@ const navItems = [
    { name: 'Tags', href: '/admin/tags', icon: Package },
   { name: 'Categories', href: '/admin/categories', icon: PlusSquare },
   { name: 'Sub Categories', href: '/admin/subcategories', icon: PlusSquare },
+  { name: 'banner', href: '/admin/banner', icon: PlusSquare },
 
 ]
 
