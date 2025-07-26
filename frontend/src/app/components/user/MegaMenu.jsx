@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { useGlobalContext } from '../context/GlobalContext';
 
 export default function MegaMenu({ onClose, category, subcategories }) {
     if (!category || !subcategories?.length) return null;
@@ -43,7 +44,8 @@ export default function MegaMenu({ onClose, category, subcategories }) {
   //     viewAll: '/exclusive',
   //   },
   // };
-
+      const { productsByCategory, refetchProductsByCategory } = useGlobalContext();
+    
   const featured = [
     {
       name: 'The Aura Collection',
@@ -76,9 +78,9 @@ export default function MegaMenu({ onClose, category, subcategories }) {
     },
   ];
 
-  function formatCategoryPath(name) {
-  return name.trim().toLowerCase().replace(/\s+/g, '-'); // e.g., Saaj Riwaaj Exclusive → saaj-riwaaj-exclusive
-}
+useEffect(()=>{
+  refetchProductsByCategory(category._id)
+},[])
 
 function formatCategoryLabel(name) {
   return name
@@ -96,7 +98,7 @@ function formatCategoryLabel(name) {
           <h3 className="text-sm font-semibold uppercase text-stone-500 mb-4"> Shop By Category</h3>
           <ul className="space-y-3">
             {subcategories.map((sub) => {
-              const categoryPath = `/${formatCategoryPath(category.name)}/${formatCategoryPath(sub.name)}`;
+              // const categoryPath = `/${formatCategoryPath(category.name)}/${formatCategoryPath(sub.name)}`;
     const categoryLabel = formatCategoryLabel(sub.name);
             return(
               <li key={sub._id}>
@@ -125,28 +127,35 @@ function formatCategoryLabel(name) {
         <div className="col-span-3">
           <h3 className="text-sm font-semibold uppercase text-stone-500 mb-4">Featured</h3>
           <div className="grid grid-cols-5 gap-8">
-            {featured.map((item, idx) => (
-              <Link
-                key={idx}
-                href={item.link}
-                onClick={onClose}
-                className="group flex flex-col items-center bg-stone-50 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
-              >
-                <div className="w-full">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.name}
-                    className="h-60 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-4 flex-1">
-                  <h4 className="font-semibold text-stone-800 group-hover:text-amber-700 transition-colors">
-                    {item.name}
-                  </h4>
-                  <p className="text-sm text-stone-600">{item.description}</p>
-                </div>
-              </Link>
-            ))}
+          {productsByCategory.slice(0, 5).map((item, idx) => {
+  const categoryPath = item.category?.name?.toLowerCase().replace(/\s+/g, '-') || 'category';
+  const subcategoryPath = item.subcategory?.name?.toLowerCase().replace(/\s+/g, '-') || 'subcategory';
+  const productPath = `${categoryPath}/${subcategoryPath}`;
+
+  return (
+    <Link
+      key={idx}
+      href={`/${productPath}`}
+      onClick={onClose}
+      className="group flex flex-col items-center bg-stone-50 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+    >
+      <div className="w-full">
+        <img
+          src={item.images?.[0]}
+          alt={item.name}
+          className="h-60 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
+      <div className="p-4 flex-1">
+        <h4 className="font-semibold text-stone-800 group-hover:text-amber-700 transition-colors">
+          {item.name}
+        </h4>
+        <p className="text-sm text-stone-600">{item.description}</p>
+      </div>
+    </Link>
+  );
+})}
+
           </div>
         </div>
       </div>

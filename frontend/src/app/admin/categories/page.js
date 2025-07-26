@@ -17,7 +17,7 @@ const TagsPage = () => {
     try {
       const res = await fetch("http://localhost:5000/category/");
       const data = await res.json();
-      console.log(data)
+      // console.log(data)
       setTags(data.cats || []);
     } catch (err) {
       console.error("Error fetching categories:", err);

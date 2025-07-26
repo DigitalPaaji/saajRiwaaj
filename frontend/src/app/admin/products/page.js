@@ -18,7 +18,7 @@ const ProductsList = () => {
   const [productToDelete, setProductToDelete] = useState("")
   const [IdToDelete, setIdToDelete] = useState("")
   const router = useRouter();
-  const { categories, subCategoriesMap, allProducts, refetchAllProducts } = useGlobalContext();
+  const { allProducts, refetchAllProducts } = useGlobalContext();
 
 
     // const fetchProducts = useCallback(async () => {
@@ -73,7 +73,7 @@ const ProductsList = () => {
       await refetchAllProducts()
       }else{
         const data = await res.json();
-        console.log(data)
+        // console.log(data)
         toast.error(data.message || 'Failed to delete Product.')
       }
     }catch(err){

@@ -7,6 +7,8 @@ export const GlobalProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [subCategoriesMap, setSubCategoriesMap] = useState({});
   const [allProducts, setAllProducts] = useState([]);
+  const [productsByCategory, setProductsByCategory] = useState([]);
+
 
   // Fetch categories
   const fetchCategories = useCallback(async () => {
@@ -44,13 +46,38 @@ export const GlobalProvider = ({ children }) => {
         console.error("Unexpected response format:", data);
         setAllProducts([]);
       }
-      console.log(data)
+      // console.log(data)
        
       } catch (err) {
         console.error("Error fetching products:", err);
         setAllProducts([]);
       }
     },[])
+
+        const fetchProductsByCategory = useCallback(async (id) => {
+      try {
+        // const res = await fetch(`${Apiurl}/products`);
+        const res = await fetch(`http://localhost:5000/product/category/${id}`);
+        const data = await res.json();
+      console.log(data)
+
+         // Check if data is array
+      if (Array.isArray(data)) {
+        setProductsByCategory(data);
+      } else if (data.products && Array.isArray(data.products)) {
+        setProductsByCategory(data.products);
+      } else {
+        console.error("Unexpected response format:", data);
+        setProductsByCategory([]);
+      }
+       
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setProductsByCategory([]);
+      }
+    },[])
+
+    
 
   // Initial fetch
   useEffect(() => {
@@ -59,10 +86,10 @@ export const GlobalProvider = ({ children }) => {
       if (cats.length) await fetchSubCategories(cats);
       await fetchAllProducts();
     })();
-  }, [fetchCategories, fetchSubCategories, fetchAllProducts]);
+  }, [fetchCategories, fetchSubCategories,fetchProductsByCategory, fetchAllProducts]);
 
   return (
-    <GlobalContext.Provider value={{ categories, subCategoriesMap, allProducts, refetchAllProducts: fetchAllProducts }}>
+    <GlobalContext.Provider value={{ categories, subCategoriesMap, allProducts, productsByCategory, refetchProductsByCategory: fetchProductsByCategory, refetchAllProducts: fetchAllProducts }}>
       {children}
     </GlobalContext.Provider>
   );
