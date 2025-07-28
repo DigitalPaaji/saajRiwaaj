@@ -6,7 +6,7 @@ import { FaPlus, FaRupeeSign } from "react-icons/fa";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast, ToastContainer } from "react-toastify";
-
+import ImagePreviewModal from "@/app/components/user/ImagePreview";
 // IMPORTANT: Replace with your Cloudinary details
 const CLOUDINARY_CLOUD_NAME = "dj0z0q0ut";
 const CLOUDINARY_UPLOAD_PRESET = "saajRiwaajProducts";
@@ -31,6 +31,7 @@ const ImageUploader = ({
   uploaderId,
   maxFiles = 5,
   isUploading,
+  
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef(null);
@@ -107,6 +108,7 @@ const ImageUploader = ({
                 height={300}
                 className="w-full h-full object-cover rounded-lg shadow-sm"
                 unoptimized // Optional if using external URLs without loader config
+         
               />
               <button
                 type="button"
@@ -124,6 +126,7 @@ const ImageUploader = ({
 };
 
 export default function AddProductPage() {
+  const [previewImage, setPreviewImage] = useState(null);
   const [categories, setCategories] = useState([]);
 
   const [tags, setTags] = useState([]);
@@ -476,20 +479,8 @@ export default function AddProductPage() {
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">
                   Product Images
                 </h3>
-                {isViewMode && (
-                  <div className="flex gap-2 items-start flex-wrap">
-                    {product.images.map((img, idx) => (
-                      <Image
-                        key={idx}
-                        alt={`Product image ${idx + 1}`}
-                        src={img}
-                        width={64}
-                        height={64}
-                        className="w-16 h-16 object-cover rounded"
-                      />
-                    ))}
-                  </div>
-                )}
+                
+            
                 {!isViewMode && (
                   <div className="flex gap-2 items-start flex-wrap">
                     <ImageUploader
@@ -501,11 +492,29 @@ export default function AddProductPage() {
                         }))
                       }
                       images={product.images}
+                           onClick={() => onImageClick?.(img)} 
+
                       uploaderId="main-uploader"
                       isUploading={isMainUploading}
                     />
                   </div>
                 )}
+                {isViewMode && (
+
+                  <div className="flex gap-2 items-start flex-wrap mt-6">
+                    {product.images.map((img, idx) => (
+                      <Image
+                        key={idx}
+                        alt={`Product image ${idx + 1}`}
+                        src={img}
+                        width={300}
+                        height={300}
+                        onClick={() => setPreviewImage(img)}
+                        className="w-40 h-40 object-cover rounded"
+                      />
+                    ))}
+                  </div>
+                      )}
               </div>
 
               <div className={cardClasses}>
@@ -727,6 +736,8 @@ export default function AddProductPage() {
         </form>
         {/* ))} */}
       </div>
+      <ImagePreviewModal src={previewImage} onClose={() => setPreviewImage(null)} />
+      
     </div>
   );
 }

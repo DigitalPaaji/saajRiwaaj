@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+
+
 /* Neumorphism base */
 .neumorphic-btn {
   background: #e0e0e0;
@@ -9,6 +11,18 @@
 }
 
 .neumorphic-btn:hover {
+  box-shadow: inset 4px 4px 10px #bebebe, inset -4px -4px 10px #ffffff;
+}
+
+
+.neumorphic-btn1 {
+  background: #e0e0e02c;
+  box-shadow: 6px 6px 12px #bebebe75, -6px -6px 12px #ffffff2d;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.neumorphic-btn1:hover {
   box-shadow: inset 4px 4px 10px #bebebe, inset -4px -4px 10px #ffffff;
 }
 
@@ -23,4 +37,36 @@
     100% { transform: translateX(-100%); }
   }
 }
+
+
+/* swiper dots  */
+.swiper-pagination {
+  position: absolute !important;
+  bottom: 0px !important;
+  text-align: center;
+  width: 100%;
+  z-index: 10;
+}
+
+.swiper-pagination-bullet {
+  background-color: #693d17c5 !important;
+  opacity: 1 !important;
+  width: 14px !important;
+  height: 14px !important;
+  margin: 0 6px !important;
+  transition: background 0.3s ease;
+  
+  clip-path: polygon(
+    50% 0%,   /* Top */
+    100% 50%, /* Right */
+    50% 100%, /* Bottom */
+    0% 50%    /* Left */
+  );
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #bd9f85c4 !important;
+  transform: scale(1.1);
+}
+
 

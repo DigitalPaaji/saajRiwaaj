@@ -30,7 +30,7 @@ const CollectionCard = ({ title, description, imageUrl, hoverImageUrl, link, bgC
       
       <Link 
         href={link}
-        className="relative z-10 inline-flex items-center text-amber-700 font-semibold group-hover:text-amber-800 transition-all duration-300 transform group-hover:translate-x-2"
+        className="relative z-10 inline-flex items-center text-[#B67032] font-semibold group-hover:text-amber-800 transition-all duration-300 transform group-hover:translate-x-2"
       >
         Explore Collection
         <ArrowRight className="ml-2 w-5 h-5 transition-all duration-300 group-hover:translate-x-2 group-hover:scale-110" />
@@ -71,7 +71,7 @@ export default function CollectionShowcase() {
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
+    <section className="py-20 px-4 sm:px-6 lg:px-8  overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-stone-800 mb-6 relative">

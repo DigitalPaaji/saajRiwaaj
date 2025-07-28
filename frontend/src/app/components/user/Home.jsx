@@ -7,20 +7,28 @@ import EditorialSection from './EditorialSection';
 import FeaturedProducts from './FeauturedProducts';
 import Footer from './Footer';
 import AnnouncementBar from './AnnouncementBar';
-import { useState, useEffect, useCallback } from 'react';
 
+import EarringsMarquee from './Earring';
 
 export default function Home() {
  
 
   return (
-    <div className="min-h-screen bg-white text-stone-800">
+    <div className="min-h-screen text-stone-800 bg-[#f3ecdf5d]">
       
         <AnnouncementBar />
       <Navbar/>
         <HeroBanner />
-        <ShopByCategory />
         <EditorialSection />
+        <EarringsMarquee/>
+{/* <Earrings
+  categoryId="6880c122e9e1dc327b67e304" // earrings category ID
+  categoryName="Earrings"
+  heading="Shop Earrings"
+  description="From timeless studs to graceful chandbalis, find your perfect pair."
+/> */}
+
+        <ShopByCategory />
         <FeaturedProducts />
       <Footer />
     </div>

@@ -7,7 +7,7 @@ import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PopupModal from "@/app/components/admin/ConfirmPopup";
-
+import ImagePreviewModal from "@/app/components/user/ImagePreview";
 // Cloudinary setup
 const CLOUDINARY_CLOUD_NAME = "dj0z0q0ut";
 const CLOUDINARY_UPLOAD_PRESET = "saajRiwaajProducts";
@@ -199,7 +199,7 @@ const handleDrop = (e, type) => {
       <div className="mt-4 relative w-48 h-32 border rounded-lg overflow-hidden">
         <Image
           src={desktopImage}
-          alt="Desktop Preview"
+          alt="Desktop "
           fill
           className="object-cover"
           unoptimized
@@ -240,7 +240,7 @@ const handleDrop = (e, type) => {
       <div className="mt-4 relative w-48 h-32 border rounded-lg overflow-hidden">
         <Image
           src={mobileImage}
-          alt="Mobile Preview"
+          alt="Mobile "
           fill
           className="object-cover"
           unoptimized
@@ -329,21 +329,8 @@ const handleDrop = (e, type) => {
       </div>
 
       {/* Full Image Preview Modal */}
-{previewImage && (
-  <div
-    className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
-    onClick={() => setPreviewImage(null)}
-  >
-    <Image
-      src={previewImage}
-      alt="Preview"
-      width={1000}
-      height={600}
-      className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-xl"
-      unoptimized
-    />
-  </div>
-)}
+<ImagePreviewModal src={previewImage} onClose={() => setPreviewImage(null)} />
+
 
 
       {showDeletePopup && (

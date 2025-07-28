@@ -51,15 +51,15 @@ function formatCategoryLabel(name) {
 }
   return (
     <header
-      className="bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm"
+      className="bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm "
       onMouseLeave={() => setActiveMegaMenu(null)}
     >
-      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className=" mx-4 md:mx-12 xl:mx-24  ">
         <div className="flex justify-between items-center h-20">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="lg:hidden p-2 text-stone-700 hover:text-amber-700"
+            className="lg:hidden p-2 text-stone-700 hover:text-[#B67032]"
           >
             <Menu className="w-6 h-6" />
           </button>
@@ -87,7 +87,7 @@ function formatCategoryLabel(name) {
       >
         <Link
            href={categoryPath}
-          className="flex items-center text-stone-700 hover:text-amber-700 font-medium transition"
+          className="flex items-center text-stone-700 hover:text-[#B67032] font-medium transition"
         >
           {categoryLabel}
           {hasSubCats && (
@@ -115,18 +115,18 @@ function formatCategoryLabel(name) {
 
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
-            <button className="hidden md:block p-2 text-stone-700 hover:text-amber-700">
+            <button className="hidden md:block p-2 text-stone-700 hover:text-[#B67032]">
               <Search className="w-5 h-5" />
             </button>
-            <button className="p-2 text-stone-700 hover:text-amber-700">
+            <button className="p-2 text-stone-700 hover:text-[#B67032]">
               <Heart className="w-5 h-5" />
             </button>
-            <button className="p-2 text-stone-700 hover:text-amber-700">
+            <button className="p-2 text-stone-700 hover:text-[#B67032]">
               <User className="w-5 h-5" />
             </button>
-            <button className="p-2 text-stone-700 hover:text-amber-700 relative">
+            <button className="p-2 text-stone-700 hover:text-[#B67032] relative">
               <ShoppingBag className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 bg-amber-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-[#B67032] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 0
               </span>
             </button>

@@ -5,82 +5,14 @@ import { useGlobalContext } from '../context/GlobalContext';
 
 export default function MegaMenu({ onClose, category, subcategories }) {
     if (!category || !subcategories?.length) return null;
-  // const content = {
-  //   earrings: {
-  //     categories: [
-  //       { name: 'Studs', link: '/earrings/studs' },
-  //       { name: 'Jhumkas', link: '/earrings/jhumkas' },
-  //       { name: 'Hoops', link: '/earrings/hoops' },
-  //       { name: 'Danglers', link: '/earrings/danglers' },
-  //       { name: 'Chandbalis', link: '/earrings/chandbalis' },
-  //     ],
-  //     viewAll: '/earrings',
-  //   },
-  //   neckwear: {
-  //     categories: [
-  //       { name: 'Chokers', link: '/neckwear/chokers' },
-  //       { name: 'Long Necklaces', link: '/neckwear/long' },
-  //       { name: 'Pearl Sets', link: '/neckwear/pearls' },
-  //       { name: 'Layered Necklaces', link: '/neckwear/layered' },
-  //     ],
-  //     viewAll: '/neckwear',
-  //   },
-  //   collections: {
-  //     categories: [
-  //       { name: 'Modern', link: '/collections/modern' },
-  //       { name: 'Oxidized', link: '/collections/oxidized' },
-  //       { name: 'Wedding', link: '/collections/wedding' },
-  //       { name: 'Party Wear', link: '/collections/partywear' },
-  //     ],
-  //     viewAll: '/collections',
-  //   },
-  //   exclusive: {
-  //     categories: [
-  //       { name: 'New Arrivals', link: '/exclusive/new' },
-  //       { name: 'Best Sellers', link: '/exclusive/bestsellers' },
-  //       { name: 'Limited Edition', link: '/exclusive/limited' },
-  //       { name: 'Signature Picks', link: '/exclusive/signature' },
-  //     ],
-  //     viewAll: '/exclusive',
-  //   },
-  // };
+  
       const { productsByCategory, refetchProductsByCategory } = useGlobalContext();
-    
-  const featured = [
-    {
-      name: 'The Aura Collection',
-      description: 'Minimalist designs for everyday sparkle.',
-      imageUrl: '/Images/1.webp',
-      link: '/collections/aura',
-    },
-    {
-      name: 'Geometric Gems',
-      description: 'Bold shapes meet modern elegance.',
-      imageUrl: '/Images/2.webp',
-      link: '/collections/geometric',
-    },
-    {
-      name: 'Riwaaj Royal',
-      description: 'Our top picks in luxurious charm.',
-      imageUrl: '/Images/3.webp',
-      link: '/exclusive/royal',
-    },  {
-      name: 'Geometric Gems',
-      description: 'Bold shapes meet modern elegance.',
-      imageUrl: '/Images/2.webp',
-      link: '/collections/geometric',
-    },
-    {
-      name: 'Riwaaj Royal',
-      description: 'Our top picks in luxurious charm.',
-      imageUrl: '/Images/3.webp',
-      link: '/exclusive/royal',
-    },
-  ];
-
-useEffect(()=>{
+    useEffect(()=>{
   refetchProductsByCategory(category._id)
 },[])
+
+
+
 
 function formatCategoryLabel(name) {
   return name
@@ -101,11 +33,11 @@ function formatCategoryLabel(name) {
               // const categoryPath = `/${formatCategoryPath(category.name)}/${formatCategoryPath(sub.name)}`;
     const categoryLabel = formatCategoryLabel(sub.name);
             return(
-              <li key={sub._id}>
+              <li key={sub._id} >
                 <Link
              href={`/${category.name.toLowerCase().replace(/\s+/g, '-')}/${sub.name.toLowerCase().replace(/\s+/g, '-')}`}
                   onClick={onClose}
-                  className="hover:text-amber-700 hover:translate-x-1 transition-all duration-200 inline-block"
+                  className="hover:text-[#B67032] hover:translate-x-1 transition-all duration-200 inline-block"
                 >
                   {categoryLabel}
                 </Link>
@@ -115,7 +47,7 @@ function formatCategoryLabel(name) {
               <Link
                 href={`/${category.name.toLowerCase()}`}
                 onClick={onClose}
-                className="flex items-center text-amber-700 font-semibold mt-4 hover:underline"
+                className="flex items-center text-[#B67032] font-semibold mt-4 hover:underline"
               >
                 View All <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
@@ -147,7 +79,7 @@ function formatCategoryLabel(name) {
         />
       </div>
       <div className="p-4 flex-1">
-        <h4 className="font-semibold text-stone-800 group-hover:text-amber-700 transition-colors">
+        <h4 className="font-semibold text-stone-800 group-hover:text-[#B67032] transition-colors">
           {item.name}
         </h4>
         <p className="text-sm text-stone-600">{item.description}</p>

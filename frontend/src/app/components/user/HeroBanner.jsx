@@ -5,10 +5,10 @@ import { Pagination, Autoplay, EffectFade } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
-import Link from 'next/link';
 
 export default function HeroBanner() {
   const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchBanners = useCallback(async () => {
     try {
@@ -17,6 +17,8 @@ export default function HeroBanner() {
       setBanners(data);
     } catch (err) {
       console.error("Error fetching banners:", err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -24,12 +26,19 @@ export default function HeroBanner() {
     fetchBanners();
   }, [fetchBanners]);
 
-  if (banners.length === 0) {
-    return <div className="h-auto bg-stone-100 animate-pulse"></div>;
+  if (loading) {
+    // Skeleton placeholder
+    return (
+      <div className="relative w-full min-h-[300px] bg-stone-200 animate-pulse flex items-center justify-center">
+        <div className="w-[80%] h-[70%] bg-stone-300 rounded-lg animate-pulse" />
+      </div>
+    );
   }
 
+  if (!loading && banners.length === 0) return null; // nothing to render
+
   return (
-    <section className="relative w-full overflow-hidden">
+    <section className="relative w-full">
       <Swiper
         modules={[Pagination, Autoplay, EffectFade]}
         effect="fade"
@@ -37,41 +46,21 @@ export default function HeroBanner() {
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         loop={true}
-        className="w-full h-auto"
+        className="w-full relative min-h-[300px]"
       >
         {banners.map((banner, index) => (
           <SwiperSlide key={index}>
             <div className="relative w-full h-full">
-        <img
-  src={banner.mobileImage}
-  alt="Mobile Banner"
-  className="block lg:hidden w-full h-full "
-/>
-<img
-  src={banner.desktopImage}
-  alt="Desktop Banner"
-  className="hidden lg:block w-full h-full "
-/>
-
-              {/* Optional: Overlay content */}
-              {/* <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <div className="text-white text-center px-4 max-w-4xl animate-fadeInUp">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold mb-4">
-                    {banner.title}
-                  </h1>
-                  <p className="text-base sm:text-lg md:text-xl mb-6">
-                    {banner.description}
-                  </p>
-                  {banner.buttonText && banner.link && (
-                    <Link
-                      href={banner.link}
-                      className="bg-white text-stone-800 font-semibold px-6 py-3 rounded-full hover:bg-amber-100 transition-colors duration-300"
-                    >
-                      {banner.buttonText}
-                    </Link>
-                  )}
-                </div>
-              </div> */}
+              <img
+                src={banner.mobileImage}
+                alt="Mobile Banner"
+                className="block lg:hidden w-full h-full"
+              />
+              <img
+                src={banner.desktopImage}
+                alt="Desktop Banner"
+                className="hidden lg:block w-full h-full"
+              />
             </div>
           </SwiperSlide>
         ))}
