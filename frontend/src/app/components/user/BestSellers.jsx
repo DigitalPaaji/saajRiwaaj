@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useGlobalContext } from "../../components/context/GlobalContext";
+import { useGlobalContext } from "../context/GlobalContext";
 import { FaRupeeSign } from 'react-icons/fa';
 
 export default function ShopByCategory() {
@@ -22,7 +22,7 @@ export default function ShopByCategory() {
   if (!loading && allProducts.length === 0) return null; // hide section if no data
 
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8">
+    <section className="py-12 px-4 sm:px-6 lg:px-8">
      
         <div>
           <h2 className="text-3xl md:text-4xl font-serif text-center">Best Sellers</h2>

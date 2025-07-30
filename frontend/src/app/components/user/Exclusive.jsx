@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useGlobalContext } from "../../components/context/GlobalContext";
+import { useGlobalContext } from "../context/GlobalContext";
 import { FaRupeeSign } from 'react-icons/fa';
 
 export default function ShopByCategory() {
@@ -22,7 +22,7 @@ export default function ShopByCategory() {
   if (!loading && allProducts.length === 0) return null; // hide section if no data
 
   return (
-    <section className="py-24 ">
+    <section className="py-12 ">
       <div className="px-4 sm:px-6 lg:px-8">
         <div>
           <h2 className="text-3xl md:text-4xl font-serif text-center"> Saaj Riwaaj Exclusive</h2>
@@ -31,7 +31,7 @@ export default function ShopByCategory() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 text-center py-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 text-center py-12">
           {loading
             ? skeletons.map((_, idx) => (
                 <div

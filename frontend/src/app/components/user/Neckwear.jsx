@@ -11,16 +11,16 @@ import { useGlobalContext } from '../context/GlobalContext';
 export default function EarringsMarquee() {
   const { subCategoriesMap, refetchAllProducts, productsByCategory, refetchProductsByCategory } = useGlobalContext();
 //  const [selectedSub, setSelectedSub] = useState('all');
-  const subCategories = subCategoriesMap['6880c122e9e1dc327b67e304'] || [];
+  const subCategories = subCategoriesMap['6880c127e9e1dc327b67e307'] || [];
 
 
-  const earringsCategoryId = '6880c122e9e1dc327b67e304'; // Replace with your actual category ID
+  const earringsCategoryId = '6880c127e9e1dc327b67e307'; // Replace with your actual category ID
   const products = productsByCategory.filter((p) => p.category === earringsCategoryId);
 
   useEffect(() => {
 
     refetchAllProducts();
-    refetchProductsByCategory('6880c122e9e1dc327b67e304')
+    refetchProductsByCategory('6880c127e9e1dc327b67e307')
   }, [refetchProductsByCategory,refetchAllProducts]);
 const loop = [...productsByCategory,...productsByCategory]
 
@@ -28,7 +28,7 @@ const loop = [...productsByCategory,...productsByCategory]
     <section className="py-16 px-4 sm:px-8 lg:px-16 bg-[#fff8f1]">
       <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
         <div className="max-w-xl">
-          <h2 className="text-3xl md:text-4xl font-serif">Shop Earrings</h2>
+          <h2 className="text-3xl md:text-4xl font-serif">Shop NeckWears</h2>
           <p className="text-md md:text-xl text-stone-500 font-serif mt-4">
            From timeless studs to graceful chandbalis, find your perfect pair.
           </p>
@@ -95,7 +95,7 @@ const loop = [...productsByCategory,...productsByCategory]
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             <div className="absolute top-2 left-2 bg-[#B67032] text-white text-xs px-2 py-1 rounded">
-              {item.subCategory || item.subcategory?.name || 'Earring'}
+              {item.subCategory || item.subcategory?.name || 'Neckwear'}
             </div>
           </div>
           <div className="p-4 flex flex-col justify-between">
