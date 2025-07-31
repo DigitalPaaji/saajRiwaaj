@@ -6,26 +6,29 @@ import { useGlobalContext } from '../context/GlobalContext';
 import { ArrowRight } from 'lucide-react';
 
 export default function CategorySection({ categoryId, categoryName, heading, description }) {
-  const { allProducts, subCategoriesMap, refetchAllProducts } = useGlobalContext();
-
+  const { subCategoriesMap, refetchProductsByCategory } = useGlobalContext();
   const [selectedSub, setSelectedSub] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
 
   const subCategories = subCategoriesMap[categoryId] || [];
 
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
-      await refetchAllProducts();
+      const data = await refetchProductsByCategory(categoryId);
+      setProducts(data || []);
       setLoading(false);
     };
     fetch();
-  }, [refetchAllProducts]);
+  }, [categoryId, refetchProductsByCategory]);
 
-  // Filter products for selected category/subcategory
-  const filteredProducts = allProducts.filter((p) => {
-    const matchCategory = p.category === categoryId;
-    const matchSub = selectedSub === 'all' || p.subCategory === selectedSub;
+  const filteredProducts = products.filter((p) => {
+    const matchCategory = p.category === categoryId || p.category?._id === categoryId;
+    const matchSub =
+      selectedSub === 'all' ||
+      p.subCategory === selectedSub ||
+      p.subcategory?._id === selectedSub;
     return matchCategory && matchSub;
   });
 
@@ -34,9 +37,7 @@ export default function CategorySection({ categoryId, categoryName, heading, des
       <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
         <div className="max-w-xl">
           <h2 className="text-3xl md:text-4xl font-serif">{heading}</h2>
-          <p className="text-md md:text-xl text-stone-500 font-serif mt-4">
-            {description}
-          </p>
+          <p className="text-md md:text-xl text-stone-500 font-serif mt-4">{description}</p>
         </div>
         <ul className="flex gap-4 mt-4 xl:mt-0 flex-wrap text-md font-medium">
           <li>
@@ -76,28 +77,28 @@ export default function CategorySection({ categoryId, categoryName, heading, des
                 className="aspect-square rounded-lg bg-gray-200 animate-pulse"
               ></div>
             ))
-          : filteredProducts
-              .slice(0, 5)
-              .map((product) => (
-                <Link href={`/product/${product._id}`} key={product._id} className="group">
-                  <div className="aspect-square rounded-lg overflow-hidden shadow relative">
-                    <img
-                      src={product.images?.[0]}
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  </div>
-                  <h3 className="mt-4 font-semibold text-lg text-stone-700 group-hover:text-[#B67032] transition">
-                    {product.name}
-                  </h3>
-                  <h3 className="font-semibold text-md text-[#B67032] flex items-center justify-center mt-1">
-                    <span className="line-through mr-3 flex items-center text-gray-500">
-                      <FaRupeeSign size={14} />{product.price}
-                    </span>
-                    <FaRupeeSign size={14} />{product.finalPrice}
-                  </h3>
-                </Link>
-              ))}
+          : filteredProducts.slice(0, 5).map((product) => (
+              <Link href={`/product/${product._id}`} key={product._id} className="group">
+                <div className="aspect-square rounded-lg overflow-hidden shadow relative">
+                  <img
+                    src={product.images?.[0]}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                </div>
+                <h3 className="mt-4 font-semibold text-lg text-stone-700 group-hover:text-[#B67032] transition">
+                  {product.name}
+                </h3>
+                <h3 className="font-semibold text-md text-[#B67032] flex items-center justify-center mt-1">
+                  <span className="line-through mr-3 flex items-center text-gray-500">
+                    <FaRupeeSign size={14} />
+                    {product.price}
+                  </span>
+                  <FaRupeeSign size={14} />
+                  {product.finalPrice}
+                </h3>
+              </Link>
+            ))}
       </div>
     </section>
   );

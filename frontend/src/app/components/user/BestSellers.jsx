@@ -40,7 +40,7 @@ export default function ShopByCategory() {
                 ></div>
               ))
             : [...allProducts]
-  .sort(() => 0.5 - Math.random())
+  // .sort(() => 0.5 - Math.random())
   .slice(0, 6)
   .map((product) => (
                 <Link href={'/category'} key={product._id} className="group">

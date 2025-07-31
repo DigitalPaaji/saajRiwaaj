@@ -21,30 +21,6 @@ const ProductsList = () => {
   const { allProducts, refetchAllProducts } = useGlobalContext();
 
 
-    // const fetchProducts = useCallback(async () => {
-    //   try {
-    //     // const res = await fetch(`${Apiurl}/products`);
-    //     const res = await fetch('http://localhost:5000/product/');
-    //     const data = await res.json();
-    //      // Check if data is array
-    //   if (Array.isArray(data)) {
-    //     setProducts(data);
-    //   } else if (data.products && Array.isArray(data.products)) {
-    //     setProducts(data.products);
-    //   } else {
-    //     console.error("Unexpected response format:", data);
-    //     setProducts([]);
-    //   }
-    //   console.log(data)
-       
-    //   } catch (err) {
-    //     console.error("Error fetching products:", err);
-    //     setProducts([]);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // },[])
-
   useEffect(() => {
     // Trigger refetch on page load
     const loadData = async () => {
@@ -144,7 +120,7 @@ const ProductsList = () => {
                     {/* {Array.isArray(product.tags) && product.tags.length > 0
   ? product.tags.map(tag => tag.name).join(', ')
   : '—'} */}
-{product.subcategory?.name}
+{product.subcategory?.name || null}
                   </td>
                   {/* <td className="px-4 py-3">
                     {product.tags?.length > 0

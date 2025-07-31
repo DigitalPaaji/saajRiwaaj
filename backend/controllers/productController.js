@@ -1,4 +1,5 @@
 const Product = require('../models/ProductModel')
+const SubCategoryModel = require('../models/SubCategoryModel')
 
 exports.createProduct = async (req,res)=>{
     try{
@@ -68,16 +69,35 @@ exports.deleteProductById = async (req,res)=>{
     }
 }
 
-exports.updateProductById = async (req,res)=>{
-      try{
-        const updated = await Product.findByIdAndUpdate(req.params.id,req.body,{
-            new:true,
-        })
-        if(!updated) return res.status(404).json({message:'Not Found'})
-        res.status(200).json(updated)
+exports.updateProductById = async (req, res) => {
+  try {
+    const { category, subcategory } = req.body;
+
+    if (category) {
+      const subcategories = await SubCategoryModel.find({ category });
+
+      // If no subcategories exist, force subcategory to null
+      if (subcategories.length === 0) {
+        req.body.subcategory = null;
+      }
+
+      // OR, if the subcategory sent doesn't belong to this category, remove it
+      const isValidSub = subcategories.find(
+        (s) => String(s._id) === String(subcategory)
+      );
+      if (!isValidSub) {
+        req.body.subcategory = null;
+      }
     }
-    catch(err){
-        res.status(500).json({error:err.message})
-        
-    }
-}
+
+    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+
+    if (!updated) return res.status(404).json({ message: "Not Found" });
+    res.status(200).json(updated);
+  } catch (err) {
+    console.error("Update error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};

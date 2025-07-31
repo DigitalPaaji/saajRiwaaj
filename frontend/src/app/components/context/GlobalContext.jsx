@@ -54,39 +54,30 @@ export const GlobalProvider = ({ children }) => {
       }
     },[])
 
-        const fetchProductsByCategory = useCallback(async (id) => {
-      try {
-        // const res = await fetch(`${Apiurl}/products`);
-        const res = await fetch(`http://localhost:5000/product/category/${id}`);
-        const data = await res.json();
-      console.log(data)
+  const fetchProductsByCategory = async (categoryId) => {
+  try {
+    const res = await fetch(`http://localhost:5000/product/category/${categoryId}`);
+    const data = await res.json();
 
-         // Check if data is array
-      if (Array.isArray(data)) {
-        setProductsByCategory(data);
-      } else if (data.products && Array.isArray(data.products)) {
-        setProductsByCategory(data.products);
-      } else {
-        console.error("Unexpected response format:", data);
-        setProductsByCategory([]);
-      }
-       
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setProductsByCategory([]);
-      }
-    },[])
+    setProductsByCategory(data); // update context state (optional)
+    return data; // ✅ RETURN so the calling component gets the products
+  } catch (err) {
+    console.error('Error fetching products by category:', err);
+    return []; // ✅ return safe empty array on error
+  }
+};
+
 
     
 
   // Initial fetch
-  useEffect(() => {
-    (async () => {
-      const cats = await fetchCategories();
-      if (cats.length) await fetchSubCategories(cats);
-      await fetchAllProducts();
-    })();
-  }, [fetchCategories, fetchSubCategories,fetchProductsByCategory, fetchAllProducts]);
+useEffect(() => {
+  (async () => {
+    const cats = await fetchCategories();
+    if (cats.length) await fetchSubCategories(cats);
+    await fetchAllProducts();
+  })();
+}, [fetchCategories, fetchSubCategories, fetchAllProducts]); // removed fetchProductsByCategory
 
   return (
     <GlobalContext.Provider value={{ categories, subCategoriesMap, allProducts, productsByCategory, refetchProductsByCategory: fetchProductsByCategory, refetchAllProducts: fetchAllProducts }}>

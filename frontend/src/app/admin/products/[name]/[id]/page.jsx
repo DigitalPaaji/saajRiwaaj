@@ -244,19 +244,34 @@ export default function AddProductPage() {
   }, [product.price, product.discount]);
 
   // --- Handlers ---
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const newValue = type === "checkbox" ? checked : value;
+ const handleInputChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  const newValue = type === "checkbox" ? checked : value;
+
+  // Handle category change
+  if (name === "category") {
+    setProduct((prev) => ({
+      ...prev,
+      category: value,
+      subcategory: "", // reset subcategory on category change
+    }));
+
+    fetchSubCategoriesByCategory(value).then((subs) => {
+      if (!subs || subs.length === 0) {
+        setProduct((prev) => ({
+          ...prev,
+          subcategory: null, // explicitly remove subcategory
+        }));
+      }
+    });
+  } else {
     setProduct((prev) => ({
       ...prev,
       [name]: newValue,
-      ...(name === "category" ? { subCategory: "" } : {}),
     }));
+  }
+};
 
-    if (name === "category") {
-      fetchSubCategoriesByCategory(value);
-    }
-  };
 
   const handleFileUpload = useCallback(async (files, type) => {
     const setIsLoading =
@@ -388,25 +403,49 @@ export default function AddProductPage() {
                         </label>
 
                         <select
-                          name="category"
-                          value={product.category || ""}
-                          onChange={handleInputChange}
-                          disabled={isViewMode}
-                          className={inputClasses}
-                        >
-                          <option value="" disabled>
-                            Select a category
-                          </option>
-                          {isViewMode && product.category?.name && (
-                            <option>{product.category?.name || null}</option>
-                          )}
-                          {!isViewMode &&
-                            categories.map((cat) => (
-                              <option key={cat._id} value={cat._id}>
-                                {cat.name}
-                              </option>
-                            ))}
-                        </select>
+  name="category"
+  value={
+    typeof product.category === "string"
+      ? product.category
+      : product.category?._id || ""
+  }
+  onChange={handleInputChange}
+  disabled={isViewMode}
+  className={inputClasses}
+>
+  <option value="" disabled>
+    Select a category
+  </option>
+
+  {/* Manually show selected if not in categories (edge case) */}
+  {!isViewMode &&
+    product.category &&
+    !categories.find((c) =>
+      typeof product.category === "string"
+        ? c._id === product.category
+        : c._id === product.category._id
+    ) && (
+      <option
+        value={
+          typeof product.category === "string"
+            ? product.category
+            : product.category._id
+        }
+      >
+        {typeof product.category === "object"
+          ? product.category.name
+          : "Selected Category"}
+      </option>
+    )}
+
+  {/* Actual category list */}
+  {categories.map((cat) => (
+    <option key={cat._id} value={cat._id}>
+      {cat.name}
+    </option>
+  ))}
+</select>
+
                       </div>
                     )}
                     {(subCategories.length > 0 || product.subcategory) && (
@@ -415,46 +454,56 @@ export default function AddProductPage() {
                           Sub Category
                         </label>
 
-                        {/* <select
-    name="subCategory"
-    value={product.subCategory}
-    onChange={handleInputChange}
-    required
-    disabled={!product.category}
-    className={inputClasses}
-  >
-    <option value="" disabled>
-          {product.category ? "Select a Sub Category" : "Select category first"}
-    </option>
-    {subCategories.map((cat) => (
-      <option key={cat._id} value={cat._id}>
-        {cat.name}
-      </option>
-    ))}
-  </select> */}
 
-                        <select
-                          name="subcategory"
-                          value={product.subcategory || ""}
-                          onChange={handleInputChange}
-                          disabled={!product.category}
-                          className={inputClasses}
-                        >
-                          <option value="" disabled>
-                            {product.category
-                              ? "Select a Sub Category"
-                              : "Select category first"}
-                          </option>
-                          {isViewMode && product.subcategory?.name && (
-                            <option>{product.subcategory?.name || null}</option>
-                          )}
-                          {!isViewMode &&
-                            subCategories.map((cat) => (
-                              <option key={cat._id} value={cat._id}>
-                                {cat.name}
-                              </option>
-                            ))}
-                        </select>
+         <select
+  name="subcategory"
+  value={
+    typeof product.subcategory === "string"
+      ? product.subcategory
+      : product.subcategory?._id || ""
+  }
+  onChange={handleInputChange}
+  disabled={!product.category || isViewMode}
+  className={inputClasses}
+>
+  <option value="" disabled>
+    {product.category
+      ? subCategories.length > 0
+        ? "Select a Sub Category"
+        : "No Sub Categories"
+      : "Select category first"}
+  </option>
+
+  {/* Manually show selected if not in subCategories (edge case) */}
+  {!isViewMode &&
+    product.subcategory &&
+    !subCategories.find((s) =>
+      typeof product.subcategory === "string"
+        ? s._id === product.subcategory
+        : s._id === product.subcategory._id
+    ) && (
+      <option
+        value={
+          typeof product.subcategory === "string"
+            ? product.subcategory
+            : product.subcategory._id
+        }
+      >
+        {typeof product.subcategory === "object"
+          ? product.subcategory.name
+          : "Selected Subcategory"}
+      </option>
+    )}
+
+  {/* Actual subcategory list */}
+  {subCategories.map((sub) => (
+    <option key={sub._id} value={sub._id}>
+      {sub.name}
+    </option>
+  ))}
+</select>
+
+
                       </div>
                     )}
                   </div>
