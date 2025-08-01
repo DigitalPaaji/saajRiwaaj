@@ -1,8 +1,10 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+"use client";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { useGlobalContext } from "../context/GlobalContext";
-import { FaRupeeSign } from 'react-icons/fa';
+import { FaRupeeSign } from "react-icons/fa";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 export default function ShopByCategory() {
   const { refetchProductsByCategory } = useGlobalContext();
@@ -10,84 +12,145 @@ export default function ShopByCategory() {
   const [loading, setLoading] = useState(true);
 
   const skeletons = Array.from({ length: 6 });
-  const earringsCategoryId = '688321125c75af760aa800e7'; // Your actual category ID
+  const earringsCategoryId = "688321125c75af760aa800e7"; // Your actual category ID
 
-useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const result = await refetchProductsByCategory(earringsCategoryId);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const result = await refetchProductsByCategory(earringsCategoryId);
 
-      const filtered = Array.isArray(result)
-        ? result.filter(
-            (p) =>
-              p.category === earringsCategoryId || p.category?._id === earringsCategoryId
-          )
-        : [];
+        const filtered = Array.isArray(result)
+          ? result.filter(
+              (p) =>
+                p.category === earringsCategoryId ||
+                p.category?._id === earringsCategoryId
+            )
+          : [];
 
+        setExclusiveProducts(filtered);
+      } catch (err) {
+        console.error(" Error fetching category-exclusive products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setExclusiveProducts(filtered);
-    } catch (err) {
-      console.error(' Error fetching category-exclusive products:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, []);
-
+    fetchData();
+  }, []);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const editorialItems = [
+    {
+      title: "The Wedding Edit",
+      description: "Find the perfect jewels for your special day.",
+      link: "Wedding",
+      imageUrl:
+        "https://www.tanishq.co.in/on/demandware.static/-/Library-Sites-TanishqSharedLibrary/default/dw1eded5b5/homepage/tanishq-collections/dailywear-chains.jpg",
+    },
+    // {
+    //   title: 'Everyday Diamonds',
+    //   description: 'Subtle sparkle for your daily life.',
+    //   link: 'Diamonds',
+    //   imageUrl: 'https://www.tanishq.co.in/dw/image/v2/BKCK_PRD/on/demandware.static/-/Library-Sites-TanishqSharedLibrary/default/dw08083f53/homepage/new-arrivals/new-arrivals-background.jpg',
+    // },
+    // {
+    //   title: 'Gifts of Love',
+    //    link: 'Gifts',
+    //   imageUrl: 'https://www.tanishq.co.in/on/demandware.static/-/Library-Sites-TanishqSharedLibrary/default/dwfba22b76/homepage/tanishq-collections/stunning-every-ear.jpg',
+    // },
+  ];
 
   return (
     <section className="py-12 ">
       <div className="px-4 sm:px-6 lg:px-8">
-        <div>
+        {/* <div>
           <h2 className="text-3xl md:text-4xl font-serif text-center">Saaj Riwaaj Exclusive</h2>
           <p className="text-md md:text-xl text-stone-500 font-serif text-center mt-4">
             Crafted with passion, worn with pride. Explore our signature exclusives.
           </p>
-        </div>
+        </div> */}
 
-        <div
-          className={`grid grid-cols-1 md:grid-cols-2   xl:grid-cols-5      gap-6 text-center py-12`}
-        >
-          {loading
-            ? skeletons.map((_, idx) => (
-                <div
-                  key={idx}
-                  className="shadow-lg rounded-lg bg-gray-200 animate-pulse h-[400px]"
-                ></div>
-              ))
-            : exclusiveProducts.slice(0, 5).map((product) => (
-                <Link href={'/category'} key={product._id} className="group">
-                  <div className="relative w-full h-[400px] overflow-hidden shadow-lg rounded-lg">
-                    <img
-                      src={product.images?.[0]}
-                      alt="product"
-                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
-                    />
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 ">
+<div className="col-span-1 xl:col-span-4">
+  <div
+    className="relative h-[400px] md:h-[600px] w-full bg-contain bg-no-repeat bg-center flex items-center justify-center text-center overflow-hidden"
+    style={{ backgroundImage: "url('/Images/exclusive2.webp')" }}
+  >
+    <div className="relative z-10 px-4 sm:px-6 max-w-full sm:max-w-md w-full">
+      <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-[#7a4a26] mb-3 leading-snug">
+        Discover Timeless Elegance with Saaj Riwaaj
+      </h3>
+      <p className="text-sm sm:text-base md:text-lg text-[#5c3b22] mb-4 leading-normal">
+        Unveil our handpicked exclusive jewellery pieces that blend tradition with royalty.
+      </p>
+      <button className="bg-[#7a4a26] text-white px-4 sm:px-5 py-2 rounded-full hover:bg-[#5c3b22] transition duration-300 text-sm">
+        Explore Now
+      </button>
+    </div>
+  </div>
+</div>
 
-                    <img
-                      src={product.images?.[1] || product.images?.[0]}
-                      alt="product hover"
-                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-0 group-hover:opacity-100"
-                    />
-                  </div>
 
-                  <h3 className="mt-4 font-semibold text-lg text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
-                    {product.name}
-                  </h3>
 
-                  <h3 className="font-semibold text-md text-[#B67032] transition-colors duration-300 flex items-center justify-center">
-                    <span className="line-through mr-4 flex items-center">
+
+
+
+
+          <div
+            className={`col-span-1 xl:col-span-8 flex flex-col justify-center `}
+          >
+                {/* <div>
+          <h2 className="text-3xl md:text-4xl font-serif ">Saaj Riwaaj Exclusive</h2>
+          <p className="text-md md:text-xl text-stone-500 font-serif  mt-4">
+            Crafted with passion, worn with pride. Explore our signature exclusives.
+          </p>
+        </div> */}
+        <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-8">
+            {loading
+              ? skeletons.map((_, idx) => (
+                  <div
+                    key={idx}
+                    className="shadow-lg rounded-lg bg-gray-200 animate-pulse "
+                  ></div>
+                ))
+              : exclusiveProducts.slice(0, 3).map((product, index) => (
+                  <Link href={"/category"} key={product._id} className="group">
+                    {/* <div className="flex items-center justify-center gap-4"> */}
+                      <div
+                        className="group relative aspect-square overflow-hidden shadow-lg rounded-lg"
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        onMouseLeave={() => setHoveredIndex(null)}
+                      >
+                        <Image
+                         width={400}
+                  height={400}
+                          src={
+                            hoveredIndex === index && product.images?.[1]
+                              ? product.images[1]
+                              : product.images?.[0]
+                          }
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-all duration-300"
+                        />
+                      </div>
+                    {/* </div> */}
+                    <h3 className="mt-4 font-semibold text-lg text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
+                      {product.name}
+                    </h3>
+
+                    <h3 className="font-semibold text-md text-stone-700 group-hover:text-[#B67032] transition-colors duration-300 ">
+                      {/* <span className="line-through mr-4 flex items-center">
+                        <FaRupeeSign size={14} />
+                        {product.price}
+                      </span>
                       <FaRupeeSign size={14} />
-                      {product.price}
-                    </span>
-                    <FaRupeeSign size={14} />
-                    {product.finalPrice}
-                  </h3>
-                </Link>
-              ))}
+                      {product.finalPrice} */}
+                      {product.description}
+                    </h3>
+                  </Link>
+                ))}
+                </div>
+          </div>
         </div>
       </div>
     </section>

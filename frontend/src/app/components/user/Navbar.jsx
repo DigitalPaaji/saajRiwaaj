@@ -21,11 +21,12 @@ import {
 const iconOptions = [
     Sparkles,
     Gem,
-   Flower,
+    Flower,
     HandHeart,
 ];
 import MegaMenu from "./MegaMenu";
 import { useGlobalContext } from "../context/GlobalContext";
+
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -77,7 +78,7 @@ function formatCategoryLabel(name) {
           <nav className="hidden lg:flex items-center space-x-10">
   {categories.map((cat) => {
     const hasSubCats = subCategoriesMap[cat._id]?.length > 0;
-    const categoryPath = `/${formatCategoryPath(cat.name)}`;
+    const categoryPath = `/category/${formatCategoryPath(cat.name)}/${formatCategoryPath(cat._id)}`;
     const categoryLabel = formatCategoryLabel(cat.name);
     return (
       <div
@@ -163,6 +164,7 @@ function formatCategoryLabel(name) {
           <div className="flex justify-between items-center p-4 border-b">
               <Link href="/" className="flex-shrink-0 group">
             <img
+            
               src="/Images/logo.webp"
               alt="Saaj Riwaaj Logo"
               className="h-10 w-auto lg:h-12 transition-transform group-hover:scale-105"

@@ -53,7 +53,7 @@ useEffect(() => {
           </p>
         </div>
         <ul className="flex gap-4 mt-4 xl:mt-0 flex-wrap text-md font-medium">
-          {subCategories.slice(0, 5).map((sub) => (
+          {subCategories.map((sub) => (
             <li key={sub._id}>
               <div className="neumorphic-btn1 p-2 transition-all text-[#B67032]">
                 {sub.name.toUpperCase()}

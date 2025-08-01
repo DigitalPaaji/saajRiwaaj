@@ -37,6 +37,8 @@ export const GlobalProvider = ({ children }) => {
         // const res = await fetch(`${Apiurl}/products`);
         const res = await fetch('http://localhost:5000/product/');
         const data = await res.json();
+      console.log(Object.keys(data.products).length)
+
          // Check if data is array
       if (Array.isArray(data)) {
         setAllProducts(data);
@@ -46,7 +48,6 @@ export const GlobalProvider = ({ children }) => {
         console.error("Unexpected response format:", data);
         setAllProducts([]);
       }
-      // console.log(data)
        
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -58,9 +59,12 @@ export const GlobalProvider = ({ children }) => {
   try {
     const res = await fetch(`http://localhost:5000/product/category/${categoryId}`);
     const data = await res.json();
+const shuffled = Array.isArray(data)
+      ? [...data].sort(() => 0.5 - Math.random())
+      : [];
 
-    setProductsByCategory(data); // update context state (optional)
-    return data; // ✅ RETURN so the calling component gets the products
+    setProductsByCategory(shuffled);
+    return shuffled; 
   } catch (err) {
     console.error('Error fetching products by category:', err);
     return []; // ✅ return safe empty array on error

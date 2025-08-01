@@ -29,8 +29,8 @@ export default function HeroBanner() {
   if (loading) {
     // Skeleton placeholder
     return (
-      <div className="relative w-full min-h-[300px] bg-stone-200 animate-pulse flex items-center justify-center">
-        <div className="w-[80%] h-[70%] bg-stone-300 rounded-lg animate-pulse" />
+      <div className="relative w-full h-[300px] xl:h-[700px] bg-stone-200 animate-pulse flex items-center justify-center">
+        <div className=" rounded-lg animate-pulse" />
       </div>
     );
   }

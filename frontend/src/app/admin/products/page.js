@@ -112,8 +112,8 @@ const ProductsList = () => {
     </tr>
   ) :(allProducts.map((product, idx) => (
                 <tr key={product._id} className=" rounded-xl hover:bg-[#d6d6d6]  transition">
-                  <td className="px-4 py-3">{idx + 1}</td>
-                  <td className="px-4 py-3"><Image alt='' width={40} height={40}  src={product.images?.[0]} className="w-16 h-16 object-cover"/></td>
+                  <td className="px-4 py-3">{idx + 1} </td>
+                  <td className="px-4 py-3"><Image alt='' width={220} height={220}  src={product.images?.[0]} className="w-16 h-16 object-cover"/></td>
                   <td className="px-4 py-3">{product.name}</td>
                   <td className="px-4 py-3 capitalize">{product.category?.name}</td>
                   <td className="px-4 py-3 capitalize">

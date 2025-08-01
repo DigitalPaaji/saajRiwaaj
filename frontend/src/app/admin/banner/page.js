@@ -29,7 +29,6 @@ export default function BannerManager() {
   const [dragActiveDesktop, setDragActiveDesktop] = useState(false);
   const [dragActiveMobile, setDragActiveMobile] = useState(false);
 
-
   // Fetch banners
   const fetchBanners = useCallback(async () => {
     try {
@@ -46,26 +45,31 @@ export default function BannerManager() {
   }, [fetchBanners]);
 
   // Drag handlers
-const handleDrag = (e, type) => {
-  e.preventDefault();
-  e.stopPropagation();
-  if (e.type === "dragenter" || e.type === "dragover") {
-    type === 'desktop' ? setDragActiveDesktop(true) : setDragActiveMobile(true);
-  } else {
-    type === 'desktop' ? setDragActiveDesktop(false) : setDragActiveMobile(false);
-  }
-};
+  const handleDrag = (e, type) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      type === "desktop"
+        ? setDragActiveDesktop(true)
+        : setDragActiveMobile(true);
+    } else {
+      type === "desktop"
+        ? setDragActiveDesktop(false)
+        : setDragActiveMobile(false);
+    }
+  };
 
-const handleDrop = (e, type) => {
-  e.preventDefault();
-  e.stopPropagation();
-  type === 'desktop' ? setDragActiveDesktop(false) : setDragActiveMobile(false);
+  const handleDrop = (e, type) => {
+    e.preventDefault();
+    e.stopPropagation();
+    type === "desktop"
+      ? setDragActiveDesktop(false)
+      : setDragActiveMobile(false);
 
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-    handleImageUpload(e.dataTransfer.files[0], type);
-  }
-};
-
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleImageUpload(e.dataTransfer.files[0], type);
+    }
+  };
 
   const handleImageUpload = async (file, target = "desktop") => {
     if (!file) return;
@@ -166,89 +170,101 @@ const handleDrop = (e, type) => {
 
       {/* Upload Area */}
       <div className={`${cardClasses} `}>
-    <div className="flex items-center justify-center gap-6 lg:gap-12 flex-wrap lg:flex-nowrap">
-  {/* Desktop Image Upload */}
-  <div className="w-full lg:w-1/2">
-    <h2 className="text-lg font-semibold">Upload Desktop Banner</h2>
-<div
-  onDragEnter={(e) => handleDrag(e, 'desktop')}
-  onDragOver={(e) => handleDrag(e, 'desktop')}
-  onDragLeave={(e) => handleDrag(e, 'desktop')}
-  onDrop={(e) => handleDrop(e, 'desktop')}
-  className={`my-6 w-full p-6 border-2 border-dashed rounded-xl text-center transition ${
-    dragActiveDesktop ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50"
-  }`}
->
-  <input
-    type="file"
-    accept="image/*"
-    id="desktop-upload"
-    onChange={(e) => handleImageUpload(e.target.files[0], 'desktop')}
-    className="hidden"
-  />
-  <label htmlFor="desktop-upload" className="cursor-pointer">
-    <UploadCloud className="mx-auto h-10 w-10 text-gray-400" />
-    <p className="mt-2 text-sm">
-      <span className="text-blue-600 font-medium">Click to upload</span> or drag Desktop image here
-    </p>
-  </label>
-</div>
+        <div className="flex items-center justify-center gap-6 lg:gap-12 flex-wrap lg:flex-nowrap">
+          {/* Desktop Image Upload */}
+          <div className="w-full lg:w-1/2">
+            <h2 className="text-lg font-semibold">Upload Desktop Banner</h2>
+            <div
+              onDragEnter={(e) => handleDrag(e, "desktop")}
+              onDragOver={(e) => handleDrag(e, "desktop")}
+              onDragLeave={(e) => handleDrag(e, "desktop")}
+              onDrop={(e) => handleDrop(e, "desktop")}
+              className={`my-6 w-full p-6 border-2 border-dashed rounded-xl text-center transition ${
+                dragActiveDesktop
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300 bg-gray-50"
+              }`}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                id="desktop-upload"
+                onChange={(e) =>
+                  handleImageUpload(e.target.files[0], "desktop")
+                }
+                className="hidden"
+              />
+              <label htmlFor="desktop-upload" className="cursor-pointer">
+                <UploadCloud className="mx-auto h-10 w-10 text-gray-400" />
+                <p className="mt-2 text-sm">
+                  <span className="text-blue-600 font-medium">
+                    Click to upload
+                  </span>{" "}
+                  or drag Desktop image here
+                </p>
+              </label>
+            </div>
 
+            {desktopImage && (
+              <div className="mt-4 relative w-48 h-32 border rounded-lg overflow-hidden">
+                <Image
+                  src={desktopImage}
+                  alt="Desktop "
+                  width={400}
+                  height={400}
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            )}
+          </div>
 
-    {desktopImage && (
-      <div className="mt-4 relative w-48 h-32 border rounded-lg overflow-hidden">
-        <Image
-          src={desktopImage}
-          alt="Desktop "
-          fill
-          className="object-cover"
-          unoptimized
-        />
-      </div>
-    )}
-  </div>
+          {/* Mobile Image Upload */}
+          <div className="w-full lg:w-1/2">
+            <h2 className="text-lg font-semibold">Upload Mobile Banner</h2>
+            <div
+              onDragEnter={(e) => handleDrag(e, "mobile")}
+              onDragOver={(e) => handleDrag(e, "mobile")}
+              onDragLeave={(e) => handleDrag(e, "mobile")}
+              onDrop={(e) => handleDrop(e, "mobile")}
+              className={`my-6 w-full p-6 border-2 border-dashed rounded-xl text-center transition ${
+                dragActiveMobile
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300 bg-gray-50"
+              }`}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                id="mobile-upload"
+                onChange={(e) => handleImageUpload(e.target.files[0], "mobile")}
+                className="hidden"
+              />
+              <label htmlFor="mobile-upload" className="cursor-pointer">
+                <UploadCloud className="mx-auto h-10 w-10 text-gray-400" />
+                <p className="mt-2 text-sm">
+                  <span className="text-blue-600 font-medium">
+                    Click to upload
+                  </span>{" "}
+                  or drag Mobile image here
+                </p>
+              </label>
+            </div>
 
-  {/* Mobile Image Upload */}
-  <div className="w-full lg:w-1/2">
-    <h2 className="text-lg font-semibold">Upload Mobile Banner</h2>
-  <div
-  onDragEnter={(e) => handleDrag(e, 'mobile')}
-  onDragOver={(e) => handleDrag(e, 'mobile')}
-  onDragLeave={(e) => handleDrag(e, 'mobile')}
-  onDrop={(e) => handleDrop(e, 'mobile')}
-  className={`my-6 w-full p-6 border-2 border-dashed rounded-xl text-center transition ${
-    dragActiveMobile ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50"
-  }`}
->
-  <input
-    type="file"
-    accept="image/*"
-    id="mobile-upload"
-    onChange={(e) => handleImageUpload(e.target.files[0], 'mobile')}
-    className="hidden"
-  />
-  <label htmlFor="mobile-upload" className="cursor-pointer">
-    <UploadCloud className="mx-auto h-10 w-10 text-gray-400" />
-    <p className="mt-2 text-sm">
-      <span className="text-blue-600 font-medium">Click to upload</span> or drag Mobile image here
-    </p>
-  </label>
-</div>
-
-
-    {mobileImage && (
-      <div className="mt-4 relative w-48 h-32 border rounded-lg overflow-hidden">
-        <Image
-          src={mobileImage}
-          alt="Mobile "
-          fill
-          className="object-cover"
-          unoptimized
-        />
-      </div>
-    )}
-  </div>
-</div>
+            {mobileImage && (
+              <div className="mt-4 relative w-48 h-32 border rounded-lg overflow-hidden">
+                <Image
+                  src={mobileImage}
+                  alt="Mobile "
+                    width={400}
+                  height={400}
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            )}
+          </div>
+        </div>
 
         <button
           type="button"
@@ -269,69 +285,72 @@ const handleDrop = (e, type) => {
         {banners.length === 0 ? (
           <p className="text-gray-500">No banners uploaded yet.</p>
         ) : (
-          
-           <div className="">
-  {banners.map((b) => (
-    <div
-      key={b._id}
-      className="relative flex items-center justify-center gap-8 rounded-xl shadow-sm overflow-hidden bg-gray-50 w-fit"
-    >
-      {/* Delete Button */}
-      <button
-        onClick={() => handleDelete(b._id)}
-        className="absolute top-2 right-2 z-10 text-red-600 hover:text-red-800 bg-white rounded-full p-1 shadow"
-      >
-        <X size={18} />
-      </button>
+          <div className="">
+            {banners.map((b) => (
+              <div
+                key={b._id}
+                className="relative flex items-center justify-center gap-8 rounded-xl shadow-sm overflow-hidden bg-gray-50 w-fit"
+              >
+                {/* Delete Button */}
+                <button
+                  onClick={() => handleDelete(b._id)}
+                  className="absolute top-2 right-2 z-10 text-red-600 hover:text-red-800 bg-white rounded-full p-1 shadow"
+                >
+                  <X size={18} />
+                </button>
 
-      <div className="flex items-center   justify-center gap-6 flex-wrap lg:flex-nowrap p-4">
-        {/* Desktop Image */}
-        {b.desktopImage && (
-          <div
-            onClick={() => setPreviewImage(b.desktopImage)}
-            className="cursor-pointer overflow-hidden"
-          >
-            <Image
-              src={b.desktopImage}
-              alt="Desktop"
-              width={600}
-              height={250}
-              className="object-cover w-full h-40"
-              unoptimized
-            />
-            <p className="text-sm text-center mt-1 text-gray-600">Desktop View</p>
+                <div className="flex items-center   justify-center gap-6 flex-wrap lg:flex-nowrap p-4">
+                  {/* Desktop Image */}
+                  {b.desktopImage && (
+                    <div
+                      onClick={() => setPreviewImage(b.desktopImage)}
+                      className="cursor-pointer overflow-hidden"
+                    >
+                      <Image
+                        src={b.desktopImage}
+                        alt="Desktop"
+                        width={600}
+                        height={250}
+                        className="object-cover w-full h-40"
+                        unoptimized
+                      />
+                      <p className="text-sm text-center mt-1 text-gray-600">
+                        Desktop View
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Mobile Image */}
+                  {b.mobileImage && (
+                    <div
+                      onClick={() => setPreviewImage(b.mobileImage)}
+                      className="cursor-pointer  overflow-hidden"
+                    >
+                      <Image
+                        src={b.mobileImage}
+                        alt="Mobile"
+                        width={600}
+                        height={250}
+                        className="object-cover w-full h-40"
+                        unoptimized
+                      />
+                      <p className="text-sm text-center mt-1 text-gray-600">
+                        Mobile View
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-
-        {/* Mobile Image */}
-        {b.mobileImage && (
-          <div
-            onClick={() => setPreviewImage(b.mobileImage)}
-            className="cursor-pointer  overflow-hidden"
-          >
-            <Image
-              src={b.mobileImage}
-              alt="Mobile"
-              width={600}
-              height={250}
-              className="object-cover w-full h-40"
-              unoptimized
-            />
-            <p className="text-sm text-center mt-1 text-gray-600">Mobile View</p>
-          </div>
-        )}
-      </div>
-    </div>
-  ))}
-</div>
-
         )}
       </div>
 
       {/* Full Image Preview Modal */}
-<ImagePreviewModal src={previewImage} onClose={() => setPreviewImage(null)} />
-
-
+      <ImagePreviewModal
+        src={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
 
       {showDeletePopup && (
         <PopupModal

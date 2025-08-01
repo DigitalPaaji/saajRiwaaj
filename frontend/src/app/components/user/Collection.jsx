@@ -6,26 +6,26 @@ import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { useGlobalContext } from '../context/GlobalContext';
-import Image from 'next/image';
 
-export default function EarringsMarquee() {
+export default function EarringsMarquee({Pid}) {
   const { subCategoriesMap, refetchProductsByCategory } = useGlobalContext();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const earringsCategoryId = '6880c127e9e1dc327b67e307';
-  const subCategories = subCategoriesMap[earringsCategoryId] || [];
+
+//   '6880c122e9e1dc327b67e304';
+  const subCategories = subCategoriesMap[Pid] || [];
 
 useEffect(() => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const result = await refetchProductsByCategory(earringsCategoryId);
+      const result = await refetchProductsByCategory(Pid);
 
       if (Array.isArray(result)) {
         const filtered = result.filter(
           (p) =>
-            p.category === earringsCategoryId || p.category?._id === earringsCategoryId
+            p.category === Pid || p.category?._id === Pid
         );
         setFilteredProducts(filtered);
       } else {
@@ -39,7 +39,7 @@ useEffect(() => {
   };
 
   fetchData();
-}, []); 
+}, [Pid]);
 
 
   const loop = filteredProducts;
@@ -48,12 +48,12 @@ useEffect(() => {
     <section className="py-16 px-4 sm:px-8 lg:px-16 bg-[#fff8f1]">
       <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
         <div className="max-w-xl">
-          <h2 className="text-3xl md:text-4xl font-serif">Shop NeckWear</h2>
+          <h2 className="text-3xl md:text-4xl font-serif">Shop Earrings</h2>
           <p className="text-md md:text-xl text-stone-500 font-serif mt-4">
             From timeless studs to graceful chandbalis, find your perfect pair.
           </p>
         </div>
-        <ul className="flex gap-4 mt-4 xl:mt-0 flex-wrap text-sm lg:text-md font-medium">
+        <ul className="flex gap-4 mt-4 xl:mt-0 flex-wrap text-md font-medium">
           {subCategories.map((sub) => (
             <li key={sub._id}>
               <div className="neumorphic-btn1 p-2 transition-all text-[#B67032]">
@@ -112,15 +112,13 @@ useEffect(() => {
                     className="group flex-shrink-0 w-full bg-white rounded-xl overflow-hidden shadow hover:shadow-md transition-shadow"
                   >
                     <div className="w-full h-[300px] relative">
-                      <Image
-                       width={400}
-                  height={400}
+                      <img
                         src={item.images?.[0]}
                         alt={item.name}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute top-2 left-2 bg-[#B67032] text-white text-xs px-2 py-1 rounded">
-                        {item.subCategory || item.subcategory?.name || 'Earring'}
+                        {item.subcategory?.name || 'Earring'}
                       </div>
                     </div>
                     <div className="p-4 flex flex-col justify-between">
