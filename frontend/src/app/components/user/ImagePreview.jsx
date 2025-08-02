@@ -23,15 +23,16 @@ export default function ImagePreviewModal({ src, onClose }) {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Image */}
-        <Image
-          src={src}
-          alt="Preview"
-          width={1000}
-          height={600}
-          className="w-full h-auto object-contain rounded-xl"
-          unoptimized
-        />
+        <div className="relative w-full h-[500px]">
+  <Image
+    src={src}
+    alt="Preview"
+    fill
+    className="object-contain rounded-xl"
+    unoptimized
+  />
+</div>
+
       </div>
     </div>
   );

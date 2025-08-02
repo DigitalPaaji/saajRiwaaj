@@ -1,8 +1,8 @@
 'use client';
 
-import LeftFilterSidebar from '../../../components/user/FIlter';
-import Collection from '../../../components/user/Collection';
-import InnerBanner from '../../../components/user/InnerBanner'
+import LeftFilterSidebar from '../../../../components/user/Filter';
+import Collection from '../../../../components/user/Collection';
+import InnerBanner from '../../../../components/user/InnerBanner'
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
@@ -27,14 +27,15 @@ useEffect(()=>{
 },[id])
   return (
     <div>
-      
- <InnerBanner title = {collection} image = 'https://via.placeholder.com/1200x500?text=Earrings+Banner'/>
-    <div className="flex  mx-4 md:mx-12 xl:mx-24  bg-gray-100">
+ <InnerBanner title = {collection} image = '/Images/banner.webp'/>
+    <div className="relative flex items-start justify-center md:gap-6  px-4 md:px-12 xl:px-24 py-24  ">
       {/* Left Filter Sidebar */}
-      <LeftFilterSidebar className={"fixed top-0"} collapsed={collapsed} setCollapsed={setCollapsed} />
+       <div className="sticky top-24">
+    <LeftFilterSidebar collapsed={collapsed} setCollapsed={setCollapsed} Pid={id} />
+  </div>
 
       {/* Right Content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1">
         <Collection Pid={id}/>
       </main>
     </div>

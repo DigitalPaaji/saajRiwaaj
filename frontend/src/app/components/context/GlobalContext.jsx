@@ -71,6 +71,18 @@ const shuffled = Array.isArray(data)
   }
 };
 
+const fetchProductById = useCallback(async (id) => {
+  try {
+    const res = await fetch(`http://localhost:5000/product/id/${id}`);
+    if (!res.ok) throw new Error('Failed to fetch product');
+
+    const data = await res.json();
+    return data; // returns single product
+  } catch (err) {
+    console.error('Error fetching product by ID:', err);
+    return null;
+  }
+}, []);
 
     
 
@@ -84,7 +96,7 @@ useEffect(() => {
 }, [fetchCategories, fetchSubCategories, fetchAllProducts]); // removed fetchProductsByCategory
 
   return (
-    <GlobalContext.Provider value={{ categories, subCategoriesMap, allProducts, productsByCategory, refetchProductsByCategory: fetchProductsByCategory, refetchAllProducts: fetchAllProducts }}>
+    <GlobalContext.Provider value={{ categories, subCategoriesMap, allProducts, productsByCategory, refetchProductsByCategory: fetchProductsByCategory, refetchAllProducts: fetchAllProducts, refetchProductById: fetchProductById, }}>
       {children}
     </GlobalContext.Provider>
   );

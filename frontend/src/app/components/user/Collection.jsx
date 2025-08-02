@@ -6,13 +6,16 @@ import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { useGlobalContext } from '../context/GlobalContext';
+import Image from 'next/image';
+import { FaRupeeSign } from 'react-icons/fa';
 
 export default function EarringsMarquee({Pid}) {
   const { subCategoriesMap, refetchProductsByCategory } = useGlobalContext();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
-
+  const skeletons = Array.from({ length: 6 });
 //   '6880c122e9e1dc327b67e304';
   const subCategories = subCategoriesMap[Pid] || [];
 
@@ -45,95 +48,64 @@ useEffect(() => {
   const loop = filteredProducts;
 
   return (
-    <section className="py-16 px-4 sm:px-8 lg:px-16 bg-[#fff8f1]">
-      <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
-        <div className="max-w-xl">
-          <h2 className="text-3xl md:text-4xl font-serif">Shop Earrings</h2>
-          <p className="text-md md:text-xl text-stone-500 font-serif mt-4">
-            From timeless studs to graceful chandbalis, find your perfect pair.
-          </p>
-        </div>
-        <ul className="flex gap-4 mt-4 xl:mt-0 flex-wrap text-md font-medium">
-          {subCategories.map((sub) => (
-            <li key={sub._id}>
-              <div className="neumorphic-btn1 p-2 transition-all text-[#B67032]">
-                {sub.name.toUpperCase()}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="overflow-x-auto scrollbar-hide">
-        {loading ? (
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide">
-            {Array.from({ length: 6 }).map((_, idx) => (
-              <div
-                key={idx}
-                className="min-w-[220px] sm:min-w-[250px] bg-white rounded-xl overflow-hidden shadow-md animate-pulse flex-shrink-0"
-              >
-                <div className="w-full h-[300px] bg-stone-200" />
-                <div className="p-4 space-y-2">
-                  <div className="h-4 bg-stone-300 rounded w-3/4" />
-                  <div className="h-3 bg-stone-200 rounded w-full" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            slidesPerView={2}
-            spaceBetween={16}
-            breakpoints={{
-              640: { slidesPerView: 2 },
-              768: { slidesPerView: 3 },
-              1024: { slidesPerView: 4 },
-              1280: { slidesPerView: 5 },
-              1536: { slidesPerView: 6 },
-            }}
-            autoplay={{
-              delay: 0,
-              disableOnInteraction: false,
-            }}
-            speed={6000}
-            loop={true}
-            grabCursor={true}
+    <section className="">
+          <div
+            className={`col-span-1 xl:col-span-8 flex flex-col justify-center `}
           >
-            {loop.map((item, idx) => {
-              const categoryPath = item.category?.name?.toLowerCase().replace(/\s+/g, '-') || 'category';
-              const subcategoryPath = item.subcategory?.name?.toLowerCase().replace(/\s+/g, '-') || 'subcategory';
-              const productPath = `${categoryPath}/${subcategoryPath}`;
+                {/* <div>
+          <h2 className="text-3xl md:text-4xl font-serif ">Saaj Riwaaj Exclusive</h2>
+          <p className="text-md md:text-xl text-stone-500 font-serif  mt-4">
+            Crafted with passion, worn with pride. Explore our signature exclusives.
+          </p>
+        </div> */}
+        <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 ">
+            {loading
+              ? skeletons.map((_, idx) => (
+                  <div
+                    key={idx}
+                    className="shadow-lg rounded-lg bg-gray-200 animate-pulse "
+                  ></div>
+                ))
+              : loop.map((product, index) => (
+                  <Link href={`/product/${product.name}/${product._id}`} key={product._id} className="group">
+                    {/* <div className="flex items-center justify-center gap-4"> */}
+                      <div
+                        className="group relative aspect-square overflow-hidden shadow-lg rounded-lg"
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        onMouseLeave={() => setHoveredIndex(null)}
+                      >
+                      <div className="relative w-full h-full">
+  <Image
+    src={
+      hoveredIndex === index && product.images?.[1]
+        ? product.images[1]
+        : product.images?.[0]
+    }
+    alt={product.name}
+    fill
+    className="object-cover rounded-xl transition-all duration-300"
+    unoptimized
+  />
+</div>
 
-              return (
-                <SwiperSlide key={idx}>
-                  <Link
-                    href={`/${productPath}`}
-                    className="group flex-shrink-0 w-full bg-white rounded-xl overflow-hidden shadow hover:shadow-md transition-shadow"
-                  >
-                    <div className="w-full h-[300px] relative">
-                      <img
-                        src={item.images?.[0]}
-                        alt={item.name}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute top-2 left-2 bg-[#B67032] text-white text-xs px-2 py-1 rounded">
-                        {item.subcategory?.name || 'Earring'}
                       </div>
+                    <div className='flex items-center justify-between flex-wrap mt-4'>
+                    <h3 className="font-semibold text-lg text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
+                      {product.name}
+                    </h3>
+                                         <h3 className="flex items-center  font-semibold text-md text-[#B67032] transition-colors duration-300 ">
+                      <span className="line-through mr-4 flex items-center ">
+                        <FaRupeeSign size={14} />
+                        {product.price}
+                      </span><FaRupeeSign size={14} />  {product.finalPrice}
+                    </h3>
                     </div>
-                    <div className="p-4 flex flex-col justify-between">
-                      <h4 className="font-semibold text-stone-800 group-hover:text-[#B67032] transition-colors text-md truncate">
-                        {item.name}
-                      </h4>
-                      <p className="text-sm text-stone-600 mt-1 line-clamp-2">{item.description}</p>
-                    </div>
+
+                   <button className='py-2 w-full cursor-pointer bg-[#B67032] rounded-lg text-white font-semibold mt-4'>Add To Cart</button>
                   </Link>
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-        )}
-      </div>
+                ))}
+                </div>
+          </div>
 
       <style jsx>{`
         .scrollbar-hide::-webkit-scrollbar {
