@@ -5,9 +5,23 @@ const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([])
   const [subCategoriesMap, setSubCategoriesMap] = useState({});
   const [allProducts, setAllProducts] = useState([]);
   const [productsByCategory, setProductsByCategory] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+
+
+  const fetchFeaturedProducts = useCallback(async () => {
+    try {
+      const res = await fetch('http://localhost:5000/product/featured');
+      const data = await res.json();
+      setFeaturedProducts(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error fetching featured products:", err);
+      setFeaturedProducts([]);
+    }
+  }, []);
 
 
   // Fetch categories
@@ -16,6 +30,16 @@ export const GlobalProvider = ({ children }) => {
     const data = await res.json();
     setCategories(data.cats || []);
     return data.cats || [];
+  }, []);
+
+  
+  // Fetch Tags
+  const fetchTags = useCallback(async () => {
+    const res = await fetch('http://localhost:5000/tag/');
+    const data = await res.json();
+    console.log(data.tags)
+    setTags(data.tags || []);
+    return data.tags || [];
   }, []);
 
   // Fetch all subcategories by category
@@ -37,7 +61,7 @@ export const GlobalProvider = ({ children }) => {
         // const res = await fetch(`${Apiurl}/products`);
         const res = await fetch('http://localhost:5000/product/');
         const data = await res.json();
-      console.log(Object.keys(data.products).length)
+      // console.log(Object.keys(data.products).length)
 
          // Check if data is array
       if (Array.isArray(data)) {
@@ -92,11 +116,15 @@ useEffect(() => {
     const cats = await fetchCategories();
     if (cats.length) await fetchSubCategories(cats);
     await fetchAllProducts();
+     await fetchFeaturedProducts();
+    await fetchTags()
+
   })();
-}, [fetchCategories, fetchSubCategories, fetchAllProducts]); // removed fetchProductsByCategory
+
+}, [fetchCategories, fetchSubCategories, fetchAllProducts, fetchTags, fetchFeaturedProducts]); // removed fetchProductsByCategory
 
   return (
-    <GlobalContext.Provider value={{ categories, subCategoriesMap, allProducts, productsByCategory, refetchProductsByCategory: fetchProductsByCategory, refetchAllProducts: fetchAllProducts, refetchProductById: fetchProductById, }}>
+    <GlobalContext.Provider value={{ categories, subCategoriesMap, allProducts, featuredProducts, productsByCategory, tags, refetchProductsByCategory: fetchProductsByCategory, refetchAllProducts: fetchAllProducts, refetchProductById: fetchProductById, refetchFeaturedProducts: fetchFeaturedProducts, }}>
       {children}
     </GlobalContext.Provider>
   );

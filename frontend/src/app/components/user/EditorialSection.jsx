@@ -41,7 +41,13 @@ export default function EditorialSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
               <div className="absolute bottom-0 left-0 p-6 text-white z-20">
                 <h3 className="text-2xl font-serif mb-1">{item.title}</h3>
-                <p className="text-sm mb-3">{item.description}</p>
+                                    {item.description?.paragraphs?.[0] && (
+  <p className="text-sm mb-3">
+    {item.description.paragraphs[0].split(" ").slice(0, 10).join(" ")}...
+  </p>
+)}
+
+              
                 <Link
                   href={item.link}
                   className="font-semibold text-sm flex items-center group-hover:underline"

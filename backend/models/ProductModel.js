@@ -19,10 +19,10 @@ const productSchema = new mongoose.Schema({
         ref :'SubCategory',
         default:null,
     },
-    description:{
-          type: String,
-    default: '',
-    },
+    description: {
+    paragraphs: { type: [String], default: [] },
+    bulletPoints: { type: [String], default: [] },
+  },
     tags:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Tag'

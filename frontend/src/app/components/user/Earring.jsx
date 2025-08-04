@@ -124,7 +124,12 @@ useEffect(() => {
                       <h4 className="font-semibold text-stone-800 group-hover:text-[#B67032] transition-colors text-md truncate">
                         {item.name}
                       </h4>
-                      <p className="text-sm text-stone-600 mt-1 line-clamp-2">{item.description}</p>
+                    {item.description?.paragraphs?.[0] && (
+  <p className="text-sm text-stone-600 mt-1 line-clamp-2">
+    {item.description.paragraphs[0].split(" ").slice(0, 10).join(" ")}...
+  </p>
+)}
+
                     </div>
                   </Link>
                 </SwiperSlide>

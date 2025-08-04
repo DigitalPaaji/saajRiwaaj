@@ -82,7 +82,12 @@ function formatCategoryLabel(name) {
         <h4 className="font-semibold text-stone-800 group-hover:text-[#B67032] transition-colors">
           {item.name}
         </h4>
-        <p className="text-sm text-stone-600">{item.description}</p>
+        {item.description?.paragraphs?.[0] && (
+                      <p className="text-sm text-stone-600">
+                        {item.description.paragraphs[0].split(" ").slice(0, 10).join(" ")}...
+                      </p>
+                    )}
+    
       </div>
     </Link>
   );

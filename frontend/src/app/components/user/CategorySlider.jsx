@@ -105,7 +105,11 @@ export default function CategorySlider({ categoryName, heading, description }) {
                     <h4 className="font-semibold text-stone-800 group-hover:text-[#B67032] transition-colors text-lg truncate">
                       {item.name}
                     </h4>
-                    <p className="text-sm text-stone-600 mt-1 line-clamp-2">{item.description}</p>
+                    <p className="text-sm text-stone-600 mt-1 line-clamp-2"> typeof item.description === 'string'
+      ? item.description
+      : item.description?.paragraphs?.[0] ||
+        item.description?.bulletPoints?.[0] ||
+        ''</p>
                   </div>
                 </Link>
               </SwiperSlide>

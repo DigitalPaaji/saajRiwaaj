@@ -146,7 +146,10 @@ const fetchSubCategoriesByCategory = useCallback(async (categoryId) => {
   }, [fetchTags, fetchCategories]);
 
     const [product, setProduct] = useState({
-        name: '', category: '', subcategory: '', description: '', tags: [],
+        name: '', category: '', subcategory: '', description: {
+  paragraphs: [''],
+  bulletPoints: ['']
+}, tags: [],
         isFeatured: false, isNewArrival: false, price: '', discount: '',
         images: [], colorVariants: []
     });
@@ -246,7 +249,10 @@ console.log("API Response:", result);
             toast.success('Product added successfully!');
         
               setProduct({
-        name: '', category: '', subcategory: '', description: '', tags: [],
+        name: '', category: '', subcategory: '',description: {
+  paragraphs: [''],
+  bulletPoints: ['']
+}, tags: [],
         isFeatured: false, isNewArrival: false, price: '', discount: '',
         images: [], colorVariants: []
     })
@@ -325,10 +331,108 @@ console.log("API Response:", result);
   </select>
 </div>
                                     </div>
-                                    <div>
-                                        <label htmlFor="description" className={labelClasses}>Description</label>
-                                        <textarea id="description" name="description" value={product.description} onChange={handleInputChange} placeholder="Detailed product description..." className={inputClasses} rows="4"></textarea>
-                                    </div>
+                                {/* --- Paragraphs Section --- */}
+<div>
+  <label className={labelClasses}>Paragraphs</label>
+  {product.description.paragraphs.map((para, index) => (
+    <div key={index} className="flex gap-2 mb-2">
+      <textarea
+        value={para}
+        onChange={(e) => {
+          const updated = [...product.description.paragraphs];
+          updated[index] = e.target.value;
+          setProduct((prev) => ({
+            ...prev,
+            description: { ...prev.description, paragraphs: updated },
+          }));
+        }}
+        className={inputClasses}
+        rows={2}
+        placeholder="Write a paragraph..."
+      />
+      <button
+        type="button"
+        className="text-red-500 font-bold"
+        onClick={() => {
+          const updated = product.description.paragraphs.filter((_, i) => i !== index);
+          setProduct((prev) => ({
+            ...prev,
+            description: { ...prev.description, paragraphs: updated },
+          }));
+        }}
+      >
+        ✕
+      </button>
+    </div>
+  ))}
+  <button
+    type="button"
+    className={buttonClasses.primary}
+    onClick={() =>
+      setProduct((prev) => ({
+        ...prev,
+        description: {
+          ...prev.description,
+          paragraphs: [...prev.description.paragraphs, ''],
+        },
+      }))
+    }
+  >
+    + Add Paragraph
+  </button>
+</div>
+
+{/* --- Bullet Points Section --- */}
+<div className="mt-6">
+  <label className={labelClasses}>Bullet Points</label>
+  {product.description.bulletPoints.map((point, index) => (
+    <div key={index} className="flex gap-2 mb-2">
+      <input
+        type="text"
+        value={point}
+        onChange={(e) => {
+          const updated = [...product.description.bulletPoints];
+          updated[index] = e.target.value;
+          setProduct((prev) => ({
+            ...prev,
+            description: { ...prev.description, bulletPoints: updated },
+          }));
+        }}
+        className={inputClasses}
+        placeholder="Enter a feature or care tip..."
+      />
+      <button
+        type="button"
+        className="text-red-500 font-bold"
+        onClick={() => {
+          const updated = product.description.bulletPoints.filter((_, i) => i !== index);
+          setProduct((prev) => ({
+            ...prev,
+            description: { ...prev.description, bulletPoints: updated },
+          }));
+        }}
+      >
+        ✕
+      </button>
+    </div>
+  ))}
+  <button
+    type="button"
+    className={buttonClasses.primary}
+    onClick={() =>
+      setProduct((prev) => ({
+        ...prev,
+        description: {
+          ...prev.description,
+          bulletPoints: [...prev.description.bulletPoints, ''],
+        },
+      }))
+    }
+  >
+    + Add Bullet Point
+  </button>
+</div>
+
                                 
                                 </div>
                             </div>

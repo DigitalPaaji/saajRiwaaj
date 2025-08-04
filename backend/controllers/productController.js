@@ -101,3 +101,18 @@ exports.updateProductById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getFeaturedProducts = async (req, res) => {
+  try {
+    const featuredProducts = await Product.find({ isFeatured: true })
+      .populate('category', 'name')
+      .populate('tags', 'name')
+      .populate('subcategory', 'name')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(featuredProducts);
+  } catch (err) {
+    console.error("Error fetching featured products:", err);
+    res.status(500).json({ error: err.message });
+  }
+};

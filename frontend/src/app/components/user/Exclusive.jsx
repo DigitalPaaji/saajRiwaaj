@@ -137,16 +137,11 @@ export default function ShopByCategory() {
                     <h3 className="mt-4 font-semibold text-lg text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
                       {product.name}
                     </h3>
-
-                    <h3 className="font-semibold text-md text-stone-700 group-hover:text-[#B67032] transition-colors duration-300 ">
-                      {/* <span className="line-through mr-4 flex items-center">
-                        <FaRupeeSign size={14} />
-                        {product.price}
-                      </span>
-                      <FaRupeeSign size={14} />
-                      {product.finalPrice} */}
-                      {product.description}
-                    </h3>
+                   {product.description?.paragraphs?.[0] && (
+                      <h3 className="font-semibold text-md text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
+                        {product.description.paragraphs[0].split(" ").slice(0, 10).join(" ")}...
+                      </h3>
+                    )}
                   </Link>
                 ))}
                 </div>

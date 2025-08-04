@@ -5,21 +5,22 @@ import { useGlobalContext } from "../context/GlobalContext";
 import { FaRupeeSign } from 'react-icons/fa';
 
 export default function ShopByCategory() {
-  const { allProducts, refetchAllProducts } = useGlobalContext();
+const { featuredProducts, refetchFeaturedProducts } = useGlobalContext();
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
-      await refetchAllProducts();
+          await refetchFeaturedProducts();
       setLoading(false);
     };
     fetch();
-  }, [refetchAllProducts]);
+  }, [refetchFeaturedProducts]);
 
   const skeletons = Array.from({ length: 6 });
 
-  if (!loading && allProducts.length === 0) return null; // hide section if no data
+  if (!loading && featuredProducts.length === 0) return null; // hide section if no data
 
   return (
     <section className="py-12 px-4 sm:px-6 lg:px-8">
@@ -39,10 +40,11 @@ export default function ShopByCategory() {
                   className="aspect-square rounded-full bg-gray-200 animate-pulse"
                 ></div>
               ))
-            : [...allProducts]
-  // .sort(() => 0.5 - Math.random())
+        : [...featuredProducts]
+  .sort(() => 0.5 - Math.random()) 
   .slice(0, 6)
   .map((product) => (
+
                 <Link href={'/category'} key={product._id} className="group">
                   <div className="aspect-square rounded-full overflow-hidden shadow-lg relative">
                     {/* Hover Image Swap */}

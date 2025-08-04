@@ -135,7 +135,11 @@ export default function AddProductPage() {
     name: "",
     category: "",
     subcategory: "",
-    description: "",
+    description: {
+  paragraphs: [''],
+  bulletPoints: ['']
+},
+
     tags: [],
     isFeatured: false,
     isNewArrival: false,
@@ -507,7 +511,120 @@ export default function AddProductPage() {
                       </div>
                     )}
                   </div>
-                  <div>
+                {/* Paragraphs Input Section */}
+<div className="mb-6">
+  <label className={labelClasses}>Description Paragraphs</label>
+  {product.description.paragraphs.map((para, index) => (
+    <div key={index} className="flex items-start gap-2 mb-2">
+      <textarea
+        disabled={isViewMode}
+        value={para}
+        onChange={(e) => {
+          const updated = [...product.description.paragraphs];
+          updated[index] = e.target.value;
+          setProduct((prev) => ({
+            ...prev,
+            description: { ...prev.description, paragraphs: updated },
+          }));
+        }}
+        placeholder="Enter paragraph text..."
+        className={inputClasses}
+        rows="2"
+      />
+      {!isViewMode && (
+        <button
+          type="button"
+          className="text-red-500 font-bold"
+          onClick={() => {
+            const updated = product.description.paragraphs.filter((_, i) => i !== index);
+            setProduct((prev) => ({
+              ...prev,
+              description: { ...prev.description, paragraphs: updated },
+            }));
+          }}
+        >
+          ✕
+        </button>
+      )}
+    </div>
+  ))}
+  {!isViewMode && (
+    <button
+      type="button"
+      className="text-sm text-blue-600 mt-1"
+      onClick={() =>
+        setProduct((prev) => ({
+          ...prev,
+          description: {
+            ...prev.description,
+            paragraphs: [...prev.description.paragraphs, ''],
+          },
+        }))
+      }
+    >
+      + Add Paragraph
+    </button>
+  )}
+</div>
+
+{/* Bullet Points Input Section */}
+<div>
+  <label className={labelClasses}>Bullet Points</label>
+  {product.description.bulletPoints.map((point, index) => (
+    <div key={index} className="flex items-center gap-2 mb-2">
+      <input
+        disabled={isViewMode}
+        type="text"
+        value={point}
+        onChange={(e) => {
+          const updated = [...product.description.bulletPoints];
+          updated[index] = e.target.value;
+          setProduct((prev) => ({
+            ...prev,
+            description: { ...prev.description, bulletPoints: updated },
+          }));
+        }}
+        placeholder="Enter a bullet point..."
+        className={inputClasses}
+      />
+      {!isViewMode && (
+        <button
+          type="button"
+          className="text-red-500 font-bold"
+          onClick={() => {
+            const updated = product.description.bulletPoints.filter((_, i) => i !== index);
+            setProduct((prev) => ({
+              ...prev,
+              description: { ...prev.description, bulletPoints: updated },
+            }));
+          }}
+        >
+          ✕
+        </button>
+      )}
+    </div>
+  ))}
+  {!isViewMode && (
+    <button
+      type="button"
+      className="text-sm text-blue-600"
+      onClick={() =>
+        setProduct((prev) => ({
+          ...prev,
+          description: {
+            ...prev.description,
+            bulletPoints: [...prev.description.bulletPoints, ''],
+          },
+        }))
+      }
+    >
+      + Add Bullet Point
+    </button>
+  )}
+</div>
+
+                
+                  {/* <div>
                     <label htmlFor="description" className={labelClasses}>
                       Description
                     </label>
@@ -521,7 +638,7 @@ export default function AddProductPage() {
                       className={inputClasses}
                       rows="4"
                     ></textarea>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className={cardClasses}>

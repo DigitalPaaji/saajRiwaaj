@@ -3,27 +3,60 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGlobalContext } from '../context/GlobalContext';
-const filtersData = {
-  // categories: ['earrings', 'neckwear', 'collections', 'saaj riwaaj exclusive'],
-  // subcategories: [
-  //   'jhumkas', 'studs', 'hoops', 'danglers', 'chandbalis',
-  //   'chains', 'necklace sets', 'layered necklaces',
-  //   'oxidized', 'wedding', 'modern'
-  // ],
-  tags: [
-    'anti-tarnish', 'fashion jewellery', 'ear-rings', 'studs', 'hoops',
-    'danglers', 'chandbali', 'sahara collection', 'wedding special',
-    'bridal collection', 'neck chains', 'american diamond collection',
-    'daily wear collection', 'oxidised jewellery', 'necklaces',
-    'meenakari collection', 'kundan / polki collection'
-  ],
-  highlights: ['Featured', 'New Arrivals'],
-  priceRanges: ['Under ₹1000', '₹1000 - ₹2500', '₹2500 - ₹5000', 'Above ₹5000']
-};
 
-export default function LeftFilterSidebar({ collapsed, setCollapsed, Pid }) {
-  const {subCategoriesMap} = useGlobalContext();
+const priceRanges = ['Under ₹1000', '₹1000 - ₹2500', '₹2500 - ₹5000', 'Above ₹5000'];
+
+export default function LeftFilterSidebar({ collapsed, setCollapsed, Pid, onFilterChange }) {
+  const { subCategoriesMap, tags } = useGlobalContext();
   const subCategories = subCategoriesMap[Pid] || [];
+
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedPrices, setSelectedPrices] = useState([]);
+
+  const updateFilters = (updatedSub, updatedTag, updatedPrice) => {
+    onFilterChange({
+      subCategories: updatedSub,
+      tags: updatedTag,
+      prices: updatedPrice,
+    });
+  };
+
+  const handleChange = (type, value) => {
+    let updatedList;
+
+    if (type === 'subcategory') {
+      updatedList = selectedSubCategories.includes(value)
+        ? selectedSubCategories.filter(item => item !== value)
+        : [...selectedSubCategories, value];
+      setSelectedSubCategories(updatedList);
+      updateFilters(updatedList, selectedTags, selectedPrices);
+    }
+
+    if (type === 'tag') {
+      updatedList = selectedTags.includes(value)
+        ? selectedTags.filter(item => item !== value)
+        : [...selectedTags, value];
+      setSelectedTags(updatedList);
+      updateFilters(selectedSubCategories, updatedList, selectedPrices);
+    }
+
+    if (type === 'price') {
+      updatedList = selectedPrices.includes(value)
+        ? selectedPrices.filter(item => item !== value)
+        : [...selectedPrices, value];
+      setSelectedPrices(updatedList);
+      updateFilters(selectedSubCategories, selectedTags, updatedList);
+    }
+  };
+
+  const handleClear = () => {
+    setSelectedSubCategories([]);
+    setSelectedTags([]);
+    setSelectedPrices([]);
+    updateFilters([], [], []);
+  };
+
   return (
     <aside
       className={`
@@ -36,42 +69,95 @@ export default function LeftFilterSidebar({ collapsed, setCollapsed, Pid }) {
         {!collapsed && (
           <h2 className="text-lg font-semibold text-gray-700">Filters</h2>
         )}
-        <button
+         <button
+              onClick={handleClear}
+              className=" text-red-500 underline  cursor-pointer  transition"
+            >
+              Clear Filters
+            </button>
+        {/* <button
           onClick={() => setCollapsed(!collapsed)}
           className="text-white rounded-lg bg-[#4d4c4b] p-1"
         >
           {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-        </button>
+        </button> */}
       </div>
 
       {!collapsed && (
         <div className="space-y-6">
-          {/* <FilterGroup title="Categories" items={filtersData.categories} /> */}
-          <FilterGroup title="Subcategories" items={filtersData.subcategories} />
-          <FilterGroup title="Price" items={filtersData.priceRanges} />
+          
+          {subCategories.length > 0 && (
+            <FilterGroup
+              title="Subcategories"
+              items={subCategories.map(sub => sub.name.toUpperCase())}
+              selectedItems={selectedSubCategories}
+              type="subcategory"
+              onChange={handleChange}
+            />
+          )}
 
-          <FilterGroup title="Tags" items={filtersData.tags} />
-          <FilterGroup title="Highlights" items={filtersData.highlights} />
+       <FilterGroup
+  title="Tags"
+  items={tags.map(tag => ({ label: tag.name, value: tag._id }))} // ID as value
+  selectedItems={selectedTags}
+  type="tag"
+  onChange={handleChange}
+/>
+
+
+          <FilterGroup
+            title="Price"
+            items={priceRanges}
+            selectedItems={selectedPrices}
+            type="price"
+            onChange={handleChange}
+          />
+
+       
         </div>
       )}
     </aside>
   );
 }
 
-function FilterGroup({ title, items }) {
+function FilterGroup({ title, items, selectedItems = [], type, onChange }) {
   return (
     <div>
       <h3 className="text-sm font-medium text-gray-600 mb-2">{title}</h3>
-      <ul className="space-y-2">
+ <ul className="space-y-2">
+        {items.map((item) => {
+          const label = typeof item === 'object' ? item.label : item;
+          const value = typeof item === 'object' ? item.value : item;
+          return (
+            <li key={value}>
+              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="accent-black"
+                  checked={selectedItems.includes(value)}
+                  onChange={() => onChange(type, value)}
+                />
+                {label}
+              </label>
+            </li>
+          );
+        })}
+      </ul>
+            {/* <ul className="space-y-2">
         {items.map((item) => (
           <li key={item}>
             <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-              <input type="checkbox" className="accent-black" />
+              <input
+                type="checkbox"
+                className="accent-black"
+                checked={selectedItems.includes(item)}
+                onChange={() => onChange(type, item)}
+              />
               {item}
             </label>
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 }

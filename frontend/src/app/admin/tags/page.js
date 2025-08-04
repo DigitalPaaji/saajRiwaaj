@@ -62,11 +62,11 @@ const TagsPage = () => {
       });
 
       if (res.ok) {
+        console.log('delted')
+
+        await fetchTags();
         toast.success("Tag deleted successfully!");
-        fetchTags();
-      } else {
-        toast.error("Failed to delete tag.");
-      }
+      } 
     } catch (err) {
       toast.error("Something went wrong.");
     } finally {
