@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useGlobalContext } from '../../../../components/context/GlobalContext';
 import Image from 'next/image';
-import EarringsMarquee from '../../../../components/user/Earring';
+import Similar from '../../../../components/user/SimilarSuggestions';
 
 import {
   PackageSearch,
@@ -21,7 +21,7 @@ import {
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const { refetchProductById } = useGlobalContext();
+  const { refetchProductById, addToCart } = useGlobalContext();
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
 // Add this above return in component
@@ -54,32 +54,35 @@ const handleMouseLeave = () => {
 
   if (!product) return <div className="p-12">Loading...</div>;
 
+
   return (
     <div>
- <div className="relative flex items-start justify-center flex-wrap lg:flex-nowrap md:gap-6 px-4 md:px-12 xl:px-40 py-24 bg-[#fffaf7]">
+ <div className="relative flex flex-col items-center lg:flex-row lg:items-start justify-center flex-wrap lg:flex-nowrap gap-6 px-4 md:px-12 xl:px-40 py-12 bg-[#fffaf7]">
       {/* Left: Sticky Images */}
-      <div className="w-full md:w-1/2 lg:sticky lg:top-24">
-        <div className="flex gap-4">
+      <div className="w-full xl:w-1/2 lg:sticky lg:top-24  ">
+        <div className="flex flex-col md:flex-row items-center gap-4">
           {/* Thumbnails */}
     
-<div className="flex-col space-y-4">
-            {product.images.map((img, idx) => (
-              <Image
-                key={idx}
-                src={img}
-                alt={`Thumbnail ${idx + 1}`}
-                width={400}
-                height={400}
-                className={`w-36 h-auto cursor-pointer  rounded-tl-2xl rounded-br-2xl object-cover ${
-                  selectedImage === img ? 'ring-2 ring-[#B67032]' : ''
-                }`}
-                onClick={() => setSelectedImage(img)}
-              />
-            ))}
-          </div>
+{/* Thumbnails */}
+<div className="flex   md:flex-col gap-4 max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
+  {product.images.map((img, idx) => (
+    <Image
+      key={idx}
+      src={img}
+      alt={`Thumbnail ${idx + 1}`}
+      width={100}
+      height={100}
+      className={`w-24 h-24 object-cover rounded-tl-2xl rounded-br-2xl cursor-pointer transition-all duration-200 ${
+        selectedImage === img ? 'ring-2 ring-[#B67032]' : ''
+      }`}
+      onClick={() => setSelectedImage(img)}
+    />
+  ))}
+</div>
+
           {/* Main Image */}
          <div
-  className="relative w-full h-[600px] overflow-hidden  rounded-md  cursor-zoom-in "
+  className="relative w-full h-[400px] xl:h-[600px] overflow-hidden  rounded-md  cursor-zoom-in "
   onMouseMove={handleMouseMove}
   onMouseLeave={handleMouseLeave}
   style={{
@@ -99,13 +102,13 @@ const handleMouseLeave = () => {
       {/* Right: Details */}
 
 
-<div className="w-full md:w-1/2 flex flex-col gap-6  ">
+<div className="w-full xl:w-1/2 flex flex-col gap-2  ">
 
   {/* Title */}
   <div>
 
-    <h1 className="text-3xl md:text-4xl font-serif  text-stone-900">{product.name}</h1>
-    <p className="text-md text-stone-500 mt-2 capitalize ">
+    <h1 className="text-2xl md:text-3xl font-serif  text-stone-900">{product.name}</h1>
+    <p className="lg:text-md text-stone-500 mt-2 capitalize ">
       {product.category?.name} {product.subcategory?.name && `→ ${product.subcategory.name}`}
     </p>
   </div>
@@ -120,7 +123,7 @@ const handleMouseLeave = () => {
         {product.tags.map((tag, i) => (
           <span
             key={i}
-            className="text-md bg-[#f3eae4] text-[#B67032] p-2 rounded-lg"
+            className="lg:text-md bg-[#f3eae4] text-[#B67032] p-2 rounded-lg"
           >
             {tag.name}
           </span>
@@ -132,20 +135,20 @@ const handleMouseLeave = () => {
   {/* Price Section */}
   <div className="flex flex-col gap-1">
     <div className="flex items-end gap-3">
-      <span className="text-[#B67032] text-2xl font-bold tracking-wide">₹{product.finalPrice}</span>
+      <span className="text-[#B67032] text-xl font-bold tracking-wide">₹{product.finalPrice}</span>
       {product.discount > 0 && (
         <>
-          <span className="line-through text-stone-600 text-md">₹{product.price}</span>
-          <span className="text-green-600 text-md ">({product.discount}% OFF)</span>
+          <span className="line-through text-stone-600 lg:text-md">₹{product.price}</span>
+          <span className="text-green-600 lg:text-md ">({product.discount}% OFF)</span>
         </>
       )}
     </div>
 
-    <span className="text-md text-stone-500">Inclusive of all taxes</span>
+    <span className="lg:text-md text-stone-500">Inclusive of all taxes</span>
   </div>
   {/* CTA Buttons */}
   <div className="flex flex-col md:flex-row gap-4">
-    <button className="w-full flex items-center justify-center gap-2 bg-[#B67032] text-white px-4 py-3 rounded hover:bg-[#a95c2e] transition text-sm font-medium tracking-wide">
+    <button onClick={() => addToCart(product)} className="cursor-pointer w-full flex items-center justify-center gap-2 bg-[#B67032] text-white px-4 py-3 rounded hover:bg-[#a95c2e] transition text-sm font-medium tracking-wide">
       <ShoppingCart className="w-4 h-4" />
       Add to Cart
     </button>
@@ -156,22 +159,22 @@ const handleMouseLeave = () => {
   </div>
 {/* Description */}
 {(product.description?.paragraphs?.length > 0 || product.description?.bulletPoints?.length > 0) && (
-  <div className="space-y-4">
+  <div className="mt-4">
   <div className="flex items-center gap-2 text-stone-800">
     <Info className="w-5 h-5" />
-    <h3 className="text-xl font-serif">Description</h3>
+    <h3 className="text-md lg:text-xl">About Product</h3>
   </div>
 
   {/* Paragraphs */}
   {product.description?.paragraphs?.map((para, idx) => (
-    <p key={idx} className="text-md  text-stone-600">
+    <p key={idx} className="lg:text-md  text-stone-800 mt-2">
       {para}
     </p>
   ))}
 
   {/* Bullet Points */}
   {product.description?.bulletPoints?.length > 0 && (
-    <ul className="list-disc ml-6 text-md text-stone-800  space-y-2">
+    <ul className="list-disc ml-6 lg:text-md text-stone-800  space-y-2">
       {product.description.bulletPoints.map((point, idx) => (
         <li key={idx}>{point}</li>
       ))}
@@ -187,7 +190,7 @@ const handleMouseLeave = () => {
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-stone-800">
         <Palette className="w-5 h-5" />
-        <h3 className="text-xl font-serif ">Available Colors</h3>
+        <h3 className="text-md lg:text-xl font-serif ">Available Colors</h3>
       </div>
       <div className="flex flex-wrap gap-2">
         {product.colorVariants.map((v, i) => (
@@ -208,10 +211,10 @@ const handleMouseLeave = () => {
     
     <div className="flex items-center gap-2 text-stone-800">
       <PackageSearch className="w-5 h-5" />
-      <h3 className="text-2xl font-serif ">Shipping Policy</h3>
+      <h3 className="text-md lg:text-xl  ">Shipping Policy</h3>
     </div>
-      <h5 className='text-lg text-[#240b41] font-semibold mt-2'>Free shipping on orders above ₹499 within India</h5>
-    <ul className="list-disc list-inside text-md leading-relaxed ">
+      <h5 className='lg:text-lg text-[#240b41d7] font-semibold mt-2'>Free shipping on orders above ₹499 within India</h5>
+    <ul className="list-disc list-inside lg:text-md leading-relaxed ">
       <li>International delivery in 8-10 days</li>
       <li>Order your Rakhi early to ensure timely delivery</li>
       <li className="text-sm italic text-stone-500">*Delivery times may vary by location</li>
@@ -223,10 +226,10 @@ const handleMouseLeave = () => {
     
     <div className="flex items-center gap-2 text-stone-800">
       <RefreshCcw className="w-5 h-5" />
-      <h3 className="text-2xl font-serif ">Returns & Refunds</h3>
+      <h3 className="text-md lg:text-xl  ">Returns & Refunds</h3>
     </div>
-      <h5 className='text-lg text-[#240b41] font-semibold mt-2'>10-day return from date of delivery</h5>
-    <ul className="list-disc list-inside text-md leading-relaxed">
+      <h5 className='lg:text-lg text-[#240b41d7] font-semibold mt-2'>10-day return from date of delivery</h5>
+    <ul className="list-disc list-inside lg:text-md leading-relaxed">
       <li>Rakhi items are non-returnable</li>
       <li>Lab-grown diamond jewellery requires quality check</li>
       <li>All items including certificate & box must be returned</li>
@@ -238,10 +241,10 @@ const handleMouseLeave = () => {
     
     <div className="flex items-center gap-2 text-stone-800">
       <ShieldCheck className="w-5 h-5" />
-      <h3 className="text-2xl font-serif ">Care Instructions</h3>
+      <h3 className="text-md lg:text-xl  ">Care Instructions</h3>
     </div>
-      <h5 className='text-lg text-[#240b41] font-semibold mt-2'>Avoid water, perfume, and hairspray</h5>
-    <ul className="list-disc list-inside text-md leading-relaxed">
+      <h5 className='lg:text-lg text-[#240b41d7] font-semibold mt-2'>Avoid water, perfume, and hairspray</h5>
+    <ul className="list-disc list-inside lg:text-md leading-relaxed">
       <li>Store in a dry, cool place separately</li>
       <li>Clean gently with a soft cloth</li>
       <li>Remove before physical activity</li>
@@ -258,7 +261,9 @@ const handleMouseLeave = () => {
 
     </div>
 
-        <EarringsMarquee/>
+        {product.category &&  (
+  <Similar categoryId={product.category._id} categoryName = {product.category.name}/>
+)}
     </div>
    
   );

@@ -55,11 +55,13 @@ useEffect(() => {
         </div>
         <ul className="flex gap-4 mt-4 xl:mt-0 flex-wrap text-sm lg:text-md font-medium">
           {subCategories.map((sub) => (
-            <li key={sub._id}>
+             <Link key={sub._id} href={'/category/neckwear/6880c127e9e1dc327b67e307'}>
+            <li >
               <div className="neumorphic-btn1 p-2 transition-all text-[#B67032]">
                 {sub.name.toUpperCase()}
               </div>
             </li>
+            </Link>
           ))}
         </ul>
       </div>
@@ -83,10 +85,10 @@ useEffect(() => {
         ) : (
           <Swiper
             modules={[Navigation, Autoplay]}
-            slidesPerView={2}
+            slidesPerView={1.3}
             spaceBetween={16}
             breakpoints={{
-              640: { slidesPerView: 2 },
+              640: { slidesPerView: 1.3 },
               768: { slidesPerView: 3 },
               1024: { slidesPerView: 4 },
               1280: { slidesPerView: 5 },
@@ -101,14 +103,11 @@ useEffect(() => {
             grabCursor={true}
           >
             {loop.map((item, idx) => {
-              const categoryPath = item.category?.name?.toLowerCase().replace(/\s+/g, '-') || 'category';
-              const subcategoryPath = item.subcategory?.name?.toLowerCase().replace(/\s+/g, '-') || 'subcategory';
-              const productPath = `${categoryPath}/${subcategoryPath}`;
-
+             
               return (
                 <SwiperSlide key={idx}>
                   <Link
-                    href={`/${productPath}`}
+                    href={`/product/${item.name}/${item._id}`}
                     className="group flex-shrink-0 w-full bg-white rounded-xl overflow-hidden shadow hover:shadow-md transition-shadow"
                   >
                     <div className="w-full h-[300px] relative">

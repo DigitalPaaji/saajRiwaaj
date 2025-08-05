@@ -35,7 +35,7 @@ function formatCategoryLabel(name) {
             return(
               <li key={sub._id} >
                 <Link
-             href={`/${category.name.toLowerCase().replace(/\s+/g, '-')}/${sub.name.toLowerCase().replace(/\s+/g, '-')}`}
+             href={`/category/${category.name.toLowerCase().replace(/\s+/g, '-')}/${category._id}`}
                   onClick={onClose}
                   className="hover:text-[#B67032] hover:translate-x-1 transition-all duration-200 inline-block"
                 >
@@ -45,7 +45,7 @@ function formatCategoryLabel(name) {
             )})}
             <li>
               <Link
-                href={`/${category.name.toLowerCase()}`}
+                href={`/category/${category.name.toLowerCase().replace(/\s+/g, '-')}/${category._id}`}
                 onClick={onClose}
                 className="flex items-center text-[#B67032] font-semibold mt-4 hover:underline"
               >
@@ -60,14 +60,14 @@ function formatCategoryLabel(name) {
           <h3 className="text-sm font-semibold uppercase text-stone-500 mb-4">Featured</h3>
           <div className="grid grid-cols-5 gap-8">
           {productsByCategory.slice(0, 5).map((item, idx) => {
-  const categoryPath = item.category?.name?.toLowerCase().replace(/\s+/g, '-') || 'category';
-  const subcategoryPath = item.subcategory?.name?.toLowerCase().replace(/\s+/g, '-') || 'subcategory';
-  const productPath = `${categoryPath}/${subcategoryPath}`;
+  // const categoryPath = item.category?.name?.toLowerCase().replace(/\s+/g, '-') || 'category';
+  // const subcategoryPath = item.subcategory?.name?.toLowerCase().replace(/\s+/g, '-') || 'subcategory';
+  // const productPath = `${categoryPath}/${subcategoryPath}`;
 
   return (
     <Link
       key={idx}
-      href={`/${productPath}`}
+      href={`/product/${item.name?.toLowerCase().replace(/\s+/g, '-')}/${item._id}`}
       onClick={onClose}
       className="group flex flex-col items-center bg-stone-50 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
     >

@@ -4,6 +4,7 @@ import { GlobalProvider } from "../components/context/GlobalContext";
 import AnnouncementBar from "../components/user/AnnouncementBar";
 import Navbar from "../components/user/Navbar";
 import Footer from "../components/user/Footer";
+import CartSidebar from "../components/user/CartSidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,8 @@ export default function RootLayout({ children }) {
         <GlobalProvider>
             <AnnouncementBar />
                 <Navbar/>
+                      <CartSidebar/>
+                
         {children}
 
               <Footer />

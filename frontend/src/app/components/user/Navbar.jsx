@@ -31,7 +31,8 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
-  const { categories, subCategoriesMap } = useGlobalContext();
+  const { categories, subCategoriesMap, cart, addToCart, removeFromCart, updateQty, setIsCartOpen } = useGlobalContext();
+
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
     return () => {
@@ -50,6 +51,8 @@ function formatCategoryLabel(name) {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' '); // e.g., saaj riwaaj → Saaj Riwaaj
 }
+
+const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   return (
     <header
       className="bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm "
@@ -125,12 +128,17 @@ function formatCategoryLabel(name) {
             <button className="p-2 text-stone-700 hover:text-[#B67032]">
               <User className="w-5 h-5" />
             </button>
-            <button className="p-2 text-stone-700 hover:text-[#B67032] relative">
-              <ShoppingBag className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 bg-[#B67032] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
-            </button>
+              <button
+      onClick={() => setIsCartOpen(true)}
+      className="p-2 text-stone-700 hover:text-[#B67032] relative"
+    >
+      <ShoppingBag className="w-5 h-5" />
+      {itemCount > 0 && (
+        <span className="absolute -top-1 -right-1 bg-[#B67032] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          {itemCount}
+        </span>
+      )}
+    </button>
           </div>
         </div>
       </div>
@@ -178,7 +186,7 @@ function formatCategoryLabel(name) {
             {categories.map((cat) =>{
               const Icon = iconOptions[categories.indexOf(cat) % iconOptions.length];
 
-                const categoryPath = `/${formatCategoryPath(cat.name)}`;
+                const categoryPath = `/category/${formatCategoryPath(cat.name)}/${formatCategoryPath(cat._id)}`;
                 const categoryLabel = formatCategoryLabel(cat.name);
               return(
               <Link

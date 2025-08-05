@@ -32,7 +32,7 @@ const { featuredProducts, refetchFeaturedProducts } = useGlobalContext();
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-6 xl:gap-12 text-center pt-24">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6 xl:gap-12 text-center pt-24">
           {loading
             ? skeletons.map((_, idx) => (
                 <div
@@ -45,7 +45,7 @@ const { featuredProducts, refetchFeaturedProducts } = useGlobalContext();
   .slice(0, 6)
   .map((product) => (
 
-                <Link href={'/category'} key={product._id} className="group">
+                <Link href={`/product/${product.name}/${product._id}`} key={product._id} className="group">
                   <div className="aspect-square rounded-full overflow-hidden shadow-lg relative">
                     {/* Hover Image Swap */}
                     <img

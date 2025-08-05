@@ -7,24 +7,24 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import { useGlobalContext } from '../context/GlobalContext';
 
-export default function EarringsMarquee() {
+export default function EarringsMarquee({categoryId, categoryName}) {
   const { subCategoriesMap, refetchProductsByCategory } = useGlobalContext();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const earringsCategoryId = '6880c122e9e1dc327b67e304';
-  const subCategories = subCategoriesMap[earringsCategoryId] || [];
+
+  const subCategories = subCategoriesMap[categoryId] || [];
 
 useEffect(() => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const result = await refetchProductsByCategory(earringsCategoryId);
+      const result = await refetchProductsByCategory(categoryId);
 
       if (Array.isArray(result)) {
         const filtered = result.filter(
           (p) =>
-            p.category === earringsCategoryId || p.category?._id === earringsCategoryId
+            p.category === categoryId || p.category?._id === categoryId
         );
         setFilteredProducts(filtered);
       } else {
@@ -41,20 +41,19 @@ useEffect(() => {
 }, []);
 
 
-  const loop = filteredProducts;
+  const loop = [...filteredProducts,...filteredProducts];
 
   return (
     <section className="py-16 px-4 sm:px-8 lg:px-16 bg-[#fff8f1]">
       <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
         <div className="max-w-xl">
-          <h2 className="text-3xl md:text-4xl font-serif">Shop Earrings</h2>
-          <p className="text-md md:text-xl text-stone-500 font-serif mt-4">
-            From timeless studs to graceful chandbalis, find your perfect pair.
-          </p>
+          <h2 className="text-xl md:text-2xl font-serif capitalize">You will also love these!
+</h2>
+
         </div>
         <ul className="flex gap-4 mt-4 xl:mt-0 flex-wrap text-md font-medium">
           {subCategories.map((sub) => (
-            <Link key={sub._id} href={'/category/earrings/6880c122e9e1dc327b67e304'}>
+            <Link key={sub._id} href={`/category/${categoryName}/${categoryId}`}>
             <li >
               <div className="neumorphic-btn1 p-2 transition-all text-[#B67032]">
                 {sub.name.toUpperCase()}

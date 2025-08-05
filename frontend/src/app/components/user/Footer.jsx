@@ -37,7 +37,7 @@ function formatCategoryLabel(name) {
     const categoryPath = `/${formatCategoryPath(cat.name)}`;
     const categoryLabel = formatCategoryLabel(cat.name);
     return (   <ul  key={cat._id} className=" text-stone-200">
-              <li><Link  href={categoryPath} className="hover:text-[#B67032]">   {categoryLabel}</Link></li>
+              <li><Link  href={`/category/${cat.name?.trim().toLowerCase().replace(/\s+/g, '-')}/${cat._id}`} className="hover:text-[#B67032]">   {categoryLabel}</Link></li>
              
             </ul>  )})}
           </div>

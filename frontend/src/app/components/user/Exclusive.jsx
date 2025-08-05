@@ -83,9 +83,9 @@ export default function ShopByCategory() {
       <p className="text-sm sm:text-base md:text-lg text-[#5c3b22] mb-4 leading-normal">
         Unveil our handpicked exclusive jewellery pieces that blend tradition with royalty.
       </p>
-      <button className="bg-[#7a4a26] text-white px-4 sm:px-5 py-2 rounded-full hover:bg-[#5c3b22] transition duration-300 text-sm">
+      <Link href={'/category/saaj-riwaaj-exclusive/688321125c75af760aa800e7'} className="bg-[#7a4a26] text-white px-4 sm:px-5 py-2 rounded-xl hover:bg-[#5c3b22] transition duration-300 text-md">
         Explore Now
-      </button>
+      </Link>
     </div>
   </div>
 </div>
@@ -114,7 +114,7 @@ export default function ShopByCategory() {
                   ></div>
                 ))
               : exclusiveProducts.slice(0, 3).map((product, index) => (
-                  <Link href={"/category"} key={product._id} className="group">
+                  <Link href={`/product/${product.name}/${product._id}`} key={product._id} className="group">
                     {/* <div className="flex items-center justify-center gap-4"> */}
                       <div
                         className="group relative aspect-square overflow-hidden shadow-lg rounded-lg"

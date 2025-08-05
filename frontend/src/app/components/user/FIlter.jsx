@@ -6,7 +6,7 @@ import { useGlobalContext } from '../context/GlobalContext';
 
 const priceRanges = ['Under ₹1000', '₹1000 - ₹2500', '₹2500 - ₹5000', 'Above ₹5000'];
 
-export default function LeftFilterSidebar({ collapsed, setCollapsed, Pid, onFilterChange }) {
+export default function LeftFilterSidebar({ Pid, onFilterChange }) {
   const { subCategoriesMap, tags } = useGlobalContext();
   const subCategories = subCategoriesMap[Pid] || [];
 
@@ -58,65 +58,55 @@ export default function LeftFilterSidebar({ collapsed, setCollapsed, Pid, onFilt
   };
 
   return (
-    <aside
-      className={`
-        ${collapsed ? 'w-12' : 'w-56 lg:w-64'} 
-        transition-all duration-300 
-        min-h-screen sticky top-0 z-20 px-2 py-4
-      `}
+  <aside
+  className={`
+    lg:min-h-screen px-2 py-4 md:sticky md:top-24
+  `}
+>
+  <div className="flex items-center justify-start gap-12 mb-6">
+   
+      <h2 className="text-lg font-semibold text-gray-700">Filters</h2>
+ 
+
+    <button
+      onClick={handleClear}
+      className="text-red-500 underline cursor-pointer transition text-sm"
     >
-      <div className="flex items-center justify-between mb-6">
-        {!collapsed && (
-          <h2 className="text-lg font-semibold text-gray-700">Filters</h2>
-        )}
-         <button
-              onClick={handleClear}
-              className=" text-red-500 underline  cursor-pointer  transition"
-            >
-              Clear Filters
-            </button>
-        {/* <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-white rounded-lg bg-[#4d4c4b] p-1"
-        >
-          {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-        </button> */}
-      </div>
-
-      {!collapsed && (
-        <div className="space-y-6">
-          
-          {subCategories.length > 0 && (
-            <FilterGroup
-              title="Subcategories"
-              items={subCategories.map(sub => sub.name.toUpperCase())}
-              selectedItems={selectedSubCategories}
-              type="subcategory"
-              onChange={handleChange}
-            />
-          )}
-
-       <FilterGroup
-  title="Tags"
-  items={tags.map(tag => ({ label: tag.name, value: tag._id }))} // ID as value
-  selectedItems={selectedTags}
-  type="tag"
-  onChange={handleChange}
-/>
+      Clear Filters
+    </button>
+  </div>
 
 
-          <FilterGroup
-            title="Price"
-            items={priceRanges}
-            selectedItems={selectedPrices}
-            type="price"
-            onChange={handleChange}
-          />
-
-       
-        </div>
+    <div className="space-y-6">
+      {subCategories.length > 0 && (
+        <FilterGroup
+          title="Subcategories"
+          items={subCategories.map(sub => sub.name.toUpperCase())}
+          selectedItems={selectedSubCategories}
+          type="subcategory"
+          onChange={handleChange}
+        />
       )}
-    </aside>
+
+      <FilterGroup
+        title="Tags"
+        items={tags.map(tag => ({ label: tag.name, value: tag._id }))}
+        selectedItems={selectedTags}
+        type="tag"
+        onChange={handleChange}
+      />
+
+      <FilterGroup
+        title="Price"
+        items={priceRanges}
+        selectedItems={selectedPrices}
+        type="price"
+        onChange={handleChange}
+      />
+    </div>
+
+</aside>
+
   );
 }
 
