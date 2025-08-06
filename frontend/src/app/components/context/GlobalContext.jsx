@@ -19,6 +19,9 @@ export const GlobalProvider = ({ children }) => {
   // CART STATE
     const [isCartOpen, setIsCartOpen] = useState(false);
   const [cart, setCart] = useState([]);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authTab, setAuthTab] = useState('login'); // or 'signup'
+
 
   // Cart helpers
   const addToCart = (product) => {
@@ -179,6 +182,10 @@ export const GlobalProvider = ({ children }) => {
         updateQty,
         isCartOpen,
         setIsCartOpen,
+        isAuthOpen,
+        setIsAuthOpen,
+        authTab,
+        setAuthTab, 
         refetchProductsByCategory: fetchProductsByCategory,
         refetchAllProducts: fetchAllProducts,
         refetchProductById: fetchProductById,

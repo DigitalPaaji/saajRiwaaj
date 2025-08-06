@@ -1,52 +1,53 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import { useGlobalContext } from '../context/GlobalContext';
+"use client";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import { useGlobalContext } from "../context/GlobalContext";
 
 export default function EarringsMarquee() {
   const { subCategoriesMap, refetchProductsByCategory } = useGlobalContext();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const earringsCategoryId = '6880c122e9e1dc327b67e304';
+  const earringsCategoryId = "6880c122e9e1dc327b67e304";
   const subCategories = subCategoriesMap[earringsCategoryId] || [];
 
-useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const result = await refetchProductsByCategory(earringsCategoryId);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const result = await refetchProductsByCategory(earringsCategoryId);
 
-      if (Array.isArray(result)) {
-        const filtered = result.filter(
-          (p) =>
-            p.category === earringsCategoryId || p.category?._id === earringsCategoryId
-        );
-        setFilteredProducts(filtered);
-      } else {
-        setFilteredProducts([]);
+        if (Array.isArray(result)) {
+          const filtered = result.filter(
+            (p) =>
+              p.category === earringsCategoryId ||
+              p.category?._id === earringsCategoryId
+          );
+          setFilteredProducts(filtered);
+        } else {
+          setFilteredProducts([]);
+        }
+      } catch (err) {
+        console.error("Error fetching earrings:", err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching earrings:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchData();
-}, []);
-
+    fetchData();
+  }, []);
 
   const loop = filteredProducts;
-
   return (
     <section className="py-16 px-4 sm:px-8 lg:px-16 bg-[#fff8f1]">
+      {" "}
       <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
         <div className="max-w-xl">
+          {" "}
           <h2 className="text-3xl md:text-4xl font-serif">Shop Earrings</h2>
           <p className="text-md md:text-xl text-stone-500 font-serif mt-4">
             From timeless studs to graceful chandbalis, find your perfect pair.
@@ -54,17 +55,19 @@ useEffect(() => {
         </div>
         <ul className="flex gap-4 mt-4 xl:mt-0 flex-wrap text-md font-medium">
           {subCategories.map((sub) => (
-            <Link key={sub._id} href={'/category/earrings/6880c122e9e1dc327b67e304'}>
-            <li >
-              <div className="neumorphic-btn1 p-2 transition-all text-[#B67032]">
-                {sub.name.toUpperCase()}
-              </div>
-            </li>
+            <Link
+              key={sub._id}
+              href={"/category/earrings/6880c122e9e1dc327b67e304"}
+            >
+              <li>
+                <div className="neumorphic-btn1 p-2 transition-all text-[#B67032]">
+                  {sub.name.toUpperCase()}
+                </div>
+              </li>
             </Link>
           ))}
         </ul>
       </div>
-
       <div className="overflow-x-auto scrollbar-hide">
         {loading ? (
           <div className="flex gap-4 overflow-x-auto scrollbar-hide">
@@ -102,7 +105,6 @@ useEffect(() => {
             grabCursor={true}
           >
             {loop.map((item, idx) => {
-            
               return (
                 <SwiperSlide key={idx}>
                   <Link
@@ -116,19 +118,24 @@ useEffect(() => {
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute top-2 left-2 bg-[#B67032] text-white text-xs px-2 py-1 rounded">
-                        {item.subCategory || item.subcategory?.name || 'Earring'}
+                        {item.subCategory ||
+                          item.subcategory?.name ||
+                          "Earring"}
                       </div>
                     </div>
                     <div className="p-4 flex flex-col justify-between">
                       <h4 className="font-semibold text-stone-800 group-hover:text-[#B67032] transition-colors text-md truncate">
                         {item.name}
                       </h4>
-                    {item.description?.paragraphs?.[0] && (
-  <p className="text-sm text-stone-600 mt-1 line-clamp-2">
-    {item.description.paragraphs[0].split(" ").slice(0, 10).join(" ")}...
-  </p>
-)}
-
+                      {item.description?.paragraphs?.[0] && (
+                        <p className="text-sm text-stone-600 mt-1 line-clamp-2">
+                          {item.description.paragraphs[0]
+                            .split(" ")
+                            .slice(0, 10)
+                            .join(" ")}
+                          ...
+                        </p>
+                      )}
                     </div>
                   </Link>
                 </SwiperSlide>
@@ -137,7 +144,6 @@ useEffect(() => {
           </Swiper>
         )}
       </div>
-
       <style jsx>{`
         .scrollbar-hide::-webkit-scrollbar {
           display: none;

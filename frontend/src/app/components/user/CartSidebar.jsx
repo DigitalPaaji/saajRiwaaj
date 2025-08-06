@@ -38,13 +38,15 @@ const handleApplyCoupon = () => {
       </div>
 
       {cart.length === 0 ? (
-       <div className="flex flex-col items-center justify-center h-full text-center px-6 text-gray-500">
+       <div className="flex items-center justify-center h-full w-full text-center text-gray-500 px-6">
+   <div className="flex flex-col items-center justify-center">
   <img
-    src="/Images/cart.webp" 
+    src="/Images/cart.gif" 
     alt="Empty Cart"
-    className="w-60 h-60 mb-4 opacity-80"
+    className="w-40 h-40 mb-4 "
   />
-  <p className="text-md">Your cart is empty</p>
+  <p className="text-md">Your Cart Is Empty</p>
+  </div>
 </div>
 
       ) : (

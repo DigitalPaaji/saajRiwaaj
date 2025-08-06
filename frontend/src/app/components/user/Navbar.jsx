@@ -31,7 +31,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
-  const { categories, subCategoriesMap, cart, addToCart, removeFromCart, updateQty, setIsCartOpen } = useGlobalContext();
+  const {  setAuthTab, setIsAuthOpen, categories, subCategoriesMap, cart, addToCart, removeFromCart, updateQty, setIsCartOpen } = useGlobalContext();
 
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
@@ -125,7 +125,12 @@ const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
             <button className="p-2 text-stone-700 hover:text-[#B67032]">
               <Heart className="w-5 h-5" />
             </button>
-            <button className="p-2 text-stone-700 hover:text-[#B67032]">
+            <button 
+            onClick={() => {
+              setAuthTab("login"); // or signup
+              setIsAuthOpen(true);
+            }}
+            className="p-2 text-stone-700 hover:text-[#B67032]">
               <User className="w-5 h-5" />
             </button>
               <button

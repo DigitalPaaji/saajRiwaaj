@@ -52,7 +52,38 @@ const handleMouseLeave = () => {
     }
   }, [id, refetchProductById]);
 
-  if (!product) return <div className="p-12">Loading...</div>;
+  if (!product) return  <div className="flex flex-col lg:flex-row gap-6 px-4 md:px-12 xl:px-40 py-12 bg-[#fffaf7]">
+      {/* Left: Image Skeleton */}
+      <div className="w-full xl:w-1/2 space-y-4">
+        <div className="flex gap-4">
+          <div className="flex flex-col gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="w-24 h-24 bg-gray-200 animate-pulse rounded-lg" />
+            ))}
+          </div>
+          <div className="flex-1 h-[400px] xl:h-[600px] bg-gray-200 animate-pulse rounded-md" />
+        </div>
+      </div>
+
+      {/* Right: Details Skeleton */}
+      <div className="w-full xl:w-1/2 flex flex-col gap-6">
+        <div className="space-y-2">
+          <div className="h-6 bg-gray-200 animate-pulse w-2/3 rounded" />
+          <div className="h-4 bg-gray-200 animate-pulse w-1/3 rounded" />
+        </div>
+        <div className="h-6 bg-gray-200 animate-pulse w-1/4 rounded" />
+        <div className="flex gap-4">
+          <div className="h-10 bg-gray-200 animate-pulse flex-1 rounded" />
+          <div className="h-10 bg-gray-200 animate-pulse flex-1 rounded" />
+        </div>
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-4 bg-gray-200 animate-pulse rounded w-full" />
+          ))}
+        </div>
+        <div className="h-40 bg-gray-200 animate-pulse rounded" />
+      </div>
+    </div>;
 
 
   return (
