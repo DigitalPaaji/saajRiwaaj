@@ -21,7 +21,45 @@ export const GlobalProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState('login'); // or 'signup'
+  const [user, setUser] = useState(null);
 
+
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/user/", {
+        credentials: "include",
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        console.log(userData.user)
+        localStorage.setItem("saajUser", JSON.stringify(userData));
+        setUser(userData.user);
+      } else {
+        setUser(null);
+        localStorage.removeItem("saajUser");
+      }
+    } catch (err) {
+      console.error("Error fetching user:", err);
+    }
+  };
+
+
+
+
+const logoutUser = async () => {
+  try {
+    await fetch("http://localhost:5000/user/logout", {
+      credentials: "include",
+    });
+    localStorage.removeItem("saajUser");
+    localStorage.removeItem("saajToken");
+    setUser(null);
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
+};
+
+const isLoggedIn = !!user;
 
   // Cart helpers
   const addToCart = (product) => {
@@ -152,12 +190,23 @@ export const GlobalProvider = ({ children }) => {
 
   // Initial fetch
   useEffect(() => {
+     const savedUser = localStorage.getItem("saajUser");
+  if (savedUser) {
+    try {
+      const parsedUser = JSON.parse(savedUser);
+      setUser(parsedUser);
+    } catch (err) {
+      console.error("Failed to parse stored user:", err);
+      localStorage.removeItem("saajUser");
+    }
+  }
     (async () => {
       const cats = await fetchCategories();
       if (cats.length) await fetchSubCategories(cats);
       await fetchAllProducts();
       await fetchFeaturedProducts();
       await fetchTags();
+      await fetchUser()
     })();
   }, [
     fetchCategories,
@@ -186,10 +235,15 @@ export const GlobalProvider = ({ children }) => {
         setIsAuthOpen,
         authTab,
         setAuthTab, 
+        user,
+        setUser,
+        logoutUser,
+        isLoggedIn,
         refetchProductsByCategory: fetchProductsByCategory,
         refetchAllProducts: fetchAllProducts,
         refetchProductById: fetchProductById,
         refetchFeaturedProducts: fetchFeaturedProducts,
+    refetchUser:fetchUser
       }}
     >
       {children}
