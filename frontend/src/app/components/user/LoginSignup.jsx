@@ -162,10 +162,10 @@ console.log('vgchgch   ',data)
   return (
     <>
    
-    {isCartOpen && (
+    {isAuthOpen && (
   <div
     className="fixed inset-0 bg-black/50 z-[998]"
-    onClick={() => setIsCartOpen(false)} // close on overlay click
+    onClick={() => setIsAuthOpen(false)} // close on overlay click
   />
 )}
     <div
