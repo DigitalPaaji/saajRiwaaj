@@ -160,7 +160,14 @@ console.log('vgchgch   ',data)
 
 
   return (
-
+    <>
+   
+    {isCartOpen && (
+  <div
+    className="fixed inset-0 bg-black/50 z-[998]"
+    onClick={() => setIsCartOpen(false)} // close on overlay click
+  />
+)}
     <div
       className={`fixed top-0 right-0 h-screen w-full max-w-sm bg-white shadow-lg z-[999] transition-transform duration-300 ${
         isAuthOpen ? "translate-x-0" : "translate-x-full"
@@ -283,5 +290,6 @@ console.log('vgchgch   ',data)
 
 
     </div>
+     </>
   );
 }

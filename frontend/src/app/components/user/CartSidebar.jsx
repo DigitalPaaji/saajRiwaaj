@@ -24,12 +24,24 @@ const handleApplyCoupon = () => {
   const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
+    <>
+    {isCartOpen && (
+  <div
+    className="fixed inset-0 bg-black/50 z-[998]"
+    onClick={() => setIsCartOpen(false)} // close on overlay click
+  />
+)}
+
+ 
     <div
-      className={`fixed top-0 right-0 min-h-screen
+      className={`fixed top-0 right-0 min-h-screen 
          w-[70%] md:w-[40%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
         isCartOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
+
+
+
       <div className="flex justify-between items-center px-4 py-6 border-b">
         <h2 className="text-xl font-semibold">Cart</h2>
         <button className="cursor-pointer" onClick={() => setIsCartOpen(false)}>
@@ -147,5 +159,6 @@ const handleApplyCoupon = () => {
         </div>
       )}
     </div>
+       </>
   );
 }

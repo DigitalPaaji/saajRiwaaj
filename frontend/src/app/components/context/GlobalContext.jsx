@@ -24,24 +24,68 @@ export const GlobalProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
 
-  const fetchUser = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/user/", {
-        credentials: "include",
-      });
-      if (res.ok) {
-        const userData = await res.json();
-        console.log(userData.user)
-        localStorage.setItem("saajUser", JSON.stringify(userData));
-        setUser(userData.user);
-      } else {
-        setUser(null);
-        localStorage.removeItem("saajUser");
-      }
-    } catch (err) {
-      console.error("Error fetching user:", err);
+// const fetchUser = useCallback(async () => {
+//   try {
+//     const res = await fetch("http://localhost:5000/user/", {
+//       credentials: "include",
+//     });
+
+//     if (res.status === 204) {
+//       // No user logged in
+//       setUser(null);
+//       localStorage.removeItem("saajUser");
+//       return;
+//     }
+   
+//     if (res.ok) {  
+//       const userData = await res.json() ;  
+//       // console.log(userData.user);     
+//       localStorage.setItem("saajUser", JSON.stringify(userData));
+//       setUser(userData.user);
+//     } else {
+//       console.log("Failed to fetch user");
+//       setUser(null);
+//       localStorage.removeItem("saajUser");
+//     }
+//   } catch (err) {
+//     console.error("Error fetching user:", err);
+//   }
+// },[]);
+
+
+
+const fetchUser = useCallback(async () => {
+  try {
+    const res = await fetch("http://localhost:5000/user/", {
+      credentials: "include",
+    });
+
+    if (res.status === 204) {
+      setUser(null);
+      setCart([]);
+      localStorage.removeItem("saajUser");
+      return;
     }
-  };
+
+    if (res.ok) {
+      const userData = await res.json();
+      localStorage.setItem("saajUser", JSON.stringify(userData));
+      setUser(userData.user);
+
+      // Convert populated cart into usable frontend format
+      const formattedCart = userData.user.cart.map((item) => ({
+        ...item.product,
+        quantity: item.quantity,
+      }));
+      setCart(formattedCart);
+    } else {
+      setUser(null);
+      setCart([]);
+    }
+  } catch (err) {
+    console.error("Error fetching user:", err);
+  }
+}, []);
 
 
 
@@ -62,7 +106,25 @@ const logoutUser = async () => {
 const isLoggedIn = !!user;
 
   // Cart helpers
-  const addToCart = (product) => {
+  // const addToCart = (product) => {
+  //   setCart((prevCart) => {
+  //     const exists = prevCart.find((item) => item._id === product._id);
+  //     if (exists) {
+  //       return prevCart.map((item) =>
+  //         item._id === product._id
+  //           ? { ...item, quantity: item.quantity + 1 }
+  //           : item
+  //       );
+  //     } else {
+  //       return [...prevCart, { ...product, quantity: 1 }];
+  //     }
+  //   });
+  // };
+
+
+  const addToCart = async (product) => {
+  if (!user) {
+    // Local cart for guest user
     setCart((prevCart) => {
       const exists = prevCart.find((item) => item._id === product._id);
       if (exists) {
@@ -75,19 +137,118 @@ const isLoggedIn = !!user;
         return [...prevCart, { ...product, quantity: 1 }];
       }
     });
-  };
+    return;
+  }
 
-  const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item._id !== id));
-  };
+  // Logged-in user: Call backend
+  try {
+    const res = await fetch("http://localhost:5000/user/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        productId: product._id,
+        quantity: 1,
+      }),
+    });
 
-  const updateQty = (id, qty) => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item._id === id ? { ...item, quantity: qty } : item
+    if (res.ok) {
+      const data = await res.json();
+      // Get updated cart from backend and update state
+      const updatedCart = data.cart.map((item) => ({
+        ...item.product,
+        quantity: item.quantity,
+      }));
+      setCart(updatedCart);
+    } else {
+      console.error("Failed to add to cart");
+    }
+  } catch (err) {
+    console.error("Add to cart error:", err);
+  }
+};
+
+
+  // const removeFromCart = (id) => {
+  //   setCart((prevCart) => prevCart.filter((item) => item._id !== id));
+  // };
+
+
+  const removeFromCart = async (productId) => {
+  if (!user) {
+    setCart((prev) => prev.filter((item) => item._id !== productId));
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:5000/user/cart/${productId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const updatedCart = data.cart.map((item) => ({
+        ...item.product,
+        quantity: item.quantity,
+      }));
+      setCart(updatedCart);
+    } else {
+      console.error("Failed to remove from cart");
+    }
+  } catch (err) {
+    console.error("Remove from cart error:", err);
+  }
+};
+
+
+
+  // const updateQty = (id, qty) => {
+  //   setCart((prevCart) =>
+  //     prevCart.map((item) =>
+  //       item._id === id ? { ...item, quantity: qty } : item
+  //     )
+  //   );
+  // };
+
+
+  const updateQty = async (productId, qty) => {
+  if (!user) {
+    setCart((prev) =>
+      prev.map((item) =>
+        item._id === productId ? { ...item, quantity: qty } : item
       )
     );
-  };
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/user/cart", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ productId, quantity: qty }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const updatedCart = data.cart.map((item) => ({
+        ...item.product,
+        quantity: item.quantity,
+      }));
+      setCart(updatedCart);
+    } else {
+      console.error("Failed to update quantity");
+    }
+  } catch (err) {
+    console.error("Update quantity error:", err);
+  }
+};
+
 
 
   const fetchFeaturedProducts = useCallback(async () => {
@@ -214,6 +375,7 @@ const isLoggedIn = !!user;
     fetchAllProducts,
     fetchTags,
     fetchFeaturedProducts,
+    fetchUser
   ]); // removed fetchProductsByCategory
 
   return (
