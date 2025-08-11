@@ -24,6 +24,29 @@ export const GlobalProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
 
+const fetchUser = useCallback(async () => {
+  try {
+    const res = await fetch("http://localhost:5000/user/", { credentials: "include" });
+    if (res.ok) {
+      const data = await res.json();
+      setUser(data.user);
+      localStorage.setItem("saajUser", JSON.stringify(data.user));
+    } else {
+      setUser(null);
+      localStorage.removeItem("saajUser");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}, []);
+
+const logoutUser = async () => {
+  await fetch("http://localhost:5000/user/user/logout", { credentials: "include" });
+  setUser(null);
+  localStorage.removeItem("saajUser");
+};
+
+
 // const fetchUser = useCallback(async () => {
 //   try {
 //     const res = await fetch("http://localhost:5000/user/", {
@@ -31,96 +54,74 @@ export const GlobalProvider = ({ children }) => {
 //     });
 
 //     if (res.status === 204) {
-//       // No user logged in
 //       setUser(null);
+//       setCart([]);
 //       localStorage.removeItem("saajUser");
 //       return;
 //     }
-   
-//     if (res.ok) {  
-//       const userData = await res.json() ;  
-//       // console.log(userData.user);     
+
+//     if (res.ok) {
+//       const userData = await res.json();
 //       localStorage.setItem("saajUser", JSON.stringify(userData));
 //       setUser(userData.user);
+
+//       // Convert populated cart into usable frontend format
+//       const formattedCart = userData.user.cart.map((item) => ({
+//         ...item.product,
+//         quantity: item.quantity,
+//       }));
+//       setCart(formattedCart);
 //     } else {
-//       console.log("Failed to fetch user");
 //       setUser(null);
-//       localStorage.removeItem("saajUser");
+//       setCart([]);
 //     }
 //   } catch (err) {
 //     console.error("Error fetching user:", err);
 //   }
-// },[]);
+// }, []);
 
 
 
-const fetchUser = useCallback(async () => {
+
+// const logoutUser = async () => {
+//   try {
+//     await fetch("http://localhost:5000/user/logout", {
+//       credentials: "include",
+//     });
+//     localStorage.removeItem("saajUser");
+//     localStorage.removeItem("saajToken");
+//     setUser(null);
+//   } catch (err) {
+//     console.error("Logout error:", err);
+//   }
+// };
+
+
+const fetchAdmin = useCallback(async () => {
   try {
-    const res = await fetch("http://localhost:5000/user/", {
-      credentials: "include",
-    });
-
-    if (res.status === 204) {
-      setUser(null);
-      setCart([]);
-      localStorage.removeItem("saajUser");
-      return;
-    }
-
+    const res = await fetch("http://localhost:5000/admin/", { credentials: "include" });
     if (res.ok) {
-      const userData = await res.json();
-      localStorage.setItem("saajUser", JSON.stringify(userData));
-      setUser(userData.user);
-
-      // Convert populated cart into usable frontend format
-      const formattedCart = userData.user.cart.map((item) => ({
-        ...item.product,
-        quantity: item.quantity,
-      }));
-      setCart(formattedCart);
+      const data = await res.json();
+      setAdmin(data.user);
+      localStorage.setItem("saajAdmin", JSON.stringify(data.user));
     } else {
-      setUser(null);
-      setCart([]);
+      setAdmin(null);
+      localStorage.removeItem("saajAdmin");
     }
   } catch (err) {
-    console.error("Error fetching user:", err);
+    console.error(err);
   }
 }, []);
 
-
-
-
-const logoutUser = async () => {
-  try {
-    await fetch("http://localhost:5000/user/logout", {
-      credentials: "include",
-    });
-    localStorage.removeItem("saajUser");
-    localStorage.removeItem("saajToken");
-    setUser(null);
-  } catch (err) {
-    console.error("Logout error:", err);
-  }
+const logoutAdmin = async () => {
+  await fetch("http://localhost:5000/user/admin/logout", { credentials: "include" });
+  setAdmin(null);
+  localStorage.removeItem("saajAdmin");
 };
 
+
+
 const isLoggedIn = !!user;
-
-  // Cart helpers
-  // const addToCart = (product) => {
-  //   setCart((prevCart) => {
-  //     const exists = prevCart.find((item) => item._id === product._id);
-  //     if (exists) {
-  //       return prevCart.map((item) =>
-  //         item._id === product._id
-  //           ? { ...item, quantity: item.quantity + 1 }
-  //           : item
-  //       );
-  //     } else {
-  //       return [...prevCart, { ...product, quantity: 1 }];
-  //     }
-  //   });
-  // };
-
 
   const addToCart = async (product) => {
   if (!user) {
@@ -171,9 +172,6 @@ const isLoggedIn = !!user;
 };
 
 
-  // const removeFromCart = (id) => {
-  //   setCart((prevCart) => prevCart.filter((item) => item._id !== id));
-  // };
 
 
   const removeFromCart = async (productId) => {
@@ -202,17 +200,6 @@ const isLoggedIn = !!user;
     console.error("Remove from cart error:", err);
   }
 };
-
-
-
-  // const updateQty = (id, qty) => {
-  //   setCart((prevCart) =>
-  //     prevCart.map((item) =>
-  //       item._id === id ? { ...item, quantity: qty } : item
-  //     )
-  //   );
-  // };
-
 
   const updateQty = async (productId, qty) => {
   if (!user) {
@@ -368,6 +355,7 @@ const isLoggedIn = !!user;
       await fetchFeaturedProducts();
       await fetchTags();
       await fetchUser()
+      await fetchAdmin()
     })();
   }, [
     fetchCategories,
@@ -405,7 +393,9 @@ const isLoggedIn = !!user;
         refetchAllProducts: fetchAllProducts,
         refetchProductById: fetchProductById,
         refetchFeaturedProducts: fetchFeaturedProducts,
-    refetchUser:fetchUser
+    refetchUser:fetchUser,
+   refetchUser: fetchAdmin,
+   logoutAdmin
       }}
     >
       {children}

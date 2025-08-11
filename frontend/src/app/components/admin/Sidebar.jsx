@@ -9,6 +9,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  User,
 } from 'lucide-react'
 
 const navItems = [
@@ -19,6 +20,10 @@ const navItems = [
   { name: 'Categories', href: '/admin/categories', icon: PlusSquare },
   { name: 'Sub Categories', href: '/admin/subcategories', icon: PlusSquare },
   { name: 'banner', href: '/admin/banner', icon: PlusSquare },
+  { name: 'users', href: '/admin/users', icon: PlusSquare },
+  { name: 'Account', href: '/admin/account', icon: User },
+
+
 
 ]
 function Sidebar() {
@@ -76,7 +81,7 @@ function Sidebar() {
               setCollapsed(true)}
              }}
             href={item.href}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all
+            className={`flex items-center gap-3 capitalize px-4 py-3 rounded-xl text-sm transition-all
               ${
                 active
                   ? 'bg-[#d1d1d1] text-black'

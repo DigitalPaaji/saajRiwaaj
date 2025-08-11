@@ -4,6 +4,11 @@ const userSchema = new mongoose.Schema({
   name: String,
   email: String,
   password: String,
+  role: { 
+    type: String, 
+    enum: ['user', 'admin'], 
+    default: 'user' // all new signups will be normal users
+  },
   cart: [
     {
       product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
