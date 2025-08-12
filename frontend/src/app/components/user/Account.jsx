@@ -28,7 +28,11 @@ function Account() {
   <h4 className="text-md text-gray-700 ">{user?.email}</h4>
       
 </div>
-
+   
+                <p className="text-right text-sm text-blue-600 cursor-pointer">
+                  Reset Password
+                </p>
+       
 </div>
 
 <div className="w-full text-right ">

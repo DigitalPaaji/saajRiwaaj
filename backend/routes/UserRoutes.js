@@ -1,19 +1,21 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../controllers/UserController')
-const auth = require('../middleware/auth')
+const auth = require('../middleware/userAuth')
+const isAdmin = require('../middleware/adminAuth')
 
 router.post('/signup',User.signup)
 router.post('/login',User.login)
-router.get('/user/logout',User.logoutUser)
-router.get('/admin/logout',User.logoutAdmin)
-
-
+router.get('/userlogout',User.logoutUser)
+router.get('/adminlogout',User.logoutAdmin)
+router.get('/admin', isAdmin, User.getAdmin)
 router.get('/',auth, User.getUser)
 router.post('/cart', auth, User.addToCart);
 router.post('/wishlist', auth, User.addToWishlist);
 router.delete('/cart/:productId', auth, User.removeFromCart);
 router.put('/cart', auth, User.updateCartQuantity);
-router.get('/all', User.getAllUsers);
+router.get('/all', isAdmin, User.getAllUsers);
+router.post('/forgot-password', User.forgotPassword);
+router.put('/reset-password/:token', User.resetPassword);
 
 module.exports = router;

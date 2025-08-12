@@ -4,10 +4,10 @@ import React, { useEffect } from 'react'
 import { useGlobalContext } from "../../components/context/GlobalContext";
 import { toast } from "react-toastify";
 function Account() {
-    const {user,  setIsAuthOpen,logoutUser, refetchUser } = useGlobalContext()
+    const {admin,logoutAdmin, refetchAdmin } = useGlobalContext()
     useEffect(() => {
-    refetchUser();
-    }, [refetchUser]);
+    refetchAdmin();
+    }, [refetchAdmin]);
 
   return (
   <div className="flex flex-col  justify-between h-full pb-6">
@@ -15,17 +15,15 @@ function Account() {
 <div>
           <div className="flex justify-between items-center px-4 py-6 border-b">
   <h2 className="text-xl font-semibold">
-    Welcome, {user?.name}!
+    Welcome, {admin?.name}!
   </h2>
-     <button onClick={() => setIsAuthOpen(false)}>
-          <X className="w-5 h-5" />
-        </button>
+   
    </div>
 <div className="p-5 space-y-2">
   
-  <h4 className="text-lg text-gray-700 font-serif capitalize">{user?.name}</h4>
+  <h4 className="text-lg text-gray-700 font-serif capitalize">{admin?.name}</h4>
 
-  <h4 className="text-md text-gray-700 ">{user?.email}</h4>
+  <h4 className="text-md text-gray-700 ">{admin?.email}</h4>
       
 </div>
 
@@ -35,7 +33,7 @@ function Account() {
  <button
                   className=" mt-2 bg-red-500 text-white px-4 py-2 rounded"
                   onClick={async () => {
-                    await logoutUser();
+                    await logoutAdmin();
                     toast.success("Logged out!");
                   } }
                 >

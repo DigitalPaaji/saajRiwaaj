@@ -1,3 +1,4 @@
+// admin page
 "use client";
 
 

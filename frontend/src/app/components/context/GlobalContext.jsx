@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
+import { toast } from "react-toastify";
 
 const GlobalContext = createContext();
 
@@ -22,6 +23,38 @@ export const GlobalProvider = ({ children }) => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState('login'); // or 'signup'
   const [user, setUser] = useState(null);
+  const [admin, setAdmin] = useState(null);
+
+// Forgot Password (Not Logged In)
+const forgotPassword = async (email) => {
+  try {
+    const res = await fetch("http://localhost:5000/user/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    return { ok: res.ok, message: data.message || (res.ok ? "Password reset link sent!" : "Something went wrong.") };
+  } catch (err) {
+    return { ok: false, message: "Network error, please try again!" };
+  }
+};
+
+// Reset Password (Logged In)
+const resetPassword = async (oldPassword, newPassword) => {
+  try {
+    const res = await fetch("http://localhost:5000/user/reset-password", {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+    const data = await res.json();
+    return { ok: res.ok, message: data.message || (res.ok ? "Password updated successfully!" : "Failed to update password.") };
+  } catch (err) {
+    return { ok: false, message: "Network error, please try again!" };
+  }
+};
 
 
 const fetchUser = useCallback(async () => {
@@ -41,65 +74,21 @@ const fetchUser = useCallback(async () => {
 }, []);
 
 const logoutUser = async () => {
-  await fetch("http://localhost:5000/user/user/logout", { credentials: "include" });
-  setUser(null);
-  localStorage.removeItem("saajUser");
+  try {
+    await fetch("http://localhost:5000/user/userlogout", { credentials: "include" });
+    setUser(null);
+    localStorage.removeItem("saajUser");
+  } catch (error) {
+    console.error("User logout failed:", error);
+  }
 };
 
 
-// const fetchUser = useCallback(async () => {
-//   try {
-//     const res = await fetch("http://localhost:5000/user/", {
-//       credentials: "include",
-//     });
-
-//     if (res.status === 204) {
-//       setUser(null);
-//       setCart([]);
-//       localStorage.removeItem("saajUser");
-//       return;
-//     }
-
-//     if (res.ok) {
-//       const userData = await res.json();
-//       localStorage.setItem("saajUser", JSON.stringify(userData));
-//       setUser(userData.user);
-
-//       // Convert populated cart into usable frontend format
-//       const formattedCart = userData.user.cart.map((item) => ({
-//         ...item.product,
-//         quantity: item.quantity,
-//       }));
-//       setCart(formattedCart);
-//     } else {
-//       setUser(null);
-//       setCart([]);
-//     }
-//   } catch (err) {
-//     console.error("Error fetching user:", err);
-//   }
-// }, []);
-
-
-
-
-// const logoutUser = async () => {
-//   try {
-//     await fetch("http://localhost:5000/user/logout", {
-//       credentials: "include",
-//     });
-//     localStorage.removeItem("saajUser");
-//     localStorage.removeItem("saajToken");
-//     setUser(null);
-//   } catch (err) {
-//     console.error("Logout error:", err);
-//   }
-// };
 
 
 const fetchAdmin = useCallback(async () => {
   try {
-    const res = await fetch("http://localhost:5000/admin/", { credentials: "include" });
+    const res = await fetch("http://localhost:5000/user/admin/", { credentials: "include" });
     if (res.ok) {
       const data = await res.json();
       setAdmin(data.user);
@@ -114,10 +103,16 @@ const fetchAdmin = useCallback(async () => {
 }, []);
 
 const logoutAdmin = async () => {
-  await fetch("http://localhost:5000/user/admin/logout", { credentials: "include" });
-  setAdmin(null);
-  localStorage.removeItem("saajAdmin");
+  try {
+    await fetch("http://localhost:5000/user/adminlogout", { credentials: "include" });
+    setAdmin(null);
+    localStorage.removeItem("saajAdmin");
+    window.location.href = "/admin/auth"; // redirect after logout
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
 };
+
 
 
 
@@ -355,7 +350,9 @@ const isLoggedIn = !!user;
       await fetchFeaturedProducts();
       await fetchTags();
       await fetchUser()
-      await fetchAdmin()
+        if (window.location.pathname.startsWith("/admin")) {
+      await fetchAdmin();
+    }
     })();
   }, [
     fetchCategories,
@@ -386,15 +383,18 @@ const isLoggedIn = !!user;
         authTab,
         setAuthTab, 
         user,
+        admin,
         setUser,
         logoutUser,
         isLoggedIn,
+        forgotPassword,
+        resetPassword,
         refetchProductsByCategory: fetchProductsByCategory,
         refetchAllProducts: fetchAllProducts,
         refetchProductById: fetchProductById,
         refetchFeaturedProducts: fetchFeaturedProducts,
     refetchUser:fetchUser,
-   refetchUser: fetchAdmin,
+   refetchAdmin: fetchAdmin,
    logoutAdmin
       }}
     >

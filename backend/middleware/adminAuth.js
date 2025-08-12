@@ -1,11 +1,10 @@
 // middleware/isAdmin.js
 const User = require('../models/UserModel');
 const jwt = require("jsonwebtoken");
-const USER_JWT_SECRET = process.env.USER_JWT_SECRET;
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
 
-const isAdmin = async (req, res, next) => {
-  const token = req.cookies.token;
+const adminAuth  = async (req, res, next) => {
+  const token = req.cookies.adminToken;
   if (!token) return res.status(401).json({ message: "No token, authorization denied" });
 
   try {
@@ -21,4 +20,4 @@ const isAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = isAdmin;
+module.exports = adminAuth ;

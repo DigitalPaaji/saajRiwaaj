@@ -1,4 +1,6 @@
 "use client";
+import Image from "next/image";
+import Link from "next/link";
 // import { useGlobalContext } from "../../components/context/GlobalContext";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
@@ -74,77 +76,103 @@ export default function AuthSidebar() {
     setError(err.message || "Something went wrong.");
   }
   }
-
-
-
+  
   return (
-    <>
-   
+    <div className="md:grid grid-cols-2 ">
+   <div className="hidden md:block">
+    <Image alt="" src={'/Images/admin.webp'} width={400} height={400} className="w-full h-screen object-cover"/>
+    {/* <Image alt="" src={'/Images/admin.webp'} width={400} height={400} className="w-full h-auto object-cover"/>
+    <Image alt="" src={'/Images/admin.webp'} width={400} height={400} className="w-full h-auto object-cover"/>
+    <Image alt="" src={'/Images/admin.webp'} width={400} height={400} className="w-full h-auto object-cover"/> */}
 
-    <div className="flex items-center flex-col justify-center mx-auto py-24">
+   </div>
+
+    <div className="flex items-center justify-center px-4 min-h-screen bg-gradient-to-b from-[#FAF7F2] to-[#F5E8DA]">
       <ToastContainer />
-
-    
-
-
-
-        <div className="flex justify-between items-center px-4 py-6 border-b">
-            <h2 className="text-xl font-semibold">
-            ADMIN PANEL
-            </h2>
-
-
-          
-        </div>
-        <div className="p-5 space-y-4">
-              <>
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={ form.email}
-             
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full border border-gray-400 p-2 rounded" />
-                {fieldErrors.email && <p className="text-red-500 text-sm">{fieldErrors.email}</p>}
-              </>
-              <>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className="w-full border border-gray-400 p-2 rounded" />
-                {fieldErrors.password && <p className="text-red-500 text-sm">{fieldErrors.password}</p>}
-              </>
-             
-             
-                <p className="text-right text-sm text-blue-600 cursor-pointer">
-                  Forgot password?
-                </p>
-<p className="text-red-500 mx-auto w-fit">{error}</p>
-              <button
-                className="w-full bg-[#B67032] text-white py-2 rounded"
-                onClick={handleLogin}
-
-              >
-           Login
-                
-              </button>
-
-
-         
-         
-           
-
-              <div className="text-center text-sm text-stone-500">or</div>
-
-              <button className="w-full border py-2 rounded">
-                Continue with Google
-              </button>
+      <div className="w-full max-w-md  rounded-2xl  overflow-hidden ">
+        
+        {/* Logo */}
+        <div className="flex justify-center py-8 ">
+          <Link href="/" className="flex-shrink-0 group">
+            <Image
+            width={400}
+            height={400}
+              src="/Images/logo.webp"
+              alt="Saaj Riwaaj Logo"
+              className="h-14 w-auto transition-transform group-hover:scale-105"
+            />
+          </Link>
         </div>
 
+        {/* Title */}
+        <div className="px-6 py-4 border-b border-[#E6D3C1]">
+          <h2 className="text-3xl font-serif font-bold text-[#6B3B1A] tracking-wide text-center">
+            Admin Panel
+          </h2>
+        </div>
 
+        {/* Form */}
+        <div className="p-6 space-y-5">
+          {/* Email */}
+          <div>
+            <input
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className={`w-full border p-3 rounded-md focus:outline-none focus:ring-2 
+              ${fieldErrors.email ? "border-red-500 bg-red-50" : "border-[#D5BBA3] focus:ring-[#B67032]"}`}
+            />
+            {fieldErrors.email && (
+              <p className="text-red-500 text-xs mt-1">{fieldErrors.email}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              className={`w-full border p-3 rounded-md focus:outline-none focus:ring-2 
+              ${fieldErrors.password ? "border-red-500 bg-red-50" : "border-[#D5BBA3] focus:ring-[#B67032]"}`}
+            />
+            {fieldErrors.password && (
+              <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>
+            )}
+          </div>
+
+          {/* Forgot password */}
+          <p className="text-right text-sm text-[#B67032] cursor-pointer hover:underline">
+            Forgot password?
+          </p>
+
+          {/* General Error */}
+          {error && <p className="text-red-600 text-center">{error}</p>}
+
+          {/* Login Button */}
+          <button
+            onClick={handleLogin}
+            className="w-full bg-[#B67032] text-white py-2.5 rounded-md font-medium tracking-wide shadow-sm hover:bg-[#9A5928] transition"
+          >
+            Login
+          </button>
+
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-px bg-[#E6D3C1]" />
+            <span className="text-sm text-[#9E8A76]">or</span>
+            <div className="flex-1 h-px bg-[#E6D3C1]" />
+          </div>
+
+          {/* Google Button */}
+          <button className="w-full flex items-center justify-center gap-2 hover:bg-[#FFF6ED] transition">
+            <img src="/Images/google-icon.png" alt="Google" className="h-5 w-5" />
+            <span className="text-sm font-medium text-[#6B3B1A]">Continue with Google</span>
+          </button>
+        </div>
+      </div>
     </div>
-     </>
+     </div>
   );
 }

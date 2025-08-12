@@ -37,6 +37,8 @@ app.use('/user',userRoutes)
 
 
 
+
+
 app.listen(5000,()=>{
     console.log('server running on http://localhost:5000')
 })

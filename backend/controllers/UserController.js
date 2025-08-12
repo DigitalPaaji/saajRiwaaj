@@ -1,10 +1,20 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
+const crypto = require('crypto')
+const nodemailer = require('nodemailer')
 
 const USER_JWT_SECRET = process.env.USER_JWT_SECRET;
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
 
+const transporter = nodemailer.createTransport({
+  service:'gmail',
+  auth:{
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  }
+})
+// ---------------------- SIGNUP ----------------------
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -33,7 +43,7 @@ const signup = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
+// ---------------------- LOGIN ----------------------
 const login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -73,7 +83,7 @@ const login = async (req, res) => {
   }
 };
 
-
+// ---------------------- LOGOUT ----------------------
 const logoutUser = (req, res) => {
   res.clearCookie("userToken").json({ message: "User Logged out Successfully." });
 };
@@ -82,7 +92,65 @@ const logoutAdmin = (req, res) => {
   res.clearCookie("adminToken").json({ message: "Admin Logged out Successfully." });
 };
 
+// ---------------------- FORGOT PASSWORD ----------------------
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "No user found with that email" });
 
+    const resetToken = crypto.randomBytes(20).toString("hex");
+
+    user.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    user.resetPasswordExpire = Date.now() + 5 * 60 * 1000; // 5 mins
+    await user.save();
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    const message = `You requested a password reset. Click here to reset your password: \n\n ${resetUrl}`;
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Password Reset Request",
+      text: message,
+    });
+
+    res.status(200).json({ message: "Password reset link sent to email" });
+  } catch (err) {
+    console.error("Forgot Password Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+// ---------------------- RESET PASSWORD ----------------------
+const resetPassword = async (req, res) => {
+  const resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) return res.status(400).json({ message: "Invalid or expired reset token" });
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (err) {
+    console.error("Reset Password Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+
+// ---------------------- OTHER FUNCTIONS ----------------------
 const getUser = async (req, res) => {
   if (!req.user) return res.status(204).send();
   const fullUser = await User.findById(req.user._id)
@@ -106,6 +174,16 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+const getAdmin = async (req, res) => {
+  if (!req.user) return res.status(204).send();
+
+  // Just like getUser, but here you can fetch extra admin-related details if needed
+  const fullAdmin = await User.findById(req.user._id);
+
+  res.status(200).json({ user: fullAdmin });
+};
+
 
 const addToCart = async (req, res) => {
   const userId = req.user._id;
@@ -197,33 +275,16 @@ const updateCartQuantity = async (req, res) => {
   }
 };
 
-const changePassword = async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) return res.status(404).json({ message: "User not found" });
 
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch)
-      return res.status(400).json({ message: "Old password is incorrect" });
-
-    user.password = await bcrypt.hash(newPassword, 10);
-    await user.save();
-
-    res.status(200).json({ message: "Password updated successfully" });
-  } catch (err) {
-    console.error("Change password error:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-};
 
 module.exports = {
   signup,
   login,
-  
+  getAdmin,
   getUser,
   getAllUsers,
-  changePassword,
+  forgotPassword,
+  resetPassword,
   addToCart,
   addToWishlist,
   removeFromCart,

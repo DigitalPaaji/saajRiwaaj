@@ -6,7 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import Account from "./Account";
 
 export default function AuthSidebar() {
-  const { isAuthOpen, setIsAuthOpen, authTab, setAuthTab,user, setUser, isLoggedIn } = useGlobalContext();
+  const { isAuthOpen, setIsAuthOpen, forgotPassword, authTab, setAuthTab,user, setUser, isLoggedIn } = useGlobalContext();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -16,12 +16,26 @@ export default function AuthSidebar() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState('');
 
-
+const handleForgotPassword =async () => {
+    if (!form.email) {
+      setFieldErrors(prev => ({ ...prev, email: "Please enter your registered email." }));
+      return;
+    }
+    setFieldErrors(prev => ({ ...prev, email: "" }));
+    const result = await forgotPassword(form.email);
+    if (!result.ok) {
+      setError(result.message);
+    } else {
+      setError(result.message);
+    }
+  }
 
 
   const switchTab = (tab) => {
     setAuthTab(tab);
     setForm({ name: "", email: "", password: "", confirmPassword: "" });
+    setError('')
+    setFieldErrors('')
   };
 
   const signupUser = async ({ name, email, password }) => {
@@ -261,7 +275,9 @@ console.log('vgchgch   ',data)
               {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
               {authTab === "login" && (
-                <p className="text-right text-sm text-blue-600 cursor-pointer">
+                <p className="text-right text-sm text-blue-600 cursor-pointer"
+                onClick={handleForgotPassword}
+                >
                   Forgot password?
                 </p>
               )}

@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { GlobalProvider } from "../components/context/GlobalContext";
 import Sidebar from "../components/admin/Sidebar";
 import { ToastContainer } from "react-toastify";
+import {useGlobalContext} from '../components/context/GlobalContext'
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function AdminLayout({ children }) {
 
   const checkAdminAuth = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/user/", {
+      const res = await fetch("http://localhost:5000/user/admin/", {
         credentials: "include", // send cookies
       });
 
@@ -46,6 +47,8 @@ export default function AdminLayout({ children }) {
     }
   }, [router]);
 
+
+
   useEffect(() => {
     if (pathname === "/admin/auth") {
       setLoading(false);
@@ -68,7 +71,7 @@ export default function AdminLayout({ children }) {
     return (
       <html lang="en">
         <body>
-          <div className="flex flex-col min-h-screen bg-[#f5f2f2]">
+          <div className="flex flex-col min-h-screen bg-[#ffffff]">
             <ToastContainer className="z-[999999]" />
             <main className="flex-1">{children}</main>
           </div>

@@ -1,10 +1,9 @@
 const User = require('../models/UserModel')
 const jwt = require("jsonwebtoken");
 const USER_JWT_SECRET = process.env.USER_JWT_SECRET;
-const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
 
-const auth = async (req, res, next) => {
-  const token = req.cookies.token;
+const userAuth  = async (req, res, next) => {
+const token = req.cookies.userToken;
 if (!token) return res.status(401).json({ message: "No token, authorization denied" });
 
   try {
@@ -16,4 +15,4 @@ if (!token) return res.status(401).json({ message: "No token, authorization deni
   }
 };
 
-module.exports = auth;
+module.exports = userAuth ;
