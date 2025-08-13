@@ -56,14 +56,21 @@ const login = async (req, res) => {
     let token;
     let cookieName;
 
-    if (user.role === "admin") {
-      token = jwt.sign({ id: user._id, role: user.role }, process.env.ADMIN_JWT_SECRET, { expiresIn: "1d" });
-      cookieName = "adminToken";
-    } else {
-      token = jwt.sign({ id: user._id, role: user.role }, process.env.USER_JWT_SECRET, { expiresIn: "1d" });
-      cookieName = "userToken";
-    }
-
+   if (user.role.includes("admin")) {
+  token = jwt.sign(
+    { id: user._id, roles: user.role }, // store all roles in token
+    ADMIN_JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+  cookieName = "adminToken";
+} else {
+  token = jwt.sign(
+    { id: user._id, roles: user.role },
+    USER_JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+  cookieName = "userToken";
+}
     res
       .status(200)
       .cookie(cookieName, token, {
@@ -106,12 +113,22 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-    const message = `You requested a password reset. Click here to reset your password: \n\n ${resetUrl}`;
+   const message = `**Saaj Riwaaj - Password Reset Request**
+We received a request to reset your password. We understand that sometimes even the most precious memories need a fresh clasp.
+Click below to create a new password and keep exploring our timeless jewellery:
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+${resetUrl}
+
+If you did not request this change, please ignore this email — your account will remain secure.
+
+With love,
+The Saaj Riwaaj Team 
+`;
+
+      await transporter.sendMail({
+      from: `"Saaj Riwaaj" <${process.env.EMAIL_USER}>`,
       to: user.email,
-      subject: "Password Reset Request",
+      subject: "Reset Your Saaj Riwaaj Password",
       text: message,
     });
 
@@ -133,7 +150,11 @@ const resetPassword = async (req, res) => {
       resetPasswordExpire: { $gt: Date.now() },
     });
 
-    if (!user) return res.status(400).json({ message: "Invalid or expired reset token" });
+     if (!user) return res.status(400).json({ message: "Invalid or expired reset token" });
+
+    if (!req.body.password || req.body.password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     user.password = hashedPassword;
@@ -148,7 +169,30 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// Check Token Validity
+const checkTokenValidity = async (req, res) => {
+  const crypto = require("crypto");
+  try {
+    const resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(req.params.token)
+      .digest("hex");
 
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() }, // Check if not expired
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired reset token" });
+    }
+
+    res.status(200).json({ message: "Valid token" });
+  } catch (err) {
+    console.error("Token Check Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
 
 // ---------------------- OTHER FUNCTIONS ----------------------
 const getUser = async (req, res) => {
@@ -285,6 +329,7 @@ module.exports = {
   getAllUsers,
   forgotPassword,
   resetPassword,
+  checkTokenValidity,
   addToCart,
   addToWishlist,
   removeFromCart,

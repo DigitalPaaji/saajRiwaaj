@@ -104,7 +104,7 @@ const handleMouseLeave = () => {
       width={100}
       height={100}
       className={`w-24 h-24 object-cover rounded-tl-2xl rounded-br-2xl cursor-pointer transition-all duration-200 ${
-        selectedImage === img ? 'ring-2 ring-[#B67032]' : ''
+        selectedImage === img ? 'border-2 border-[#B67032]' : ''
       }`}
       onClick={() => setSelectedImage(img)}
     />

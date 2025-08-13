@@ -1,13 +1,14 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-// import { useGlobalContext } from "../../components/context/GlobalContext";
-import { useState } from "react";
+
+import { useGlobalContext } from "../../components/context/GlobalContext";
+import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
 
 export default function AuthSidebar() {
-  // const { setUser } = useGlobalContext();
+  const { forgotPassword } = useGlobalContext();
   const [form, setForm] = useState({
  
     email: "",
@@ -16,7 +17,34 @@ export default function AuthSidebar() {
   });
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState('');
+  const [linkSent, setLinkSent] = useState(false);
+  const [timer, setTimer] = useState(0);
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
 
+  const handleForgotPassword = async () => {
+    if (timer > 0) return; // Block if still in cooldown
+ const { email } = form; // Get email from state
+  if (!email) {
+  setError("Please enter your email first.");
+    return;
+  }
+    // Call your forgot password API
+    const { ok, message } = await forgotPassword(email);
+    if (ok) {
+      setError("Password reset link sent! Valid for 5 minutes.");
+      setLinkSent(true);
+      setTimer(300); // 5 minutes in seconds
+    } else {
+      toast.error(message);
+    }
+  };
   const loginUser = async ({email,password})=>{
     const res = await fetch("http://localhost:5000/user/login",{
       method:'POST',
@@ -32,9 +60,10 @@ export default function AuthSidebar() {
       "Login failed.";
     throw new Error(errorMessage);
   }
-      if (data.user.role !== "admin") {
-    throw new Error("You are not authorized as admin");
-  }
+if (!data.user.role?.includes("admin")) {
+  throw new Error("You are not authorized as admin");
+}
+
     localStorage.setItem('saajUser',JSON.stringify(data.user))
     localStorage.setItem('saajToken',data.token)
     // setUser(data.user)
@@ -68,7 +97,7 @@ export default function AuthSidebar() {
 
     // You can save user in localStorage or context here
     setForm({  email: "", password: "" });
-  if (data.user.role === "admin") {
+if (data.user.role.includes("admin")) {
       window.location.href = "/admin";
     }
   } catch (err) {
@@ -142,10 +171,21 @@ export default function AuthSidebar() {
               <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>
             )}
           </div>
-
+  
           {/* Forgot password */}
-          <p className="text-right text-sm text-[#B67032] cursor-pointer hover:underline">
-            Forgot password?
+          <p className={`text-right text-sm text-[#B67032] cursor-pointer hover:underline
+          ${
+                timer > 0 ? "text-gray-500" : "text-blue-600 cursor-pointer"
+              }`}
+              onClick={handleForgotPassword}
+          >
+           {timer > 0
+                ? `Link sent — valid for ${Math.floor(timer / 60)}:${String(
+                    timer % 60
+                  ).padStart(2, "0")}`
+                : linkSent
+                ? "Resend password link"
+                : "Forgot password?"}
           </p>
 
           {/* General Error */}
@@ -159,17 +199,17 @@ export default function AuthSidebar() {
             Login
           </button>
 
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-[#E6D3C1]" />
             <span className="text-sm text-[#9E8A76]">or</span>
             <div className="flex-1 h-px bg-[#E6D3C1]" />
-          </div>
+          </div> */}
 
           {/* Google Button */}
-          <button className="w-full flex items-center justify-center gap-2 hover:bg-[#FFF6ED] transition">
+          {/* <button className="w-full flex items-center justify-center gap-2 hover:bg-[#FFF6ED] transition">
             <img src="/Images/google-icon.png" alt="Google" className="h-5 w-5" />
             <span className="text-sm font-medium text-[#6B3B1A]">Continue with Google</span>
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

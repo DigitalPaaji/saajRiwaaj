@@ -32,10 +32,10 @@ export default function AdminLayout({ children }) {
 
       const data = await res.json();
 
-      if (!data.user || data.user.role !== "admin") {
-        router.replace("/admin/auth");
-        return;
-      }
+    if (!data.user || !data.user.role?.includes("admin")) {
+  router.replace("/admin/auth");
+  return;
+}
 
       // Store user in localStorage for quick access (optional)
       localStorage.setItem("saajUser", JSON.stringify(data.user));
@@ -71,10 +71,12 @@ export default function AdminLayout({ children }) {
     return (
       <html lang="en">
         <body>
+          <GlobalProvider>
           <div className="flex flex-col min-h-screen bg-[#ffffff]">
             <ToastContainer className="z-[999999]" />
             <main className="flex-1">{children}</main>
           </div>
+          </GlobalProvider>
         </body>
       </html>
     );

@@ -4,10 +4,10 @@ import React, { useEffect } from 'react'
 import { useGlobalContext } from "../context/GlobalContext";
 import { toast } from "react-toastify";
 function Account() {
-    const {user,  setIsAuthOpen,logoutUser, refetchUser } = useGlobalContext()
+    const {user,  setIsAuthOpen,logout, refetchUser } = useGlobalContext()
     useEffect(() => {
     refetchUser();
-    }, []);
+    }, [refetchUser]);
 
   return (
   <div className="flex flex-col  justify-between h-full pb-6">
@@ -29,9 +29,7 @@ function Account() {
       
 </div>
    
-                <p className="text-right text-sm text-blue-600 cursor-pointer">
-                  Reset Password
-                </p>
+            
        
 </div>
 
@@ -39,7 +37,7 @@ function Account() {
  <button
                   className=" mt-2 bg-red-500 text-white px-4 py-2 rounded"
                   onClick={async () => {
-                    await logoutUser();
+                    await logout();
                     toast.success("Logged out!");
                   } }
                 >

@@ -17,5 +17,6 @@ router.put('/cart', auth, User.updateCartQuantity);
 router.get('/all', isAdmin, User.getAllUsers);
 router.post('/forgot-password', User.forgotPassword);
 router.put('/reset-password/:token', User.resetPassword);
+router.get('/reset-token/:token',User.checkTokenValidity)
 
 module.exports = router;

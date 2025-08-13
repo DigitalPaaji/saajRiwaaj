@@ -6,7 +6,6 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { toast } from "react-toastify";
 
 const GlobalContext = createContext();
 
@@ -23,7 +22,7 @@ export const GlobalProvider = ({ children }) => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState('login'); // or 'signup'
   const [user, setUser] = useState(null);
-  const [admin, setAdmin] = useState(null);
+  // const [admin, setAdmin] = useState(null);
 
 // Forgot Password (Not Logged In)
 const forgotPassword = async (email) => {
@@ -41,13 +40,13 @@ const forgotPassword = async (email) => {
 };
 
 // Reset Password (Logged In)
-const resetPassword = async (oldPassword, newPassword) => {
+const resetPassword = async (token, password) => {
   try {
-    const res = await fetch("http://localhost:5000/user/reset-password", {
+    const res = await fetch(`http://localhost:5000/user/reset-password/${token}`, {
       method: "PUT",
-      credentials: "include",
+   
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ oldPassword, newPassword }),
+      body: JSON.stringify({  password  }),
     });
     const data = await res.json();
     return { ok: res.ok, message: data.message || (res.ok ? "Password updated successfully!" : "Failed to update password.") };
@@ -57,61 +56,96 @@ const resetPassword = async (oldPassword, newPassword) => {
 };
 
 
-const fetchUser = useCallback(async () => {
-  try {
-    const res = await fetch("http://localhost:5000/user/", { credentials: "include" });
-    if (res.ok) {
-      const data = await res.json();
-      setUser(data.user);
-      localStorage.setItem("saajUser", JSON.stringify(data.user));
-    } else {
+
+ const fetchUser = useCallback(async () => {
+    try {
+      const res = await fetch("http://localhost:5000/user/", { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+        localStorage.setItem("saajUser", JSON.stringify(data.user));
+      } else {
+        setUser(null);
+        localStorage.removeItem("saajUser");
+      }
+    } catch (err) {
+      console.error(err);
       setUser(null);
       localStorage.removeItem("saajUser");
     }
-  } catch (err) {
-    console.error(err);
-  }
-}, []);
+  }, []);
 
-const logoutUser = async () => {
+// const fetchUser = useCallback(async () => {
+//   try {
+//     const res = await fetch("http://localhost:5000/user/", { credentials: "include" });
+//     if (res.ok) {
+//       const data = await res.json();
+//       setUser(data.user);
+//       localStorage.setItem("saajUser", JSON.stringify(data.user));
+//     } else {
+//       setUser(null);
+//       localStorage.removeItem("saajUser");
+//     }
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }, []);
+
+
+const logout = async () => {
+  if (!user) return;
+  const route = user.role === "admin" ? "adminlogout" : "userlogout";
   try {
-    await fetch("http://localhost:5000/user/userlogout", { credentials: "include" });
+    await fetch(`http://localhost:5000/user/${route}`, { credentials: "include" });
     setUser(null);
     localStorage.removeItem("saajUser");
-  } catch (error) {
-    console.error("User logout failed:", error);
-  }
-};
-
-
-
-
-const fetchAdmin = useCallback(async () => {
-  try {
-    const res = await fetch("http://localhost:5000/user/admin/", { credentials: "include" });
-    if (res.ok) {
-      const data = await res.json();
-      setAdmin(data.user);
-      localStorage.setItem("saajAdmin", JSON.stringify(data.user));
-    } else {
-      setAdmin(null);
-      localStorage.removeItem("saajAdmin");
-    }
+    if (user.role === "admin") window.location.href = "/admin/auth";
   } catch (err) {
-    console.error(err);
-  }
-}, []);
-
-const logoutAdmin = async () => {
-  try {
-    await fetch("http://localhost:5000/user/adminlogout", { credentials: "include" });
-    setAdmin(null);
-    localStorage.removeItem("saajAdmin");
-    window.location.href = "/admin/auth"; // redirect after logout
-  } catch (error) {
-    console.error("Logout failed:", error);
+    console.error("Logout failed:", err);
   }
 };
+
+
+
+// const logoutUser = async () => {
+//   try {
+//     await fetch("http://localhost:5000/user/userlogout", { credentials: "include" });
+//     setUser(null);
+//     localStorage.removeItem("saajUser");
+//   } catch (error) {
+//     console.error("User logout failed:", error);
+//   }
+// };
+
+
+
+
+// const fetchAdmin = useCallback(async () => {
+//   try {
+//     const res = await fetch("http://localhost:5000/user/admin/", { credentials: "include" });
+//     if (res.ok) {
+//       const data = await res.json();
+//       setAdmin(data.user);
+//       localStorage.setItem("saajAdmin", JSON.stringify(data.user));
+//     } else {
+//       setAdmin(null);
+//       localStorage.removeItem("saajAdmin");
+//     }
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }, []);
+
+// const logoutAdmin = async () => {
+//   try {
+//     await fetch("http://localhost:5000/user/adminlogout", { credentials: "include" });
+//     setAdmin(null);
+//     localStorage.removeItem("saajAdmin");
+//     window.location.href = "/admin/auth"; // redirect after logout
+//   } catch (error) {
+//     console.error("Logout failed:", error);
+//   }
+// };
 
 
 
@@ -351,7 +385,7 @@ const isLoggedIn = !!user;
       await fetchTags();
       await fetchUser()
         if (window.location.pathname.startsWith("/admin")) {
-      await fetchAdmin();
+      // await fetchAdmin();
     }
     })();
   }, [
@@ -383,9 +417,10 @@ const isLoggedIn = !!user;
         authTab,
         setAuthTab, 
         user,
-        admin,
+        // admin,
         setUser,
-        logoutUser,
+        // logoutUser,
+        logout,
         isLoggedIn,
         forgotPassword,
         resetPassword,
@@ -394,8 +429,8 @@ const isLoggedIn = !!user;
         refetchProductById: fetchProductById,
         refetchFeaturedProducts: fetchFeaturedProducts,
     refetchUser:fetchUser,
-   refetchAdmin: fetchAdmin,
-   logoutAdmin
+  //  refetchAdmin: fetchAdmin,
+  //  logoutAdmin
       }}
     >
       {children}
