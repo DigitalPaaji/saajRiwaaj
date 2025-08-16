@@ -2,14 +2,16 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useGlobalContext } from '../context/GlobalContext' 
 import {
   LayoutDashboard,
   Package,
   PlusSquare,
-  LogOut,
+  logoutAdmin,
   ChevronLeft,
   ChevronRight,
   User,
+  LogOut,
 } from 'lucide-react'
 
 const navItems = [
@@ -27,7 +29,8 @@ const navItems = [
 
 ]
 function Sidebar() {
-      const pathname = usePathname()
+    const { logoutAdmin } = useGlobalContext();
+    const pathname = usePathname()
     const [collapsed, setCollapsed] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     
@@ -98,7 +101,7 @@ function Sidebar() {
 
   {/* Bottom Section */}
   <div>
-    <button className="neumorphic-btn cursor-pointer flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm text-red-500 hover:text-red-700 transition">
+    <button onClick={logoutAdmin} className="neumorphic-btn cursor-pointer flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm text-red-500 hover:text-red-700 transition">
       <LogOut size={18} />
       {!collapsed && 'Logout'}
     </button>

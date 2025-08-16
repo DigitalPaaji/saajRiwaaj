@@ -44,7 +44,8 @@ const signup = async (req, res) => {
   }
 };
 // ---------------------- LOGIN ----------------------
-const login = async (req, res) => {
+// loginUser
+const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -53,27 +54,19 @@ const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" });
 
-    let token;
-    let cookieName;
+    // Only allow those who have "user" role
+    if (!user.role.includes("user")) {
+      return res.status(403).json({ message: "Access denied: Users only" });
+    }
 
-   if (user.role.includes("admin")) {
-  token = jwt.sign(
-    { id: user._id, roles: user.role }, // store all roles in token
-    ADMIN_JWT_SECRET,
-    { expiresIn: "1d" }
-  );
-  cookieName = "adminToken";
-} else {
-  token = jwt.sign(
-    { id: user._id, roles: user.role },
-    USER_JWT_SECRET,
-    { expiresIn: "1d" }
-  );
-  cookieName = "userToken";
-}
-    res
-      .status(200)
-      .cookie(cookieName, token, {
+    const token = jwt.sign(
+      { id: user._id, roles: user.role },
+      USER_JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(200)
+      .cookie("userToken", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "Lax",
@@ -84,11 +77,99 @@ const login = async (req, res) => {
         token,
         user: { name: user.name, email: user.email, role: user.role },
       });
+
   } catch (err) {
-    console.error("Login Failed: ", err);
+    console.error("User Login Failed:", err);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+// loginAdmin
+const loginAdmin = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "Invalid Email or Password" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" });
+
+    // Only allow those who have "admin" role
+    if (!user.role.includes("admin")) {
+      return res.status(403).json({ message: "Access denied: Admins only" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, roles: user.role },
+      ADMIN_JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(200)
+      .cookie("adminToken", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .json({
+        message: "Login Successful",
+        token,
+        user: { name: user.name, email: user.email, role: user.role },
+      });
+
+  } catch (err) {
+    console.error("Admin Login Failed:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+// const login = async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user) return res.status(400).json({ message: "Invalid Email or Password" });
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" });
+
+//     let token;
+//     let cookieName;
+
+//    if (user.role.includes("admin")) {
+//   token = jwt.sign(
+//     { id: user._id, roles: user.role }, // store all roles in token
+//     ADMIN_JWT_SECRET,
+//     { expiresIn: "1d" }
+//   );
+//   cookieName = "adminToken";
+// } else {
+//   token = jwt.sign(
+//     { id: user._id, roles: user.role },
+//     USER_JWT_SECRET,
+//     { expiresIn: "1d" }
+//   );
+//   cookieName = "userToken";
+// }
+//     res
+//       .status(200)
+//       .cookie(cookieName, token, {
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === "production",
+//         sameSite: "Lax",
+//         maxAge: 24 * 60 * 60 * 1000,
+//       })
+//       .json({
+//         message: "Login Successful",
+//         token,
+//         user: { name: user.name, email: user.email, role: user.role },
+//       });
+//   } catch (err) {
+//     console.error("Login Failed: ", err);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// };
 
 // ---------------------- LOGOUT ----------------------
 const logoutUser = (req, res) => {
@@ -323,7 +404,9 @@ const updateCartQuantity = async (req, res) => {
 
 module.exports = {
   signup,
-  login,
+  // login,
+  loginAdmin,
+  loginUser,
   getAdmin,
   getUser,
   getAllUsers,

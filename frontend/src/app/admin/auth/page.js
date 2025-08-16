@@ -45,8 +45,8 @@ export default function AuthSidebar() {
       toast.error(message);
     }
   };
-  const loginUser = async ({email,password})=>{
-    const res = await fetch("http://localhost:5000/user/login",{
+  const loginAdmin = async ({email,password})=>{
+    const res = await fetch("http://localhost:5000/user/loginAdmin",{
       method:'POST',
       headers:{"Content-Type": "application/json"},
       body: JSON.stringify({ email, password }),
@@ -64,8 +64,9 @@ if (!data.user.role?.includes("admin")) {
   throw new Error("You are not authorized as admin");
 }
 
-    localStorage.setItem('saajUser',JSON.stringify(data.user))
-    localStorage.setItem('saajToken',data.token)
+  localStorage.setItem('saajAdmin',JSON.stringify(data.user))
+  localStorage.setItem('saajAdminToken', data.token)
+
     // setUser(data.user)
   
 
@@ -91,7 +92,7 @@ if (!data.user.role?.includes("admin")) {
     setError("");
     setFieldErrors({});
     try {
-    const data = await loginUser({ email, password });
+    const data = await loginAdmin({ email, password });
     toast.success("Login Successful!");
     console.log("Logged In User:", data.user);
 

@@ -6,6 +6,7 @@ import Navbar from "../components/user/Navbar";
 import Footer from "../components/user/Footer";
 import CartSidebar from "../components/user/CartSidebar";
 import LoginSignup from "../components/user/LoginSignup";
+import Wishlist from '../components/user/Wishlist'
 
 
 const geistSans = Geist({
@@ -34,6 +35,7 @@ export default function RootLayout({ children }) {
                 <Navbar/>
                       <CartSidebar/>
                       <LoginSignup/>
+                      <Wishlist/>
                 
         {children}
 

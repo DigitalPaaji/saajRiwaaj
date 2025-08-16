@@ -6,23 +6,28 @@ import React, {
   useState,
   useCallback,
 } from "react";
+  import { useRouter } from "next/navigation";
+
 
 const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
+  const router = useRouter();
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const [subCategoriesMap, setSubCategoriesMap] = useState({});
   const [allProducts, setAllProducts] = useState([]);
   const [productsByCategory, setProductsByCategory] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  // CART STATE
-    const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
+
   const [cart, setCart] = useState([]);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState('login'); // or 'signup'
   const [user, setUser] = useState(null);
-  // const [admin, setAdmin] = useState(null);
+  const [admin, setAdmin] = useState(null);
 
 // Forgot Password (Not Logged In)
 const forgotPassword = async (email) => {
@@ -63,15 +68,19 @@ const resetPassword = async (token, password) => {
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
-        localStorage.setItem("saajUser", JSON.stringify(data.user));
+        // localStorage.setItem("saajUser", JSON.stringify(data.user));
       } else {
         setUser(null);
         localStorage.removeItem("saajUser");
+        localStorage.removeItem("saajToken");
+
       }
     } catch (err) {
       console.error(err);
       setUser(null);
       localStorage.removeItem("saajUser");
+      localStorage.removeItem("saajToken");
+
     }
   }, []);
 
@@ -92,60 +101,66 @@ const resetPassword = async (token, password) => {
 // }, []);
 
 
-const logout = async () => {
-  if (!user) return;
-  const route = user.role === "admin" ? "adminlogout" : "userlogout";
-  try {
-    await fetch(`http://localhost:5000/user/${route}`, { credentials: "include" });
-    setUser(null);
-    localStorage.removeItem("saajUser");
-    if (user.role === "admin") window.location.href = "/admin/auth";
-  } catch (err) {
-    console.error("Logout failed:", err);
-  }
-};
-
-
-
-// const logoutUser = async () => {
+// const logout = async () => {
+//   if (!user) return;
+//   const route = user.role === "admin" ? "adminlogout" : "userlogout";
 //   try {
-//     await fetch("http://localhost:5000/user/userlogout", { credentials: "include" });
+//     await fetch(`http://localhost:5000/user/${route}`, { credentials: "include" });
 //     setUser(null);
 //     localStorage.removeItem("saajUser");
-//   } catch (error) {
-//     console.error("User logout failed:", error);
-//   }
-// };
-
-
-
-
-// const fetchAdmin = useCallback(async () => {
-//   try {
-//     const res = await fetch("http://localhost:5000/user/admin/", { credentials: "include" });
-//     if (res.ok) {
-//       const data = await res.json();
-//       setAdmin(data.user);
-//       localStorage.setItem("saajAdmin", JSON.stringify(data.user));
-//     } else {
-//       setAdmin(null);
-//       localStorage.removeItem("saajAdmin");
-//     }
+//     if (user.role === "admin") router.replace = "/admin/auth";
 //   } catch (err) {
-//     console.error(err);
-//   }
-// }, []);
-
-// const logoutAdmin = async () => {
-//   try {
-//     await fetch("http://localhost:5000/user/adminlogout", { credentials: "include" });
-//     setAdmin(null);
-//     localStorage.removeItem("saajAdmin");
-//     window.location.href = "/admin/auth"; // redirect after logout
-//   } catch (error) {
-//     console.error("Logout failed:", error);
+//     console.error("Logout failed:", err);
 //   }
 // };
+
+
+
+ const logoutUser = async () => {
+    try {
+      await fetch("http://localhost:5000/user/userlogout", { credentials: "include" });
+      setUser(null);
+      localStorage.removeItem("saajUser");
+      router.refresh();
+    } catch (err) {
+      console.error("User logout failed", err);
+    }
+  };
+
+
+
+ const fetchAdmin = useCallback(async () => {
+    try {
+      const res = await fetch("http://localhost:5000/user/admin", { credentials: "include" });
+      const data = await res.json();
+      if (res.ok) {
+        setAdmin(data.user);
+        // localStorage.setItem("saajAdmin", JSON.stringify(data.user));
+      } else {
+        setAdmin(null);
+        localStorage.removeItem("saajAdmin");
+      localStorage.removeItem("saajAdminToken");
+
+      }
+    } catch (err) {
+      setAdmin(null);
+      localStorage.removeItem("saajAdmin");
+      localStorage.removeItem("saajAdminToken");
+
+      
+    }
+  }, []);
+
+  const logoutAdmin = async () => {
+    try {
+      await fetch("http://localhost:5000/user/adminlogout", { credentials: "include" });
+      setAdmin(null);
+      localStorage.removeItem("saajAdmin");
+      router.replace("/admin/auth");
+    } catch (err) {
+      console.error("Admin logout failed", err);
+    }
+  };
 
 
 
@@ -155,19 +170,21 @@ const isLoggedIn = !!user;
   const addToCart = async (product) => {
   if (!user) {
     // Local cart for guest user
-    setCart((prevCart) => {
-      const exists = prevCart.find((item) => item._id === product._id);
-      if (exists) {
-        return prevCart.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prevCart, { ...product, quantity: 1 }];
-      }
-    });
-    return;
+    // setCart((prevCart) => {
+    //   const exists = prevCart.find((item) => item._id === product._id);
+    //   if (exists) {
+    //     return prevCart.map((item) =>
+    //       item._id === product._id
+    //         ? { ...item, quantity: item.quantity + 1 }
+    //         : item
+    //     );
+    //   } else {
+    //     return [...prevCart, { ...product, quantity: 1 }];
+    //   }
+    // });
+   setIsAuthOpen(true);
+   setAuthTab("login");
+   return;
   }
 
   // Logged-in user: Call backend
@@ -205,7 +222,9 @@ const isLoggedIn = !!user;
 
   const removeFromCart = async (productId) => {
   if (!user) {
-    setCart((prev) => prev.filter((item) => item._id !== productId));
+    // force login first
+    setIsAuthOpen(true);
+    setAuthTab("login");
     return;
   }
 
@@ -232,11 +251,9 @@ const isLoggedIn = !!user;
 
   const updateQty = async (productId, qty) => {
   if (!user) {
-    setCart((prev) =>
-      prev.map((item) =>
-        item._id === productId ? { ...item, quantity: qty } : item
-      )
-    );
+    // force login first
+    setIsAuthOpen(true);
+    setAuthTab("login");
     return;
   }
 
@@ -367,16 +384,17 @@ const isLoggedIn = !!user;
 
   // Initial fetch
   useEffect(() => {
-     const savedUser = localStorage.getItem("saajUser");
-  if (savedUser) {
-    try {
-      const parsedUser = JSON.parse(savedUser);
-      setUser(parsedUser);
-    } catch (err) {
-      console.error("Failed to parse stored user:", err);
-      localStorage.removeItem("saajUser");
+   const savedUser = localStorage.getItem("saajUser");
+    if (savedUser) setUser(JSON.parse(savedUser));
+
+    const savedAdmin = localStorage.getItem("saajAdmin");
+    if (savedAdmin) setAdmin(JSON.parse(savedAdmin));
+
+    if (window.location.pathname.startsWith("/admin")) {
+      fetchAdmin();
+    } else {
+      fetchUser();
     }
-  }
     (async () => {
       const cats = await fetchCategories();
       if (cats.length) await fetchSubCategories(cats);
@@ -394,9 +412,9 @@ const isLoggedIn = !!user;
     fetchAllProducts,
     fetchTags,
     fetchFeaturedProducts,
-    fetchUser
-  ]); // removed fetchProductsByCategory
-
+    fetchUser,
+    fetchAdmin
+  ]);
   return (
     <GlobalContext.Provider
       value={{
@@ -407,20 +425,23 @@ const isLoggedIn = !!user;
         productsByCategory,
         tags,
         cart,
+        wishlist,
         addToCart,
         removeFromCart,
         updateQty,
         isCartOpen,
         setIsCartOpen,
+        isWishlistOpen,
+        setIsWishlistOpen,
         isAuthOpen,
         setIsAuthOpen,
         authTab,
         setAuthTab, 
         user,
-        // admin,
+        admin,
         setUser,
-        // logoutUser,
-        logout,
+        logoutUser,
+        // logout,
         isLoggedIn,
         forgotPassword,
         resetPassword,
@@ -429,8 +450,8 @@ const isLoggedIn = !!user;
         refetchProductById: fetchProductById,
         refetchFeaturedProducts: fetchFeaturedProducts,
     refetchUser:fetchUser,
-  //  refetchAdmin: fetchAdmin,
-  //  logoutAdmin
+   refetchAdmin: fetchAdmin,
+   logoutAdmin
       }}
     >
       {children}

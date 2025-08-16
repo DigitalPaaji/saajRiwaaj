@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import { useGlobalContext } from "../context/GlobalContext";
 import { toast } from "react-toastify";
 function Account() {
-    const {user,  setIsAuthOpen,logout, refetchUser } = useGlobalContext()
+    const {user,  setIsAuthOpen,logoutUser, refetchUser } = useGlobalContext()
     useEffect(() => {
     refetchUser();
     }, [refetchUser]);
@@ -37,7 +37,7 @@ function Account() {
  <button
                   className=" mt-2 bg-red-500 text-white px-4 py-2 rounded"
                   onClick={async () => {
-                    await logout();
+                    await logoutUser();
                     toast.success("Logged out!");
                   } }
                 >

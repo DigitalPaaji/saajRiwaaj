@@ -31,7 +31,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
-  const {  user, refetchUser, isLoggedIn, setAuthTab, setIsAuthOpen, categories, subCategoriesMap, cart, addToCart, removeFromCart, updateQty, setIsCartOpen } = useGlobalContext();
+  const {  user, refetchUser, isLoggedIn, setAuthTab, setIsWishlistOpen, setIsAuthOpen, categories, subCategoriesMap, cart, addToCart, removeFromCart, updateQty, setIsCartOpen } = useGlobalContext();
     useEffect(() => {
     refetchUser();
     }, []);
@@ -124,7 +124,11 @@ const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
             <button className="hidden md:block p-2 text-stone-700 hover:text-[#B67032]">
               <Search className="w-5 h-5" />
             </button>
-            <button className="p-2 text-stone-700 hover:text-[#B67032]">
+            <button 
+             onClick={() => {
+              setIsWishlistOpen(true);
+            }}
+            className="p-2 text-stone-700 hover:text-[#B67032]">
               <Heart className="w-5 h-5" />
             </button>
             <button 

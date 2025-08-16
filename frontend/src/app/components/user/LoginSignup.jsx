@@ -33,7 +33,12 @@ export default function AuthSidebar() {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [timer]);
+     // when timer hits 0
+    if (timer === 0) {
+      setLinkSent(false);
+      setError("");          // <–– CLEAR ERROR
+    }
+    }, [timer]);
 
   const handleForgotPassword = async () => {
     if (timer > 0) return; // Block if still in cooldown
@@ -139,7 +144,7 @@ export default function AuthSidebar() {
   };
 
   const loginUser = async ({ email, password }) => {
-    const res = await fetch("http://localhost:5000/user/login", {
+    const res = await fetch("http://localhost:5000/user/loginUser", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

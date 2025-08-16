@@ -1,12 +1,10 @@
 "use client";
-
 import "../globals.css";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { GlobalProvider } from "../components/context/GlobalContext";
 import Sidebar from "../components/admin/Sidebar";
 import { ToastContainer } from "react-toastify";
-import {useGlobalContext} from '../components/context/GlobalContext'
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
@@ -38,7 +36,7 @@ export default function AdminLayout({ children }) {
 }
 
       // Store user in localStorage for quick access (optional)
-      localStorage.setItem("saajUser", JSON.stringify(data.user));
+      // localStorage.setItem("saajUser", JSON.stringify(data.user));
 
       setLoading(false);
     } catch (err) {
@@ -85,13 +83,15 @@ export default function AdminLayout({ children }) {
   return (
     <html lang="en">
       <body>
+          <GlobalProvider>
         <div className="relative flex h-screen bg-[#e0e0e0] transition-all duration-300 text-[#333] font-sans">
           <ToastContainer className="z-[999999]" />
           <Sidebar />
           <main className="flex-1 p-8 overflow-y-auto shadow-2xl">
-            <GlobalProvider>{children}</GlobalProvider>
+          {children}
           </main>
         </div>
+        </GlobalProvider>
       </body>
     </html>
   );
