@@ -17,11 +17,13 @@ import {
   ShieldCheck,
   ShoppingCart,
   CreditCard,
+  Heart,
 } from 'lucide-react';
+import { FaHeart } from 'react-icons/fa';
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const { refetchProductById, addToCart } = useGlobalContext();
+  const { refetchProductById, wishlist, addToWishlist, removeFromWishlist, addToCart } = useGlobalContext();
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
 // Add this above return in component
@@ -136,13 +138,35 @@ const handleMouseLeave = () => {
 <div className="w-full xl:w-1/2 flex flex-col gap-2  ">
 
   {/* Title */}
+ <div className="flex justify-between items-start">
+  {/* LEFT SIDE (name + category) */}
   <div>
-
-    <h1 className="text-2xl md:text-3xl font-serif  text-stone-900">{product.name}</h1>
-    <p className="lg:text-md text-stone-500 mt-2 capitalize ">
-      {product.category?.name} {product.subcategory?.name && `→ ${product.subcategory.name}`}
+    <h1 className="text-2xl md:text-3xl font-serif text-stone-900">
+      {product.name}
+    </h1>
+    <p className="lg:text-md text-stone-500 mt-2 capitalize">
+      {product.category?.name}{" "}
+      {product.subcategory?.name && `→ ${product.subcategory.name}`}
     </p>
   </div>
+
+  {/* RIGHT SIDE (wishlist icon) */}
+<button
+  onClick={() =>
+    wishlist?.some((w) => w._id === product._id)
+      ? removeFromWishlist(product._id)
+      : addToWishlist(product._id)
+  }
+  className="cursor-pointer"
+>
+  {wishlist?.some((w) => w._id === product._id) ? (
+    <FaHeart className="w-5 h-5 text-red-500" /> // filled icon
+  ) : (
+    <Heart className="w-5 h-5 text-stone-700" /> // outline icon
+  )}
+</button>
+</div>
+
   {/* Tags */}
   {/* {product.tags?.length > 0 && (
     <div className="space-y-2">

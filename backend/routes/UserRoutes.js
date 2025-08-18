@@ -14,6 +14,7 @@ router.get('/admin', isAdmin, User.getAdmin)
 router.get('/',auth, User.getUser)
 router.post('/cart', auth, User.addToCart);
 router.post('/wishlist', auth, User.addToWishlist);
+router.delete('/wishlist/:productId', auth, User.removeFromWishlist);
 router.delete('/cart/:productId', auth, User.removeFromCart);
 router.put('/cart', auth, User.updateCartQuantity);
 router.get('/all', isAdmin, User.getAllUsers);

@@ -153,7 +153,7 @@ const TagsPage = () => {
               tags.map((tag, index) => (
                 <tr
                   key={tag._id}
-                  className="hover:bg-[#e2e2e2] transition border-b"
+                  className="hover:bg-[#f3f2f1] transition border-b"
                 >
                   <td className="px-4 py-3">{index + 1}</td>
                   <td className="px-4 py-3 capitalize">{tag.name}</td>

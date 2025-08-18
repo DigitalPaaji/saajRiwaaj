@@ -346,6 +346,8 @@ const addToWishlist = async (req, res) => {
       user.wishlist.push(productId);
       await user.save();
     }
+    await user.populate("wishlist");
+
     res
       .status(200)
       .json({ message: "Added to wishlist", wishlist: user.wishlist });
@@ -354,6 +356,30 @@ const addToWishlist = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// Remove from wishlist
+const removeFromWishlist = async (req, res) => {
+  const userId = req.user._id;
+  const { productId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    user.wishlist = user.wishlist.filter(
+      (item) => item.toString() !== productId
+    );
+    await user.save();
+ await user.populate("wishlist");
+    res.status(200).json({
+      message: "Removed from wishlist",
+      wishlist: user.wishlist,
+    });
+  } catch (err) {
+    console.error("Remove from wishlist error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 // Remove from cart
 const removeFromCart = async (req, res) => {
@@ -367,6 +393,7 @@ const removeFromCart = async (req, res) => {
     );
 
     await user.save();
+
     await user.populate("cart.product");
     res.status(200).json({ message: "Removed from cart", cart: user.cart });
   } catch (err) {
@@ -413,8 +440,9 @@ module.exports = {
   forgotPassword,
   resetPassword,
   checkTokenValidity,
-  addToCart,
   addToWishlist,
+  removeFromWishlist,
+  addToCart,
   removeFromCart,
   updateCartQuantity,
   logoutAdmin,

@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { UploadCloud, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'react-toastify';
 
 // IMPORTANT: Replace with your Cloudinary details
 const CLOUDINARY_CLOUD_NAME = "your_cloud_name";
@@ -14,7 +15,7 @@ export default function ImageUploader({ onUploadComplete, uploadedImages, onRemo
 
     const handleFiles = useCallback(async (files) => {
         if (uploadedImages.length + files.length > maxFiles) {
-            alert(`You can only upload a maximum of ${maxFiles} files.`);
+            toast.error(`You can only upload a maximum of ${maxFiles} files.`);
             return;
         }
 
@@ -36,7 +37,7 @@ export default function ImageUploader({ onUploadComplete, uploadedImages, onRemo
             onUploadComplete(urls);
         } catch (error) {
             console.error("Image upload failed:", error);
-            alert("Image upload failed. Please check your Cloudinary settings and try again.");
+            toast.error("Image upload failed. Please check your Cloudinary settings and try again.");
         } finally {
             setIsUploading(false);
         }

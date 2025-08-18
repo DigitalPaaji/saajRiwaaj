@@ -31,7 +31,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
-  const {  user, refetchUser, isLoggedIn, setAuthTab, setIsWishlistOpen, setIsAuthOpen, categories, subCategoriesMap, cart, addToCart, removeFromCart, updateQty, setIsCartOpen } = useGlobalContext();
+  const {  user, refetchUser, isLoggedIn, wishlist, setAuthTab, setIsWishlistOpen, setIsAuthOpen, categories, subCategoriesMap, cart, setIsCartOpen } = useGlobalContext();
     useEffect(() => {
     refetchUser();
     }, []);
@@ -54,7 +54,7 @@ function formatCategoryLabel(name) {
     .join(' '); // e.g., saaj riwaaj → Saaj Riwaaj
 }
 
-const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   return (
     <header
       className="bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm "
@@ -128,25 +128,30 @@ const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
              onClick={() => {
               setIsWishlistOpen(true);
             }}
-            className="p-2 text-stone-700 hover:text-[#B67032]">
+            className="p-2 text-stone-700 hover:text-[#B67032] relative">
               <Heart className="w-5 h-5" />
+              {wishlist.length > 0 && (
+        <span className="absolute -top-1 -right-1 bg-[#b67032de] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          {wishlist.length}
+        </span>
+      )}
             </button>
             <button 
             onClick={() => {
               setAuthTab("login"); // or signup
               setIsAuthOpen(true);
             }}
-            className='p-2 text-stone-700 hover:text-[#B67032]'>
-              {isLoggedIn? (<span className="w-8 h-8 flex items-center justify-center bg-[#4d4c4b] text-white rounded-full font-semibold">{user?.name?.substr(0,1).toUpperCase()}</span>) : ( <User className="w-5 h-5" />)}
+            className='p-2 text-stone-700 hover:text-[#B67032] '>
+              {isLoggedIn? (<span className="w-8 h-8 flex items-center justify-center bg-[#77481f] text-white rounded-full font-semibold">{user?.name?.substr(0,1).toUpperCase()}</span>) : ( <User className="w-5 h-5" />)}
             </button>
               <button
       onClick={() => setIsCartOpen(true)}
       className="p-2 text-stone-700 hover:text-[#B67032] relative"
     >
       <ShoppingBag className="w-5 h-5" />
-      {itemCount > 0 && (
-        <span className="absolute -top-1 -right-1 bg-[#B67032] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-          {itemCount}
+      {cartItemCount > 0 && (
+        <span className="absolute -top-1 -right-1 bg-[#b67032de] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          {cartItemCount}
         </span>
       )}
     </button>

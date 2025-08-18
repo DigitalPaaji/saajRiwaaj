@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { FaRupeeSign } from 'react-icons/fa';
 
 export default function Collection({ Pid, filters = { subCategories: [], tags: [], prices: [] } }) {
-  const { subCategoriesMap, refetchProductsByCategory } = useGlobalContext();
+  const { addToCart, refetchProductsByCategory } = useGlobalContext();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -113,7 +113,7 @@ export default function Collection({ Pid, filters = { subCategories: [], tags: [
                       <FaRupeeSign size={14} /> {product.finalPrice}
                     </h3>
                   </div>
-                  <button className="py-2 w-full cursor-pointer bg-[#B67032] rounded-lg text-white font-semibold mt-4">
+                  <button onClick={() => addToCart(product)}  className="py-2 w-full cursor-pointer bg-[#B67032] rounded-lg text-white font-semibold mt-4">
                     Add To Cart
                   </button>
                 </Link>

@@ -1,10 +1,11 @@
 "use client";
-import { X } from "lucide-react";
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from "../../components/context/GlobalContext";
 import { toast } from "react-toastify";
+import PopupModal from "@/app/components/admin/ConfirmPopup";
 function Account() {
     const {admin,logoutAdmin, refetchAdmin } = useGlobalContext()
+    const [showLogoutPopup, setShowLogoutPopup] = useState(false);
     useEffect(() => {
     refetchAdmin();
     }, [refetchAdmin]);
@@ -32,15 +33,27 @@ function Account() {
 <div className="w-full text-right ">
  <button
                   className=" mt-2 bg-red-500 text-white px-4 py-2 rounded"
-                  onClick={async () => {
-                    await logoutAdmin();
-                    toast.success("Logged out!");
-                  } }
+                   onClick={() => setShowLogoutPopup(true)}
                 >
                   Logout
                 </button>
 </div>
-
+   {/* Logout confirmation popup */}
+      {showLogoutPopup && (
+        <PopupModal
+          title="Are you sure you want to logout?"
+          onCancel={() => setShowLogoutPopup(false)}
+          onConfirm={async () => {
+            setShowLogoutPopup(false);
+            await logoutAdmin();
+            toast.success("Logged out!");
+          }}
+          confirmText="Logout"
+          cancelText="Cancel"
+          type="delete"
+          showCancel
+        />
+      )}
       </div>
   )
 }

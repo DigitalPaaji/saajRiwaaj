@@ -13,6 +13,7 @@ import {
   User,
   LogOut,
 } from 'lucide-react'
+import PopupModal from './ConfirmPopup'
 
 const navItems = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -24,6 +25,8 @@ const navItems = [
   { name: 'banner', href: '/admin/banner', icon: PlusSquare },
   { name: 'users', href: '/admin/users', icon: PlusSquare },
   { name: 'Account', href: '/admin/account', icon: User },
+  { name: 'Coupon', href: '/admin/coupon', icon: User },
+
 
 
 
@@ -33,6 +36,7 @@ function Sidebar() {
     const pathname = usePathname()
     const [collapsed, setCollapsed] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [showLogoutPopup, setShowLogoutPopup] = useState(false);
     
     useEffect(() => {
       const handleResize = () => {
@@ -53,7 +57,7 @@ function Sidebar() {
     ${collapsed ? 'w-20' : 'w-64'} 
     transition-all duration-300 
     px-4 py-8 flex shadow-md flex-col justify-between 
-    bg-[#e0e0e0]  
+    bg-[#faf8f8]  
     ${isMobile && !collapsed ? 'absolute' : ''}
   `}
 >
@@ -84,11 +88,11 @@ function Sidebar() {
               setCollapsed(true)}
              }}
             href={item.href}
-            className={`flex items-center gap-3 capitalize px-4 py-3 rounded-xl text-sm transition-all
+            className={`flex items-center gap-3 capitalize px-4 py-3 rounded-lg text-sm transition-all
               ${
                 active
-                  ? 'bg-[#d1d1d1] text-black'
-                  : 'neumorphic-btn hover:bg-[#d6d6d6]'
+                  ? 'bg-[#f3f2f1] text-black'
+                  : 'neumorphic-btn hover:bg-[#f3f2f1]'
               }`}
           >
             <Icon size={18} />
@@ -101,12 +105,29 @@ function Sidebar() {
 
   {/* Bottom Section */}
   <div>
-    <button onClick={logoutAdmin} className="neumorphic-btn cursor-pointer flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm text-red-500 hover:text-red-700 transition">
-      <LogOut size={18} />
-      {!collapsed && 'Logout'}
-    </button>
+   <button
+    onClick={() => setShowLogoutPopup(true)}
+    className="neumorphic-btn cursor-pointer flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm text-red-500 hover:text-red-700 transition"
+  >
+    <LogOut size={18} />
+    {!collapsed && "Logout"}
+  </button>
   </div>
-</aside></div>
+</aside>
+{showLogoutPopup && (
+  <PopupModal
+    title="Are you sure you want to logout?"
+    onCancel={() => setShowLogoutPopup(false)}
+    onConfirm={() => {
+      setShowLogoutPopup(false);
+      logoutAdmin();
+    }}
+    confirmText="Logout"
+    cancelText="Cancel"
+    type="delete"
+  />
+)}
+</div>
   )
 }
 

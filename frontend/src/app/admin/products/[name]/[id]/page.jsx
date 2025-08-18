@@ -303,14 +303,14 @@ export default function AddProductPage() {
       const results = await Promise.all(uploadPromises);
       onComplete(results.map((r) => r.secure_url).filter(Boolean));
     } catch (error) {
-      alert("Image upload failed. Please check credentials and try again.");
+      toast.error("Image upload failed. Please check credentials and try again.");
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   const handleAddVariant = () => {
-    if (!variant.colorName) return alert("Please enter a color name.");
+    if (!variant.colorName) return toast.warning("Please enter a color name.");
     setProduct((prev) => ({
       ...prev,
       colorVariants: [...prev.colorVariants, variant],

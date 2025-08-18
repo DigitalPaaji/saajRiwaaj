@@ -84,7 +84,7 @@ export default function AdminLayout({ children }) {
     <html lang="en">
       <body>
           <GlobalProvider>
-        <div className="relative flex h-screen bg-[#e0e0e0] transition-all duration-300 text-[#333] font-sans">
+        <div className="relative flex h-screen bg-[#faf8f8] transition-all duration-300 text-[#333] font-sans">
           <ToastContainer className="z-[999999]" />
           <Sidebar />
           <main className="flex-1 p-8 overflow-y-auto shadow-2xl">

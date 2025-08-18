@@ -69,6 +69,19 @@ const resetPassword = async (token, password) => {
         const data = await res.json();
         setUser(data.user);
         // localStorage.setItem("saajUser", JSON.stringify(data.user));
+      
+      if (data.user?.cart) {
+        const formattedCart = data.user.cart.map((item) => ({
+          ...item.product,
+          quantity: item.quantity,
+        }));
+        setCart(formattedCart);
+      }
+      if (data.user?.wishlist) {
+        setWishlist(data.user.wishlist);
+      }
+      
+      
       } else {
         setUser(null);
         localStorage.removeItem("saajUser");
@@ -83,37 +96,6 @@ const resetPassword = async (token, password) => {
 
     }
   }, []);
-
-// const fetchUser = useCallback(async () => {
-//   try {
-//     const res = await fetch("http://localhost:5000/user/", { credentials: "include" });
-//     if (res.ok) {
-//       const data = await res.json();
-//       setUser(data.user);
-//       localStorage.setItem("saajUser", JSON.stringify(data.user));
-//     } else {
-//       setUser(null);
-//       localStorage.removeItem("saajUser");
-//     }
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }, []);
-
-
-// const logout = async () => {
-//   if (!user) return;
-//   const route = user.role === "admin" ? "adminlogout" : "userlogout";
-//   try {
-//     await fetch(`http://localhost:5000/user/${route}`, { credentials: "include" });
-//     setUser(null);
-//     localStorage.removeItem("saajUser");
-//     if (user.role === "admin") router.replace = "/admin/auth";
-//   } catch (err) {
-//     console.error("Logout failed:", err);
-//   }
-// };
-
 
 
  const logoutUser = async () => {
@@ -167,6 +149,66 @@ const resetPassword = async (token, password) => {
 
 const isLoggedIn = !!user;
 
+// Inside your component
+const addToWishlist = async (productId) => {
+  if (!user) {
+    setIsAuthOpen(true);
+    setAuthTab("login");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/user/wishlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ productId }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setWishlist(data.wishlist);
+    } else {
+      console.error("Failed to add to wishlist");
+    }
+  } catch (err) {
+    console.error("Add to wishlist error:", err);
+  }
+};
+
+
+
+
+const removeFromWishlist = async (productId) => {
+  if (!user) {
+    setIsWishlistOpen(true);
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `http://localhost:5000/user/wishlist/${productId}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      }
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      setWishlist(data.wishlist);
+    } else {
+      console.error("Failed to remove from wishlist");
+    }
+  } catch (err) {
+    console.error("Remove from wishlist error:", err);
+  }
+};
+
+
+
   const addToCart = async (product) => {
   if (!user) {
     // Local cart for guest user
@@ -216,8 +258,6 @@ const isLoggedIn = !!user;
     console.error("Add to cart error:", err);
   }
 };
-
-
 
 
   const removeFromCart = async (productId) => {
@@ -433,6 +473,8 @@ const isLoggedIn = !!user;
         setIsCartOpen,
         isWishlistOpen,
         setIsWishlistOpen,
+        addToWishlist,
+        removeFromWishlist,
         isAuthOpen,
         setIsAuthOpen,
         authTab,

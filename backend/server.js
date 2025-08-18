@@ -9,7 +9,8 @@ const Categories = require('./routes/CategoryRoutes')
 const SubCategories = require('./routes/SubCategoryRoute')
 const bannerRoutes = require('./routes/BannerRoute')
 const userRoutes = require('./routes/UserRoutes')
-
+const couponRoutes = require('./routes/CouponRoutes')
+const orderRoutes = require('./routes/OrderRoutes')
 
 
 const app = express()
@@ -33,6 +34,9 @@ app.use('/category',Categories)
 app.use('/subcategory',SubCategories)
 app.use('/banner', bannerRoutes); 
 app.use('/user',userRoutes)
+app.use('/coupon',couponRoutes)
+app.use('/order',orderRoutes);
+
 
 
 

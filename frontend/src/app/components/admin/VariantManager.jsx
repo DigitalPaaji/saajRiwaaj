@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, X, Image as ImageIcon } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import ImageUploader from './ImageUploader';
+import { toast } from 'react-toastify';
 
 const VariantChip = ({ variant, onRemove }) => (
     <div className="bg-gray-100 rounded-lg p-2 flex items-center justify-between text-sm">
@@ -32,7 +33,7 @@ export default function VariantManager({ variants, setVariants }) {
 
     const handleAddVariant = () => {
         if (!colorName) {
-            alert('Please enter a color name.');
+            toast.warning('Please enter a color name.');
             return;
         }
         setVariants([...variants, { colorName, quantity, images: variantImages }]);

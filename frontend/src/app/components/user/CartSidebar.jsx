@@ -3,23 +3,36 @@ import { useGlobalContext } from "../context/GlobalContext";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { React, useState } from "react";
+import { toast } from "react-toastify";
+import CheckoutSidebar from "./CheckoutSidebar";
 
 export default function CartSidebar() {
   const { isCartOpen, setIsCartOpen, cart, removeFromCart, updateQty } = useGlobalContext();
 const [coupon, setCoupon] = useState("");
 const [appliedCoupon, setAppliedCoupon] = useState("");
 const [discountPercent, setDiscountPercent] = useState(0);
-const handleApplyCoupon = () => {
-  const code = coupon.trim().toUpperCase();
-  if (code === "SUMMER25") {
-    setAppliedCoupon(code);
-    setDiscountPercent(25);
-  } else {
-    setAppliedCoupon("");
-    setDiscountPercent(0);
-    alert("Invalid coupon code");
+const [showCheckout, setShowCheckout] = useState(false);
+const handleApplyCoupon = async () => {
+  const code = coupon.trim();
+  if (!code) return;
+
+  try {
+    const res = await fetch(`http://localhost:5000/coupon/${code}`);
+    const data = await res.json();
+
+    if (res.ok && data.valid) {
+      setAppliedCoupon(code);
+      setDiscountPercent(data.discountPercent);
+    } else {
+      setAppliedCoupon("");
+      setDiscountPercent(0);
+      toast.error(data.message || "Invalid coupon code");
+    }
+  } catch (err) {
+    toast.error("Failed to validate coupon");
   }
 };
+
 
   const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
@@ -42,7 +55,7 @@ const handleApplyCoupon = () => {
 
 
 
-      <div className="flex justify-between items-center px-4 py-6 border-b">
+      <div className="flex justify-between items-center px-4 py-6 border-b border-[#4b4b4b]">
         <h2 className="text-xl font-semibold">Cart</h2>
         <button className="cursor-pointer" onClick={() => setIsCartOpen(false)}>
           <X className="w-5 h-5" />
@@ -71,7 +84,7 @@ const handleApplyCoupon = () => {
                   alt={item.name}
                   width={400}
                   height={400}
-                  className="w-32 h-32 rounded-md object-cover"
+                  className="w-24 h-24 rounded-md object-cover"
                 />
                 <div className="flex-1 space-y-2">
                   <p className="  ">{item.name}</p>
@@ -95,21 +108,21 @@ const handleApplyCoupon = () => {
                   </div>
                 </div>
                 <button onClick={() => removeFromCart(item._id)} className="cursor-pointer">
-                  <X className="w-5 h-5 text-red-500" />
+                  <X className="w-4 h-4 text-red-500" />
                 </button>
               </div>
             ))}
           </div>
 
-     <div className="p-4 border-t space-y-4">
+     <div className="p-4   space-y-4">
   {/* Coupon Input */}
   <div className="flex gap-2">
     <input
       type="text"
       placeholder="Enter coupon"
       value={coupon}
-      onChange={(e) => setCoupon(e.target.value)}
-      className="flex-1 border-b  text-md  outline-none"
+      onChange={(e) => setCoupon(e.target.value.toUpperCase())}
+      className="flex-1 border-b border-[#4b4b4b]   text-md  outline-none"
     />
     <button
       onClick={handleApplyCoupon}
@@ -141,8 +154,10 @@ const handleApplyCoupon = () => {
     </div>
   </div>
 
-  <button className="w-full bg-[#B67032] text-white py-2 mt-4 rounded-md">
-    Checkout
+  <button
+  onClick={() => setShowCheckout(true)}
+  className="w-full bg-[#B67032] text-white py-2 mt-4 rounded-md">
+    Place Order
   </button>
 
 
@@ -158,7 +173,17 @@ const handleApplyCoupon = () => {
 
         </div>
       )}
+
+
     </div>
+
+    <CheckoutSidebar
+  isOpen={showCheckout}
+  setIsOpen={setShowCheckout}
+  cart={cart}
+  total={total}
+  discountPercent={discountPercent}
+/>
        </>
   );
 }

@@ -6,9 +6,10 @@ import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { useGlobalContext } from "../context/GlobalContext";
+import { Heart } from "lucide-react";
 
 export default function EarringsMarquee() {
-  const { subCategoriesMap, refetchProductsByCategory } = useGlobalContext();
+  const { subCategoriesMap, wishlist, refetchProductsByCategory } = useGlobalContext();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -124,9 +125,18 @@ export default function EarringsMarquee() {
                       </div>
                     </div>
                     <div className="p-4 flex flex-col justify-between">
-                      <h4 className="font-semibold text-stone-800 group-hover:text-[#B67032] transition-colors text-md truncate">
+                     <div className="flex items-center justify-between">
+                        <h4 className="font-semibold text-stone-800 group-hover:text-[#B67032] transition-colors text-md truncate">
                         {item.name}
                       </h4>
+                      
+              <Heart className={`w-5 h-5 ${
+    wishlist?.includes(item._id) ? "text-red-500" : "text-stone-700"
+  }`}
+ />
+
+                      </div>
+                     
                       {item.description?.paragraphs?.[0] && (
                         <p className="text-sm text-stone-600 mt-1 line-clamp-2">
                           {item.description.paragraphs[0]

@@ -1,11 +1,11 @@
 "use client";
 import { useGlobalContext } from "../context/GlobalContext";
-import { X } from "lucide-react";
+import { Heart, ShoppingCart, X } from "lucide-react";
 import Image from "next/image";
 import { React } from "react";
 
 export default function CartSidebar() {
-  const { isWishlistOpen, setIsWishlistOpen, wishlist, removeFromCart, updateQty } = useGlobalContext();
+  const { isWishlistOpen, setIsWishlistOpen, addToCart, wishlist, removeFromWishlist } = useGlobalContext();
 
   return (
     <>
@@ -55,42 +55,44 @@ export default function CartSidebar() {
                   alt={item.name}
                   width={400}
                   height={400}
-                  className="w-32 h-32 rounded-md object-cover"
+                  className="w-24 h-24 rounded-md object-cover"
                 />
                 <div className="flex-1 space-y-2">
-                  <p className="  ">{item.name}</p>
-                  <p className="">₹{item.price}</p>
-                  <div className="flex items-center gap-2 ">
-                    <button
-                      className="cursor-pointer px-2 text-md bg-gray-100"
-                      onClick={() =>
-                        updateQty(item._id, Math.max(1, item.quantity - 1))
-                      }
-                    >
-                      -
-                    </button>
-                    <span>{item.quantity}</span>
-                    <button
-                      className="cursor-pointer px-2 bg-gray-100"
-                      onClick={() => updateQty(item._id, item.quantity + 1)}
-                    >
-                      +
-                    </button>
-                  </div>
+                  <p className=" ">{item.name}</p>
+                 
+                 
+                <div className="flex flex-col gap-1">
+    <div className="flex items-end gap-3">
+      <span className=" tracking-wide">₹{item.finalPrice}</span>
+      {item.discount > 0 && (
+        <>
+          <span className="line-through text-stone-600 ">₹{item.price}</span>
+        </>
+      )}
+    </div>
+
+    {/* <span className="lg:text-md text-stone-500">({item.discount}% OFF)</span> */}
+  </div>
+
+     <button onClick={() => addToCart(item)} className="cursor-pointer w-full flex items-center justify-center gap-2 bg-[#B67032] text-white px-4 py-2 rounded hover:bg-[#a95c2e] transition text-sm font-medium tracking-wide">
+      <ShoppingCart className="w-4 h-4" />
+      Add to Cart
+    </button>
                 </div>
-                <button onClick={() => removeFromCart(item._id)} className="cursor-pointer">
-                  <X className="w-5 h-5 text-red-500" />
+                <button onClick={() => removeFromWishlist(item._id)} className="cursor-pointer">
+                  
+                  <X className="w-4 h-4 text-red-500" />
                 </button>
               </div>
             ))}
           </div>
 
-     <div className="p-4 border-t space-y-4">
+     <div className="p-4  space-y-4">
   <button
     onClick={() => setIsWishlistOpen(false)}
     className="text-center text-md text-[#B67032] underline mt-3 w-full"
   >
-    Continue Shopping
+    Explore More
   </button>
 </div>
 
