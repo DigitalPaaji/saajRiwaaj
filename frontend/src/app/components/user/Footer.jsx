@@ -46,9 +46,9 @@ function formatCategoryLabel(name) {
             <ul className=" text-stone-200">
               <li><Link href={"About"} className="hover:text-[#B67032]">
 Delivery Information</Link></li>
-              <li><Link href={"Careers"} className="hover:text-[#B67032]">Return & Exchange</Link></li>
-              <li><Link href={"Press"} className="hover:text-[#B67032]">Privacy Policy</Link></li>
-              <li><Link href={"Press"} className="hover:text-[#B67032]">Terms & Conditions</Link></li>
+              <li><Link href={"refund-policy"} className="hover:text-[#B67032]">Return/Refund Policy</Link></li>
+              <li><Link href={"privacy-policy"} className="hover:text-[#B67032]">Privacy Policy</Link></li>
+              <li><Link href={"terms-and-conditions"} className="hover:text-[#B67032]">Terms & Conditions</Link></li>
 
             </ul>
           </div>
