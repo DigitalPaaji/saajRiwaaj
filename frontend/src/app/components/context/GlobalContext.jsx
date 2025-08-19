@@ -64,7 +64,7 @@ const resetPassword = async (token, password) => {
 
 //  const fetchUser = useCallback(async () => {
 //     try {
-//       const res = await fetch("https://saajriwaaj.onrender.com/user/", { credentials: "include" });
+//       const res = await fetch("https://saajriwaaj.onrender.com/user", { credentials: "include" });
 //       if (res.ok) {
 //         const data = await res.json();
 //         setUser(data.user);
@@ -101,20 +101,23 @@ const resetPassword = async (token, password) => {
 
 const fetchUser = useCallback(async () => {
   try {
+    // hit your backend
     const res = await fetch("https://saajriwaaj.onrender.com/user", {
       credentials: "include",
     });
 
-    // If not logged in simply return silently
     if (!res.ok) {
+      // not logged in or cookie expired
       setUser(null);
       setCart([]);
       setWishlist([]);
+      localStorage.removeItem("saajUser");
       return;
     }
 
     const data = await res.json();
     setUser(data.user);
+    localStorage.setItem("saajUser", JSON.stringify(data.user));
 
     if (data.user?.cart) {
       const formattedCart = data.user.cart.map((item) => ({
@@ -131,13 +134,59 @@ const fetchUser = useCallback(async () => {
     } else {
       setWishlist([]);
     }
+
   } catch (err) {
-    // no console errors, just fail silently
+    // fail silently for guest users
     setUser(null);
     setCart([]);
     setWishlist([]);
+    localStorage.removeItem("saajUser");
   }
 }, []);
+
+
+
+
+
+// const fetchUser = useCallback(async () => {
+//   try {
+//     const res = await fetch("https://saajriwaaj.onrender.com/user", {
+//       credentials: "include",
+//     });
+
+//     // If not logged in simply return silently
+//     if (!res.ok) {
+//       setUser(null);
+//       setCart([]);
+//       setWishlist([]);
+//       return;
+//     }
+
+//     const data = await res.json();
+//     setUser(data.user);
+
+//     if (data.user?.cart) {
+//       const formattedCart = data.user.cart.map((item) => ({
+//         ...item.product,
+//         quantity: item.quantity,
+//       }));
+//       setCart(formattedCart);
+//     } else {
+//       setCart([]);
+//     }
+
+//     if (data.user?.wishlist) {
+//       setWishlist(data.user.wishlist);
+//     } else {
+//       setWishlist([]);
+//     }
+//   } catch (err) {
+//     // no console errors, just fail silently
+//     setUser(null);
+//     setCart([]);
+//     setWishlist([]);
+//   }
+// }, []);
 
 
  const logoutUser = async () => {
@@ -467,26 +516,25 @@ const removeFromWishlist = async (productId) => {
   // Initial fetch
   useEffect(() => {
    const savedUser = localStorage.getItem("saajUser");
-    if (savedUser) setUser(JSON.parse(savedUser));
-
     const savedAdmin = localStorage.getItem("saajAdmin");
+
+    if (savedUser) setUser(JSON.parse(savedUser));
     if (savedAdmin) setAdmin(JSON.parse(savedAdmin));
 
-    if (window.location.pathname.startsWith("/admin")) {
-      fetchAdmin();
-    } else {
-      fetchUser();
-    }
+  if (savedUser) {
+    fetchUser();
+  }
+
+  if (window.location.pathname.startsWith("/admin") && savedAdmin) {
+    fetchAdmin();
+  }
     (async () => {
       const cats = await fetchCategories();
       if (cats.length) await fetchSubCategories(cats);
       await fetchAllProducts();
       await fetchFeaturedProducts();
       await fetchTags();
-      await fetchUser()
-        if (window.location.pathname.startsWith("/admin")) {
-      // await fetchAdmin();
-    }
+     
     })();
   }, [
     fetchCategories,

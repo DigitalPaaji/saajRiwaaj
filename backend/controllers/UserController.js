@@ -68,8 +68,8 @@ const loginUser = async (req, res) => {
     res.status(200)
       .cookie("userToken", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        secure: "true",
+        sameSite: "None",
         maxAge: 24 * 60 * 60 * 1000,
       })
       .json({
@@ -108,8 +108,8 @@ const loginAdmin = async (req, res) => {
     res.status(200)
       .cookie("adminToken", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        secure: "true",
+        sameSite: "None",
         maxAge: 24 * 60 * 60 * 1000,
       })
       .json({

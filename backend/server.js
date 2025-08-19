@@ -15,7 +15,8 @@ const orderRoutes = require('./routes/OrderRoutes')
 
 const app = express()
 app.use(cors({
-    origin:'*',
+    origin:['http://localhost:3000',
+    'https://06mrhscn-3000.inc1.devtunnels.ms/'],
     credentials:true,
 }))
 app.use(express.json())
