@@ -62,40 +62,82 @@ const resetPassword = async (token, password) => {
 
 
 
- const fetchUser = useCallback(async () => {
-    try {
-      const res = await fetch("https://saajriwaaj.onrender.com/user/", { credentials: "include" });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-        // localStorage.setItem("saajUser", JSON.stringify(data.user));
+//  const fetchUser = useCallback(async () => {
+//     try {
+//       const res = await fetch("https://saajriwaaj.onrender.com/user/", { credentials: "include" });
+//       if (res.ok) {
+//         const data = await res.json();
+//         setUser(data.user);
+//         // localStorage.setItem("saajUser", JSON.stringify(data.user));
       
-      if (data.user?.cart) {
-        const formattedCart = data.user.cart.map((item) => ({
-          ...item.product,
-          quantity: item.quantity,
-        }));
-        setCart(formattedCart);
-      }
-      if (data.user?.wishlist) {
-        setWishlist(data.user.wishlist);
-      }
+//       if (data.user?.cart) {
+//         const formattedCart = data.user.cart.map((item) => ({
+//           ...item.product,
+//           quantity: item.quantity,
+//         }));
+//         setCart(formattedCart);
+//       }
+//       if (data.user?.wishlist) {
+//         setWishlist(data.user.wishlist);
+//       }
       
       
-      } else {
-        setUser(null);
-        localStorage.removeItem("saajUser");
-        localStorage.removeItem("saajToken");
+//       } else {
+//         setUser(null);
+//         localStorage.removeItem("saajUser");
+//         localStorage.removeItem("saajToken");
 
-      }
-    } catch (err) {
-      console.error(err);
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       setUser(null);
+//       localStorage.removeItem("saajUser");
+//       localStorage.removeItem("saajToken");
+
+//     }
+//   }, []);
+
+
+
+const fetchUser = useCallback(async () => {
+  try {
+    const res = await fetch("https://saajriwaaj.onrender.com/user", {
+      credentials: "include",
+    });
+
+    // If not logged in simply return silently
+    if (!res.ok) {
       setUser(null);
-      localStorage.removeItem("saajUser");
-      localStorage.removeItem("saajToken");
-
+      setCart([]);
+      setWishlist([]);
+      return;
     }
-  }, []);
+
+    const data = await res.json();
+    setUser(data.user);
+
+    if (data.user?.cart) {
+      const formattedCart = data.user.cart.map((item) => ({
+        ...item.product,
+        quantity: item.quantity,
+      }));
+      setCart(formattedCart);
+    } else {
+      setCart([]);
+    }
+
+    if (data.user?.wishlist) {
+      setWishlist(data.user.wishlist);
+    } else {
+      setWishlist([]);
+    }
+  } catch (err) {
+    // no console errors, just fail silently
+    setUser(null);
+    setCart([]);
+    setWishlist([]);
+  }
+}, []);
 
 
  const logoutUser = async () => {
