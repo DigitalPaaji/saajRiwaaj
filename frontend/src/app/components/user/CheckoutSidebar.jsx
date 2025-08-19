@@ -63,14 +63,14 @@ export default function CheckoutSidebar({ isOpen, setIsOpen, cart, total, discou
         </div>
 
         <div className="p-4 space-y-3 overflow-y-auto">
-          <input placeholder="Name" className="border p-2 w-full" value={address.name} onChange={(e) => setAddress({ ...address, name: e.target.value })} />
-          <input placeholder="Phone" className="border p-2 w-full" value={address.phone} onChange={(e) => setAddress({ ...address, phone: e.target.value })} />
-          <textarea placeholder="Full Address" className="border p-2 w-full" value={address.addressLine} onChange={(e) => setAddress({ ...address, addressLine: e.target.value })} />
-          <input placeholder="City" className="border p-2 w-full" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} />
-          <input placeholder="State" className="border p-2 w-full" value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} />
-          <input placeholder="Pincode" className="border p-2 w-full" value={address.pincode} onChange={(e) => setAddress({ ...address, pincode: e.target.value })} />
+          <input placeholder="Name" className="border-b p-2 w-full" value={address.name} onChange={(e) => setAddress({ ...address, name: e.target.value })} />
+          <input placeholder="Phone" className="border-b p-2 w-full" value={address.phone} onChange={(e) => setAddress({ ...address, phone: e.target.value })} />
+          <textarea placeholder="Full Address" className="border-b p-2 w-full" value={address.addressLine} onChange={(e) => setAddress({ ...address, addressLine: e.target.value })} />
+          <input placeholder="City" className="border-b p-2 w-full" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} />
+          <input placeholder="State" className="border-b p-2 w-full" value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} />
+          <input placeholder="Pincode" className="border-b p-2 w-full" value={address.pincode} onChange={(e) => setAddress({ ...address, pincode: e.target.value })} />
 
-          <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="border p-2 w-full">
+          <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="border-b p-2 w-full">
             <option value="COD">Cash On Delivery</option>
             <option value="ONLINE" disabled>Online Payment (coming soon)</option>
           </select>

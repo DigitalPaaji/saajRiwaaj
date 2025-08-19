@@ -27,6 +27,10 @@ app.get('/',(req,res)=>{
     res.send('Saaj Riwaaj Backend Running!')
 })
 
+app.get('/ping',(req,res)=>{
+    res.send('pong')
+})
+
 
 app.use('/product',Product) 
 app.use('/tag',Tags)
