@@ -30,7 +30,7 @@ export default function CheckoutSidebar({ isOpen, setIsOpen, cart, total, discou
           : total,
       };
 
-      const res = await fetch("http://localhost:5000/order", {
+      const res = await fetch("https://saajriwaaj.onrender.com/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

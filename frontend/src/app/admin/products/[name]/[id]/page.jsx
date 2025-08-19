@@ -166,7 +166,7 @@ export default function AddProductPage() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/category/");
+      const res = await fetch("https://saajriwaaj.onrender.com/category/");
       const data = await res.json();
       //   console.log(data)
       setCategories(data.cats || []);
@@ -178,7 +178,7 @@ export default function AddProductPage() {
   const fetchSubCategoriesByCategory = useCallback(async (categoryId) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/subcategory/category/${categoryId}`
+        `https://saajriwaaj.onrender.com/subcategory/category/${categoryId}`
       );
       const data = await res.json();
 
@@ -191,7 +191,7 @@ export default function AddProductPage() {
 
   const fetchTags = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/tag/");
+      const res = await fetch("https://saajriwaaj.onrender.com/tag/");
       const data = await res.json();
       //   console.log(data)
       setTags(data.tags || []);
@@ -213,7 +213,7 @@ export default function AddProductPage() {
   const fetchProducts = useCallback(async () => {
     try {
       // const res = await fetch(`${Apiurl}/products`);
-      const res = await fetch(`http://localhost:5000/product/id/${id}`);
+      const res = await fetch(`https://saajriwaaj.onrender.com/product/id/${id}`);
       const data = await res.json();
       setProduct(data);
       // console.log(data)
@@ -329,7 +329,7 @@ export default function AddProductPage() {
     e.preventDefault();
     setIsUpdating(true);
     try {
-      const response = await fetch(`http://localhost:5000/product/id/${id}`, {
+      const response = await fetch(`https://saajriwaaj.onrender.com/product/id/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

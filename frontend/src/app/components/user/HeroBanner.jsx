@@ -12,7 +12,7 @@ export default function HeroBanner() {
 
   const fetchBanners = useCallback(async () => {
     try {
-      const res = await fetch('http://localhost:5000/banner');
+      const res = await fetch('https://saajriwaaj.onrender.com/banner');
       const data = await res.json();
       setBanners(data);
     } catch (err) {

@@ -32,7 +32,7 @@ export const GlobalProvider = ({ children }) => {
 // Forgot Password (Not Logged In)
 const forgotPassword = async (email) => {
   try {
-    const res = await fetch("http://localhost:5000/user/forgot-password", {
+    const res = await fetch("https://saajriwaaj.onrender.com/user/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -47,7 +47,7 @@ const forgotPassword = async (email) => {
 // Reset Password (Logged In)
 const resetPassword = async (token, password) => {
   try {
-    const res = await fetch(`http://localhost:5000/user/reset-password/${token}`, {
+    const res = await fetch(`https://saajriwaaj.onrender.com/user/reset-password/${token}`, {
       method: "PUT",
    
       headers: { "Content-Type": "application/json" },
@@ -64,7 +64,7 @@ const resetPassword = async (token, password) => {
 
  const fetchUser = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/user/", { credentials: "include" });
+      const res = await fetch("https://saajriwaaj.onrender.com/user/", { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
@@ -100,7 +100,7 @@ const resetPassword = async (token, password) => {
 
  const logoutUser = async () => {
     try {
-      await fetch("http://localhost:5000/user/userlogout", { credentials: "include" });
+      await fetch("https://saajriwaaj.onrender.com/user/userlogout", { credentials: "include" });
       setUser(null);
       localStorage.removeItem("saajUser");
       router.refresh();
@@ -113,7 +113,7 @@ const resetPassword = async (token, password) => {
 
  const fetchAdmin = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/user/admin", { credentials: "include" });
+      const res = await fetch("https://saajriwaaj.onrender.com/user/admin", { credentials: "include" });
       const data = await res.json();
       if (res.ok) {
         setAdmin(data.user);
@@ -135,7 +135,7 @@ const resetPassword = async (token, password) => {
 
   const logoutAdmin = async () => {
     try {
-      await fetch("http://localhost:5000/user/adminlogout", { credentials: "include" });
+      await fetch("https://saajriwaaj.onrender.com/user/adminlogout", { credentials: "include" });
       setAdmin(null);
       localStorage.removeItem("saajAdmin");
       router.replace("/admin/auth");
@@ -158,7 +158,7 @@ const addToWishlist = async (productId) => {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/user/wishlist", {
+    const res = await fetch("https://saajriwaaj.onrender.com/user/wishlist", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -189,7 +189,7 @@ const removeFromWishlist = async (productId) => {
 
   try {
     const res = await fetch(
-      `http://localhost:5000/user/wishlist/${productId}`,
+      `https://saajriwaaj.onrender.com/user/wishlist/${productId}`,
       {
         method: "DELETE",
         credentials: "include",
@@ -231,7 +231,7 @@ const removeFromWishlist = async (productId) => {
 
   // Logged-in user: Call backend
   try {
-    const res = await fetch("http://localhost:5000/user/cart", {
+    const res = await fetch("https://saajriwaaj.onrender.com/user/cart", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -269,7 +269,7 @@ const removeFromWishlist = async (productId) => {
   }
 
   try {
-    const res = await fetch(`http://localhost:5000/user/cart/${productId}`, {
+    const res = await fetch(`https://saajriwaaj.onrender.com/user/cart/${productId}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -298,7 +298,7 @@ const removeFromWishlist = async (productId) => {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/user/cart", {
+    const res = await fetch("https://saajriwaaj.onrender.com/user/cart", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -326,7 +326,7 @@ const removeFromWishlist = async (productId) => {
 
   const fetchFeaturedProducts = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/product/featured");
+      const res = await fetch("https://saajriwaaj.onrender.com/product/featured");
       const data = await res.json();
       // console.log(data)
       setFeaturedProducts(Array.isArray(data) ? data : []);
@@ -338,7 +338,7 @@ const removeFromWishlist = async (productId) => {
 
   // Fetch categories
   const fetchCategories = useCallback(async () => {
-    const res = await fetch("http://localhost:5000/category/");
+    const res = await fetch("https://saajriwaaj.onrender.com/category/");
     const data = await res.json();
     setCategories(data.cats || []);
     return data.cats || [];
@@ -346,7 +346,7 @@ const removeFromWishlist = async (productId) => {
 
   // Fetch Tags
   const fetchTags = useCallback(async () => {
-    const res = await fetch("http://localhost:5000/tag/");
+    const res = await fetch("https://saajriwaaj.onrender.com/tag/");
     const data = await res.json();
     // console.log(data.tags)
     setTags(data.tags || []);
@@ -358,7 +358,7 @@ const removeFromWishlist = async (productId) => {
     const results = await Promise.all(
       cats.map(async (cat) => {
         const res = await fetch(
-          `http://localhost:5000/subcategory/category/${cat._id}`
+          `https://saajriwaaj.onrender.com/subcategory/category/${cat._id}`
         );
         const data = await res.json();
         return { [cat._id]: data };
@@ -372,7 +372,7 @@ const removeFromWishlist = async (productId) => {
   const fetchAllProducts = useCallback(async () => {
     try {
       // const res = await fetch(`${Apiurl}/products`);
-      const res = await fetch("http://localhost:5000/product/");
+      const res = await fetch("https://saajriwaaj.onrender.com/product/");
       const data = await res.json();
       // console.log(Object.keys(data.products).length)
 
@@ -394,7 +394,7 @@ const removeFromWishlist = async (productId) => {
   const fetchProductsByCategory = async (categoryId) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/product/category/${categoryId}`
+        `https://saajriwaaj.onrender.com/product/category/${categoryId}`
       );
       const data = await res.json();
       const shuffled = Array.isArray(data)
@@ -411,7 +411,7 @@ const removeFromWishlist = async (productId) => {
 
   const fetchProductById = useCallback(async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/product/id/${id}`);
+      const res = await fetch(`https://saajriwaaj.onrender.com/product/id/${id}`);
       if (!res.ok) throw new Error("Failed to fetch product");
 
       const data = await res.json();

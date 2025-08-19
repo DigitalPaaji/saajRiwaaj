@@ -16,7 +16,7 @@ const CouponPage = () => {
   // fetch all coupons
   const fetchCoupon = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/coupon",{
+      const res = await fetch("https://saajriwaaj.onrender.com/coupon",{
         credentials:'include'
       });
       const data = await res.json();
@@ -38,7 +38,7 @@ const CouponPage = () => {
       return toast.warn("Enter coupon code and discount percent");
     }
     try {
-      const res = await fetch("http://localhost:5000/coupon", {
+      const res = await fetch("https://saajriwaaj.onrender.com/coupon", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +65,7 @@ const CouponPage = () => {
   // delete coupon
   const confirmDeleteCoupon = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/coupon/${couponToDelete._id}`, {
+      const res = await fetch(`https://saajriwaaj.onrender.com/coupon/${couponToDelete._id}`, {
         method: "DELETE",
         credentials:'include'
       });

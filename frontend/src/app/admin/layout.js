@@ -13,7 +13,7 @@ export default function AdminLayout({ children }) {
 
   const checkAdminAuth = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/user/admin/", {
+      const res = await fetch("https://saajriwaaj.onrender.com/user/admin/", {
         credentials: "include", // send cookies
       });
 

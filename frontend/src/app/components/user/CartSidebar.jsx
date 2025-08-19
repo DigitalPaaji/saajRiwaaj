@@ -17,7 +17,7 @@ const handleApplyCoupon = async () => {
   if (!code) return;
 
   try {
-    const res = await fetch(`http://localhost:5000/coupon/${code}`);
+    const res = await fetch(`https://saajriwaaj.onrender.com/coupon/${code}`);
     const data = await res.json();
 
     if (res.ok && data.valid) {

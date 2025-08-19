@@ -41,7 +41,7 @@ const ProductsList = () => {
     }
     const deleteProduct = useCallback( async ()=>{
     try{
-      const res = await fetch(`http://localhost:5000/product/id/${IdToDelete}`,{
+      const res = await fetch(`https://saajriwaaj.onrender.com/product/id/${IdToDelete}`,{
         method:'DELETE',
       })
       if(res.ok){

@@ -15,7 +15,7 @@ const TagsPage = () => {
 
   const fetchTags = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/tag");
+      const res = await fetch("https://saajriwaaj.onrender.com/tag");
       const data = await res.json();
     //   console.log(data)
       setTags(data.tags || []);
@@ -35,7 +35,7 @@ const TagsPage = () => {
     if (!newTag.trim()) return toast.warn("Please enter a tag name.");
 
     try {
-      const res = await fetch("http://localhost:5000/tag/", {
+      const res = await fetch("https://saajriwaaj.onrender.com/tag/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newTag }),
@@ -57,7 +57,7 @@ const TagsPage = () => {
 
   const confirmDeleteTag = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/tag/${tagToDelete._id}`, {
+      const res = await fetch(`https://saajriwaaj.onrender.com/tag/${tagToDelete._id}`, {
         method: "DELETE",
       });
 

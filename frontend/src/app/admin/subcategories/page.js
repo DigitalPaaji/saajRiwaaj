@@ -17,7 +17,7 @@ const TagsPage = () => {
     const [selectedCategory, setSelectedCategory] = useState("");
          const fetchCategories = useCallback(async () => {
       try {
-        const res = await fetch("http://localhost:5000/category/");
+        const res = await fetch("https://saajriwaaj.onrender.com/category/");
         const data = await res.json();
       //   console.log(data)
         setCategories(data.cats || []);
@@ -27,7 +27,7 @@ const TagsPage = () => {
     }, []);
   const fetchTags = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:5000/subcategory/");
+      const res = await fetch("https://saajriwaaj.onrender.com/subcategory/");
       const data = await res.json();
       console.log(data)
       setTags(data.cats || []);
@@ -48,7 +48,7 @@ const TagsPage = () => {
    if (!selectedCategory) return toast.warn("Please select a category.");
 
     try {
-      const res = await fetch("http://localhost:5000/subcategory/", {
+      const res = await fetch("https://saajriwaaj.onrender.com/subcategory/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newTag, category: selectedCategory }),
@@ -75,7 +75,7 @@ const TagsPage = () => {
 
   const confirmDeleteTag = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/subcategory/${tagToDelete._id}`, {
+      const res = await fetch(`https://saajriwaaj.onrender.com/subcategory/${tagToDelete._id}`, {
         method: "DELETE",
       });
 
