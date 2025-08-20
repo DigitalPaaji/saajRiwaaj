@@ -5,6 +5,7 @@ import Image from "next/image";
 import { React, useState } from "react";
 import { toast } from "react-toastify";
 import CheckoutSidebar from "./CheckoutSidebar";
+import Link from "next/link";
 
 export default function CartSidebar() {
   const { isCartOpen, setIsCartOpen, cart, removeFromCart, updateQty } = useGlobalContext();
@@ -78,7 +79,7 @@ const handleApplyCoupon = async () => {
         <div className="flex flex-col justify-between h-full">
           <div className="p-4 space-y-4 overflow-y-auto flex-1">
             {cart.map((item) => (
-              <div key={item._id} className="flex items-start gap-4 text-md">
+              <Link href={`/product/${item.name}/${item._id}`} key={item._id} className="flex items-start gap-4 text-md">
                 <Image
                   src={item.images[0]}
                   alt={item.name}
@@ -110,7 +111,7 @@ const handleApplyCoupon = async () => {
                 <button onClick={() => removeFromCart(item._id)} className="cursor-pointer">
                   <X className="w-4 h-4 text-red-500" />
                 </button>
-              </div>
+              </Link>
             ))}
           </div>
 

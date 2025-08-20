@@ -1,11 +1,20 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
+import { useGlobalContext } from "../context/GlobalContext";
 
-export default function CheckoutSidebar({ isOpen, setIsOpen, cart, total, discountPercent }) {
+export default function CheckoutSidebar({
+  isOpen,
+  setIsOpen,
+  cart,
+  total,
+  discountPercent,
+}) {
+  const { user } = useGlobalContext(); // <-- Logged-in user Details ✔️
   const [address, setAddress] = useState({
     name: "",
+    email: "",
     phone: "",
     addressLine: "",
     city: "",
@@ -13,9 +22,22 @@ export default function CheckoutSidebar({ isOpen, setIsOpen, cart, total, discou
     pincode: "",
     country: "India",
   });
-  const [paymentMethod, setPaymentMethod] = useState("COD");
 
-  const handlePlaceOrder = async () => {
+  const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState(false);
+  useEffect(() => {
+    // autofill from logged-in user
+    if (user) {
+      setAddress((prev) => ({
+        ...prev,
+        name: user.name || "",
+        email: user.email || "",
+      }));
+    }
+  }, [user]);
+
+  const handleCOD = async () => {
     try {
       const payload = {
         items: cart.map((c) => ({
@@ -24,10 +46,11 @@ export default function CheckoutSidebar({ isOpen, setIsOpen, cart, total, discou
           price: c.price,
         })),
         shippingAddress: address,
-        paymentMethod,
-        amount: discountPercent > 0
-          ? Math.floor(total * (1 - discountPercent / 100))
-          : total,
+        paymentMethod: "COD",
+        amount:
+          discountPercent > 0
+            ? Math.floor(total * (1 - discountPercent / 100))
+            : total,
       };
 
       const res = await fetch("https://saajriwaaj.onrender.com/order", {
@@ -37,10 +60,8 @@ export default function CheckoutSidebar({ isOpen, setIsOpen, cart, total, discou
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-
       if (res.ok) {
-        toast.success("Order placed successfully!");
-        setIsOpen(false);
+        setSuccess(true); 
       } else {
         toast.error(data.message || "Failed to place order");
       }
@@ -49,65 +70,265 @@ export default function CheckoutSidebar({ isOpen, setIsOpen, cart, total, discou
     }
   };
 
+  const handlePayOnline = async () => {
+    try {
+      // 1. Create Razorpay order from backend
+      const amount =
+        discountPercent > 0
+          ? Math.floor(total * (1 - discountPercent / 100))
+          : total;
+
+      const res = await fetch(
+        "https://saajriwaaj.onrender.com/order/razorpay",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ amount }),
+        }
+      );
+      const data = await res.json();
+
+      if (!res.ok) return toast.error("Payment setup failed");
+
+      const options = {
+        key: "RAZORPAY_KEY", // <-- Replace with your Razorpay Key ID
+        amount: data.amount,
+        currency: "INR",
+        name: "Saaj Riwaaj",
+        description: "Order Payment",
+        order_id: data.id,
+        handler: async function (response) {
+          // success handler : place order in DB
+          await fetch("https://saajriwaaj.onrender.com/order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              items: cart.map((c) => ({
+                product: c._id,
+                quantity: c.quantity,
+                price: c.price,
+              })),
+              shippingAddress: address,
+              paymentMethod: "ONLINE",
+              amount,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+            }),
+          });
+          window.location.href = "/order-success"; // success page
+        },
+        prefill: {
+          name: address.name,
+          email: user.email,
+          contact: address.phone,
+        },
+        notes: { address: address.addressLine },
+        theme: { color: "#B67032" },
+      };
+
+      const razor = new window.Razorpay(options);
+      razor.open();
+    } catch (err) {
+      toast.error("Error redirecting to payment");
+    }
+  };
+
+  const handlePlaceOrder = () => {
+    const { name, email, phone, addressLine, city, state, pincode } = address;
+    let newErrors = {};
+
+    if (!name) newErrors.name = "Full name is required";
+    if (!email) newErrors.email = "Email is required";
+    if (!phone) newErrors.phone = "Phone number is required";
+    if (!addressLine) newErrors.addressLine = "Address is required";
+    if (!city) newErrors.city = "City is required";
+    if (!state) newErrors.state = "State is required";
+    if (!pincode) newErrors.pincode = "Pincode is required";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length !== 0) return; // stop if any error
+
+    // else proceed
+    paymentMethod === "COD" ? handleCOD() : handlePayOnline();
+  };
+
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 z-[998]" onClick={() => setIsOpen(false)} />
+        <div
+          className="fixed inset-0 bg-black/50 z-[998]"
+          onClick={() => setIsOpen(false)}
+        />
       )}
-
-      <div className={`fixed top-0 right-0 min-h-screen w-[85%] sm:w-[55%] md:w-[45%] xl:w-[30%] bg-white shadow-lg z-[999] transition-transform duration-300
-      ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
-
+      <div
+        className={`fixed top-0 right-0 min-h-screen w-[70%] md:w-[40%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
         {/* Header */}
         <div className="flex justify-between items-center px-5 py-4 border-b-[1px]">
-          <h2 className="text-xl font-bold">Delivery Details</h2>
+          <h2 className="text-xl font-semibold">
+            {success ? "Success!" : "Delivery Details"}
+          </h2>
           <button onClick={() => setIsOpen(false)}>
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-5 space-y-6 overflow-y-auto text-sm">
-
-          {/* Address Section */}
-          <div className="space-y-3">
-            <input value={address.name} placeholder="Full Name" onChange={(e)=>setAddress({...address,name:e.target.value})}
-              className="border rounded-md w-full p-2 focus:border-black" />
-            <input value={address.phone} placeholder="Phone Number" onChange={(e)=>setAddress({...address,phone:e.target.value})}
-              className="border rounded-md w-full p-2 focus:border-black" />
-            <textarea value={address.addressLine} placeholder="House / Street Address" onChange={(e)=>setAddress({...address,addressLine:e.target.value})}
-              className="border rounded-md w-full p-2 focus:border-black" rows={2} />
-            <div className="flex gap-3">
-              <input value={address.city} placeholder="City" onChange={(e)=>setAddress({...address,city:e.target.value})}
-                className="border rounded-md w-full p-2 focus:border-black" />
-              <input value={address.state} placeholder="State" onChange={(e)=>setAddress({...address,state:e.target.value})}
-                className="border rounded-md w-full p-2 focus:border-black" />
+        <div className="p-5 overflow-y-auto text-sm">
+          {/* ✅ SUCCESS SCREEN */}
+          {success ? (
+            <div className="bg-green-600 flex flex-col items-center justify-center py-20 gap-4">
+              <Image src={'/Images/success.gif'} alt="" width={400} height={400} className="w-full h-auto object-cover"/>
+            
+              <h3 className="text-white text-xl font-semibold text-center">
+                Order placed successfully! 🎉
+              </h3>
+              <a
+                href="/orders"
+                className="px-5 py-3 bg-[#B67032] text-white rounded-md"
+              >
+                View My Orders
+              </a>
             </div>
-            <input value={address.pincode} placeholder="Pincode" onChange={(e)=>setAddress({...address,pincode:e.target.value})}
-              className="border rounded-md w-full p-2 focus:border-black" />
-          </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Address input form */}
+              <div className="space-y-3">
+                <input
+                  value={address.name}
+                  placeholder="Full Name"
+                  onChange={(e) =>
+                    setAddress({ ...address, name: e.target.value })
+                  }
+                  className="border rounded-md w-full p-2 focus:border-black"
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-xs">{errors.name}</p>
+                )}
+                <input
+                  value={address.email}
+                  placeholder="Email"
+                  onChange={(e) =>
+                    setAddress({ ...address, email: e.target.value })
+                  }
+                  className="border rounded-md w-full p-2 focus:border-black"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs">{errors.email}</p>
+                )}
+                <input
+                  value={address.phone}
+                  placeholder="Phone Number"
+                  onChange={(e) =>
+                    setAddress({ ...address, phone: e.target.value })
+                  }
+                  className="border rounded-md w-full p-2 focus:border-black"
+                />
+                {errors.phone && (
+                  <p className="text-red-500 text-xs">{errors.phone}</p>
+                )}
+                <textarea
+                  value={address.addressLine}
+                  placeholder="House / Street Address"
+                  onChange={(e) =>
+                    setAddress({ ...address, addressLine: e.target.value })
+                  }
+                  className="border rounded-md w-full p-2 focus:border-black"
+                  rows={2}
+                />
+                {errors.addressLine && (
+                  <p className="text-red-500 text-xs">{errors.addressLine}</p>
+                )}
+                <div className="flex gap-3">
+                  <input
+                    value={address.city}
+                    placeholder="City"
+                    onChange={(e) =>
+                      setAddress({ ...address, city: e.target.value })
+                    }
+                    className="border rounded-md w-full p-2 focus:border-black"
+                  />
+                  {errors.city && (
+                    <p className="text-red-500 text-xs">{errors.city}</p>
+                  )}
 
-          <hr />
+                  <input
+                    value={address.state}
+                    placeholder="State"
+                    onChange={(e) =>
+                      setAddress({ ...address, state: e.target.value })
+                    }
+                    className="border rounded-md w-full p-2 focus:border-black"
+                  />
+                  {errors.state && (
+                    <p className="text-red-500 text-xs">{errors.state}</p>
+                  )}
+                </div>
+                <input
+                  value={address.pincode}
+                  placeholder="Pincode"
+                  onChange={(e) =>
+                    setAddress({ ...address, pincode: e.target.value })
+                  }
+                  className="border rounded-md w-full p-2 focus:border-black"
+                />
+                {errors.pincode && (
+                  <p className="text-red-500 text-xs">{errors.pincode}</p>
+                )}
+              </div>
 
-          {/* Payment Section */}
-          <div className="space-y-3">
-            <h3 className="font-semibold">Payment Method</h3>
-            <select value={paymentMethod} onChange={(e)=>setPaymentMethod(e.target.value)}
-              className="border rounded-md p-2 w-full focus:border-black">
-              <option value="COD">Cash on Delivery</option>
-              <option value="ONLINE" disabled>Online Payment (coming soon)</option>
-            </select>
-          </div>
+              <hr />
 
-          {/* Amount */}
-          <div className="flex justify-between font-semibold text-base mt-3">
-            <span>Total Amount</span>
-            <span>₹{discountPercent>0 ? Math.floor(total*(1-discountPercent/100)): total}</span>
-          </div>
+              {/* Payment */}
+              <div className="space-y-3">
+                <h3 className="font-semibold">Payment Method</h3>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="cod"
+                    value="COD"
+                    checked={paymentMethod === "COD"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="accent-[#B67032]"
+                  />
+                  <label htmlFor="cod">Cash on Delivery</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="online"
+                    value="ONLINE"
+                    checked={paymentMethod === "ONLINE"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="accent-[#B67032]"
+                  />
+                  <label htmlFor="online">UPI / Card / Netbanking</label>
+                </div>
+              </div>
 
-          <button onClick={handlePlaceOrder} className="block w-full bg-[#B67032] hover:bg-[#9c5a2b] text-white py-3 rounded-md text-center mt-2 font-semibold">
-            Place Order
-          </button>
+              {/* Amount */}
+              <div className="flex justify-between font-semibold text-base mt-3">
+                <span>Total Amount</span>
+                <span>
+                  ₹
+                  {discountPercent > 0
+                    ? Math.floor(total * (1 - discountPercent / 100))
+                    : total}
+                </span>
+              </div>
+
+              <button
+                onClick={handlePlaceOrder}
+                className="block w-full bg-[#B67032] hover:bg-[#9c5a2b] text-white py-3 rounded-md text-center mt-2 font-semibold"
+              >
+                {paymentMethod === "COD" ? "Place Order" : "Pay Now"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>

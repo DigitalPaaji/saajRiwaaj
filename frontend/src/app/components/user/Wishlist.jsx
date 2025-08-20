@@ -2,6 +2,7 @@
 import { useGlobalContext } from "../context/GlobalContext";
 import { Heart, ShoppingCart, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { React } from "react";
 
 export default function CartSidebar() {
@@ -47,9 +48,9 @@ export default function CartSidebar() {
 
       ) : (
         <div className="flex flex-col justify-between h-full">
-          <div className="p-4 space-y-4 overflow-y-auto flex-1">
+          <div className=" p-4 space-y-4 overflow-y-auto flex-1">
             {wishlist.map((item) => (
-              <div key={item._id} className="flex items-start gap-4 text-md">
+              <Link href={`/product/${item.name}/${item._id}`} key={item._id} className="group flex items-start gap-4 text-md">
                 <Image
                   src={item.images[0]}
                   alt={item.name}
@@ -74,7 +75,7 @@ export default function CartSidebar() {
     {/* <span className="lg:text-md text-stone-500">({item.discount}% OFF)</span> */}
   </div>
 
-     <button onClick={() => addToCart(item)} className="cursor-pointer w-full flex items-center justify-center gap-2 bg-[#B67032] text-white px-4 py-2 rounded hover:bg-[#a95c2e] transition text-sm font-medium tracking-wide">
+     <button onClick={() => addToCart(item)} className="lg:opacity-0  duration-300 lg:group-hover:opacity-100 cursor-pointer w-full flex items-center justify-center gap-2 bg-[#B67032] text-white px-4 py-2 rounded hover:bg-[#a95c2e] transition text-sm font-medium tracking-wide">
       <ShoppingCart className="w-4 h-4" />
       Add to Cart
     </button>
@@ -83,7 +84,7 @@ export default function CartSidebar() {
                   
                   <X className="w-4 h-4 text-red-500" />
                 </button>
-              </div>
+              </Link>
             ))}
           </div>
 
