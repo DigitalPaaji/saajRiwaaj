@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../context/GlobalContext";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function CheckoutSidebar({
   isOpen,
@@ -180,19 +182,19 @@ export default function CheckoutSidebar({
 
         <div className="p-5 overflow-y-auto text-sm">
           {/* ✅ SUCCESS SCREEN */}
-          {success ? (
-            <div className="bg-green-600 flex flex-col items-center justify-center py-20 gap-4">
-              <Image src={'/Images/success.gif'} alt="" width={400} height={400} className="w-full h-auto object-cover"/>
+          {!success ? (
+            <div className="min-h-screen  py-20 text-center ">
+              <Image src={'/Images/success.gif'} alt="" width={400} height={400} className="w-full h-40 object-contain"/>
             
-              <h3 className="text-white text-xl font-semibold text-center">
+              <h3 className="text-green-600 text-xl font-semibold text-center">
                 Order placed successfully! 🎉
               </h3>
-              <a
+              <Link
                 href="/orders"
-                className="px-5 py-3 bg-[#B67032] text-white rounded-md"
+                className="px-5 py-3 bg-[#B67032] text-white rounded-md "
               >
                 View My Orders
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="space-y-6">
