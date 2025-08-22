@@ -13,7 +13,7 @@ export default function CheckoutSidebar({
   total,
   discountPercent,
 }) {
-  const { user } = useGlobalContext(); // <-- Logged-in user Details ✔️
+  const { user, setCart } = useGlobalContext();
   const [address, setAddress] = useState({
     name: "",
     email: "",
@@ -64,6 +64,7 @@ export default function CheckoutSidebar({
       const data = await res.json();
       if (res.ok) {
         setSuccess(true); 
+        setCart([])
       } else {
         toast.error(data.message || "Failed to place order");
       }
@@ -182,8 +183,8 @@ export default function CheckoutSidebar({
 
         <div className="p-5 overflow-y-auto text-sm">
           {/* ✅ SUCCESS SCREEN */}
-          {!success ? (
-            <div className="min-h-screen  py-20 text-center ">
+          {success ? (
+            <div className="min-h-screen flex flex-col items-center space-y-5  py-20 text-center ">
               <Image src={'/Images/success.gif'} alt="" width={400} height={400} className="w-full h-40 object-contain"/>
             
               <h3 className="text-green-600 text-xl font-semibold text-center">
@@ -191,9 +192,10 @@ export default function CheckoutSidebar({
               </h3>
               <Link
                 href="/orders"
-                className="px-5 py-3 bg-[#B67032] text-white rounded-md "
+               onClick={() => setIsOpen(false)}
+                className="px-5 py-3 w-fit bg-[#B67032] text-white rounded-md"
               >
-                View My Orders
+                View Order Details
               </Link>
             </div>
           ) : (

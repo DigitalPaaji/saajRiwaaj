@@ -53,9 +53,6 @@ const handleApplyCoupon = async () => {
         isCartOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
-
-
-
       <div className="flex justify-between items-center px-4 py-6 border-b border-[#4b4b4b]">
         <h2 className="text-xl font-semibold">Cart</h2>
         <button className="cursor-pointer" onClick={() => setIsCartOpen(false)}>
@@ -79,7 +76,8 @@ const handleApplyCoupon = async () => {
         <div className="flex flex-col justify-between h-full">
           <div className="p-4 space-y-4 overflow-y-auto flex-1">
             {cart.map((item) => (
-              <Link href={`/product/${item.name}/${item._id}`} key={item._id} className="flex items-start gap-4 text-md">
+              <div  key={item._id}  className="flex items-start gap-4 text-md">
+              <Link href={`/product/${item.name}/${item._id}`}>
                 <Image
                   src={item.images[0]}
                   alt={item.name}
@@ -87,6 +85,7 @@ const handleApplyCoupon = async () => {
                   height={400}
                   className="w-24 h-24 rounded-md object-cover"
                 />
+                    </Link>
                 <div className="flex-1 space-y-2">
                   <p className="  ">{item.name}</p>
                   <p className="">₹{item.price}</p>
@@ -111,7 +110,7 @@ const handleApplyCoupon = async () => {
                 <button onClick={() => removeFromCart(item._id)} className="cursor-pointer">
                   <X className="w-4 h-4 text-red-500" />
                 </button>
-              </Link>
+          </div>
             ))}
           </div>
 
@@ -156,7 +155,14 @@ const handleApplyCoupon = async () => {
   </div>
 
   <button
-  onClick={() => setShowCheckout(true)}
+  onClick={() =>
+    {
+      setShowCheckout(true)
+      setIsCartOpen(false);
+    }
+
+  }
+
   className="w-full bg-[#B67032] text-white py-2 mt-4 rounded-md">
     Place Order
   </button>

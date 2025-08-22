@@ -1,4 +1,5 @@
 const Order = require("../models/OrderModel");
+const User = require("../models/UserModel");
 
 // USER: Place an order
 const placeOrder = async (req, res) => {
@@ -16,9 +17,12 @@ const placeOrder = async (req, res) => {
       orderStatus: "placed"
     });
 
-    res.status(201).json({ message: "Order placed", order });
+    await User.findByIdAndUpdate(userId, { $set: { cart: [] } });
+
+    res.status(201).json({ message: "Order placed successfully", order });
   } catch (err) {
-    res.status(500).json({ message: "Order placement failed" });
+    console.error("Place order error:", err);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
