@@ -81,7 +81,7 @@ export default function OrdersPage() {
               return (
                 <div
                   key={item._id}
-                  className="flex items-start gap-4 bg-white rounded-lg shadow-sm p-3"
+                  className="flex items-start gap-4 bg-white rounded-lg shadow-sm p-3 "
                 >
                   {/* Product Image */}
                   <div className="w-20 h-20 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
@@ -97,14 +97,15 @@ export default function OrdersPage() {
                   </div>
 
                   {/* Details */}
-                  <div className="">
-                    {/* Status */}
+                  <div className=" flex items-start justify-batween">
+                 <div className="space-y-0.5"> 
+                           {/* Status */}
                     <p
                       className={`font-semibold text-md ${
                         order.orderStatus === "delivered"
                           ? "text-green-600"
                           : order.orderStatus === "cancelled"
-                          ? "text-red-600"
+                          ? "text-red-500"
                           : "text-yellow-600"
                       }`}
                     >
@@ -114,6 +115,12 @@ export default function OrdersPage() {
                         ? "Order Cancelled"
                         : "Order Placed"}
                     </p>
+                     {/* Product Name */}
+                  
+                    <p className="text-sm font-medium text-gray-800">
+                      {product.name || "Unknown Product"}
+                    </p>
+           
 
                     {/* Delivery/Refund info */}
                     <p className="text-xs text-gray-500">
@@ -127,26 +134,23 @@ export default function OrdersPage() {
                             order.createdAt
                           ).toLocaleDateString()}`}
                     </p>
-
-                    {/* Product Name */}
-                    <p className="text-sm font-medium mt-1">
-                      {product.name || "Unknown Product"}
-                    </p>
+</div>  
+               
 
                     {/* Price, Qty */}
-                    <p className="text-xs text-gray-600 mt-1">
+                    {/* <p className="text-xs text-gray-600 mt-1">
                       ₹{item.price * item.quantity} • Qty: {item.quantity}
-                    </p>
+                    </p> */}
 
                     {/* Cancel button */}
-                    {order.orderStatus === "placed" && (
+                    {/* {order.orderStatus === "placed" && (
                       <button
                         onClick={() => cancelOrder(order._id)}
                         className="mt-2 px-3 py-1 text-xs bg-red-500 text-white rounded-md"
                       >
                         Cancel Order
                       </button>
-                    )}
+                    )} */}
                   </div>
                 </div>
               );

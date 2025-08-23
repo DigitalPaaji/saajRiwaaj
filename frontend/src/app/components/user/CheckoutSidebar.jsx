@@ -33,8 +33,14 @@ export default function CheckoutSidebar({
     if (user) {
       setAddress((prev) => ({
         ...prev,
-        name: user.name || "",
-        email: user.email || "",
+      name: user.name || "",
+      email: user.email || "",
+      phone: user.phone || "",
+      addressLine: user.address?.addressLine || "",
+      city: user.address?.city || "",
+      state: user.address?.state || "",
+      pincode: user.address?.pincode || "",
+      country: user.address?.country || "India",
       }));
     }
   }, [user]);

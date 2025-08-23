@@ -3,7 +3,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { React, useState } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import CheckoutSidebar from "./CheckoutSidebar";
 import Link from "next/link";
 
@@ -24,6 +24,8 @@ const handleApplyCoupon = async () => {
     if (res.ok && data.valid) {
       setAppliedCoupon(code);
       setDiscountPercent(data.discountPercent);
+
+
     } else {
       setAppliedCoupon("");
       setDiscountPercent(0);
@@ -39,6 +41,7 @@ const handleApplyCoupon = async () => {
 
   return (
     <>
+    <ToastContainer />
     {isCartOpen && (
   <div
     className="fixed inset-0 bg-black/50 z-[998]"

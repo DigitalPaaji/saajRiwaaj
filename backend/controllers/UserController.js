@@ -125,51 +125,6 @@ const loginAdmin = async (req, res) => {
 };
 
 
-// const login = async (req, res) => {
-//   const { email, password } = req.body;
-//   try {
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(400).json({ message: "Invalid Email or Password" });
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" });
-
-//     let token;
-//     let cookieName;
-
-//    if (user.role.includes("admin")) {
-//   token = jwt.sign(
-//     { id: user._id, roles: user.role }, // store all roles in token
-//     ADMIN_JWT_SECRET,
-//     { expiresIn: "1d" }
-//   );
-//   cookieName = "adminToken";
-// } else {
-//   token = jwt.sign(
-//     { id: user._id, roles: user.role },
-//     USER_JWT_SECRET,
-//     { expiresIn: "1d" }
-//   );
-//   cookieName = "userToken";
-// }
-//     res
-//       .status(200)
-//       .cookie(cookieName, token, {
-//         httpOnly: true,
-//         secure: process.env.NODE_ENV === "production",
-//         sameSite: "Lax",
-//         maxAge: 24 * 60 * 60 * 1000,
-//       })
-//       .json({
-//         message: "Login Successful",
-//         token,
-//         user: { name: user.name, email: user.email, role: user.role },
-//       });
-//   } catch (err) {
-//     console.error("Login Failed: ", err);
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// };
 
 // ---------------------- LOGOUT ----------------------
 const logoutUser = (req, res) => {
@@ -427,6 +382,30 @@ const updateCartQuantity = async (req, res) => {
   }
 };
 
+// update user profile
+const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { name, phone, address } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          ...(name && { name }),
+          ...(phone && { phone }),
+          ...(address && { address }),
+        },
+      },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({ message: "Profile updated", user: updatedUser });
+  } catch (err) {
+    console.error("Update profile error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 
 module.exports = {
@@ -447,4 +426,5 @@ module.exports = {
   updateCartQuantity,
   logoutAdmin,
   logoutUser,
+  updateUserProfile,
 };
