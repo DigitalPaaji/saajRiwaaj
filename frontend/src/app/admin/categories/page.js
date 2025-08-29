@@ -15,7 +15,7 @@ const TagsPage = () => {
 
   const fetchTags = useCallback(async () => {
     try {
-      const res = await fetch("https://saajriwaaj.onrender.com/category/");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/category/`);
       const data = await res.json();
       // console.log(data)
       setTags(data.cats || []);
@@ -32,7 +32,7 @@ const TagsPage = () => {
     e.preventDefault();
     if (!newTag.trim()) return toast.warn("Please enter a tag name.");
     try {
-      const res = await fetch("https://saajriwaaj.onrender.com/category/", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/category/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newTag }),
@@ -54,7 +54,7 @@ const TagsPage = () => {
 
   const confirmDeleteTag = async () => {
     try {
-      const res = await fetch(`https://saajriwaaj.onrender.com/category/${tagToDelete._id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/category/${tagToDelete._id}`, {
         method: "DELETE",
       });
 

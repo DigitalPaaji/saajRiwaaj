@@ -16,7 +16,7 @@ const orderRoutes = require('./routes/OrderRoutes')
 const app = express()
 app.use(cors({
     origin:['http://localhost:3000',
-    'https://06mrhscn-3000.inc1.devtunnels.ms/'],
+],
     credentials:true,
 }))
 app.use(express.json())
@@ -43,11 +43,7 @@ app.use('/coupon',couponRoutes)
 app.use('/order',orderRoutes);
 
 
-
-
-
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log("Server running on port", PORT);
+  console.log(`http://localhost:${PORT}/`);
 });

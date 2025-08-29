@@ -1,19 +1,19 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
-const crypto = require('crypto')
-const nodemailer = require('nodemailer')
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 const USER_JWT_SECRET = process.env.USER_JWT_SECRET;
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
 
 const transporter = nodemailer.createTransport({
-  service:'gmail',
-  auth:{
+  service: "gmail",
+  auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
-  }
-})
+  },
+});
 // ---------------------- SIGNUP ----------------------
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -49,10 +49,12 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid Email or Password" });
+    if (!user)
+      return res.status(400).json({ message: "Invalid Email or Password" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" });
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid Credentials" });
 
     // Only allow those who have "user" role
     if (!user.role.includes("user")) {
@@ -65,19 +67,21 @@ const loginUser = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.status(200)
+    res
+      .status(200)
       .cookie("userToken", token, {
         httpOnly: true,
-        secure: "true",
-        sameSite: "None",
+        secure: false,
+        sameSite: "Lax",
         maxAge: 24 * 60 * 60 * 1000,
+        path:'/',
+        domain: "localhost",
       })
       .json({
         message: "Login Successful",
         token,
         user: { name: user.name, email: user.email, role: user.role },
       });
-
   } catch (err) {
     console.error("User Login Failed:", err);
     res.status(500).json({ message: "Server Error" });
@@ -89,10 +93,12 @@ const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid Email or Password" });
+    if (!user)
+      return res.status(400).json({ message: "Invalid Email or Password" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" });
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid Credentials" });
 
     // Only allow those who have "admin" role
     if (!user.role.includes("admin")) {
@@ -105,51 +111,71 @@ const loginAdmin = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.status(200)
+    res
+      .status(200)
       .cookie("adminToken", token, {
         httpOnly: true,
-        secure: "true",
-        sameSite: "None",
+        secure: false,
+        path:'/',
+        domain: "localhost",
+        sameSite: "Lax",
         maxAge: 24 * 60 * 60 * 1000,
+     
       })
       .json({
         message: "Login Successful",
         token,
         user: { name: user.name, email: user.email, role: user.role },
       });
-
   } catch (err) {
     console.error("Admin Login Failed:", err);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-
-
 // ---------------------- LOGOUT ----------------------
 const logoutUser = (req, res) => {
-  res.clearCookie("userToken").json({ message: "User Logged out Successfully." });
+  res.clearCookie("userToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "Lax",
+    path: '/',
+    domain: "localhost"
+    
+  });
+  return res.status(200).json({ message: "Logged out" });
 };
 
 const logoutAdmin = (req, res) => {
-  res.clearCookie("adminToken").json({ message: "Admin Logged out Successfully." });
+  res.clearCookie("adminToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "Lax",
+    path: '/',
+    domain: "localhost"
+  
+  });
+  return res.status(200).json({ message: "Admin Logged out Successfully." });
 };
-
 // ---------------------- FORGOT PASSWORD ----------------------
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "No user found with that email" });
+    if (!user)
+      return res.status(404).json({ message: "No user found with that email" });
 
     const resetToken = crypto.randomBytes(20).toString("hex");
 
-    user.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    user.resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
     user.resetPasswordExpire = Date.now() + 5 * 60 * 1000; // 5 mins
     await user.save();
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-   const message = `**Saaj Riwaaj - Password Reset Request**
+    const message = `**Saaj Riwaaj - Password Reset Request**
 We received a request to reset your password. We understand that sometimes even the most precious memories need a fresh clasp.
 Click below to create a new password and keep exploring our timeless jewellery:
 
@@ -161,7 +187,7 @@ With love,
 The Saaj Riwaaj Team 
 `;
 
-      await transporter.sendMail({
+    await transporter.sendMail({
       from: `"Saaj Riwaaj" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: "Reset Your Saaj Riwaaj Password",
@@ -175,10 +201,12 @@ The Saaj Riwaaj Team
   }
 };
 
-
 // ---------------------- RESET PASSWORD ----------------------
 const resetPassword = async (req, res) => {
-  const resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
 
   try {
     const user = await User.findOne({
@@ -186,10 +214,15 @@ const resetPassword = async (req, res) => {
       resetPasswordExpire: { $gt: Date.now() },
     });
 
-     if (!user) return res.status(400).json({ message: "Invalid or expired reset token" });
+    if (!user)
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired reset token" });
 
     if (!req.body.password || req.body.password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -220,7 +253,9 @@ const checkTokenValidity = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid or expired reset token" });
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired reset token" });
     }
 
     res.status(200).json({ message: "Valid token" });
@@ -228,7 +263,7 @@ const checkTokenValidity = async (req, res) => {
     console.error("Token Check Error:", err);
     res.status(500).json({ message: "Server error" });
   }
-}
+};
 
 // ---------------------- OTHER FUNCTIONS ----------------------
 const getUser = async (req, res) => {
@@ -263,7 +298,6 @@ const getAdmin = async (req, res) => {
 
   res.status(200).json({ user: fullAdmin });
 };
-
 
 const addToCart = async (req, res) => {
   const userId = req.user._id;
@@ -312,7 +346,6 @@ const addToWishlist = async (req, res) => {
   }
 };
 
-
 // Remove from wishlist
 const removeFromWishlist = async (req, res) => {
   const userId = req.user._id;
@@ -324,7 +357,7 @@ const removeFromWishlist = async (req, res) => {
       (item) => item.toString() !== productId
     );
     await user.save();
- await user.populate("wishlist");
+    await user.populate("wishlist");
     res.status(200).json({
       message: "Removed from wishlist",
       wishlist: user.wishlist,
@@ -334,7 +367,6 @@ const removeFromWishlist = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // Remove from cart
 const removeFromCart = async (req, res) => {
@@ -406,7 +438,6 @@ const updateUserProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 module.exports = {
   signup,

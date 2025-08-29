@@ -7,7 +7,8 @@ import Footer from "../components/user/Footer";
 import CartSidebar from "../components/user/CartSidebar";
 import LoginSignup from "../components/user/LoginSignup";
 import Wishlist from '../components/user/Wishlist'
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +42,7 @@ export default function RootLayout({ children }) {
 
               <Footer />
         </GlobalProvider>
-      
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       </body>
     </html>
   );

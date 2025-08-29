@@ -6,8 +6,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-  import { useRouter } from "next/navigation";
-
+import { useRouter } from "next/navigation";
 
 const GlobalContext = createContext();
 
@@ -25,106 +24,131 @@ export const GlobalProvider = ({ children }) => {
 
   const [cart, setCart] = useState([]);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [authTab, setAuthTab] = useState('login'); // or 'signup'
+  const [authTab, setAuthTab] = useState("login"); // or 'signup'
   const [user, setUser] = useState(null);
   const [admin, setAdmin] = useState(null);
 
-// Forgot Password (Not Logged In)
-const forgotPassword = async (email) => {
-  try {
-    const res = await fetch("https://saajriwaaj.onrender.com/user/forgot-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const data = await res.json();
-    return { ok: res.ok, message: data.message || (res.ok ? "Password reset link sent!" : "Something went wrong.") };
-  } catch (err) {
-    return { ok: false, message: "Network error, please try again!" };
-  }
-};
-
-// Reset Password (Logged In)
-const resetPassword = async (token, password) => {
-  try {
-    const res = await fetch(`https://saajriwaaj.onrender.com/user/reset-password/${token}`, {
-      method: "PUT",
-   
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({  password  }),
-    });
-    const data = await res.json();
-    return { ok: res.ok, message: data.message || (res.ok ? "Password updated successfully!" : "Failed to update password.") };
-  } catch (err) {
-    return { ok: false, message: "Network error, please try again!" };
-  }
-};
-
-
-
-const fetchUser = useCallback(async () => {
-  try {
-    // hit your backend
-    const res = await fetch("https://saajriwaaj.onrender.com/user", {
-      credentials: "include",
-    });
-
-    if (!res.ok) {
-      // not logged in or cookie expired
-      setUser(null);
-      setCart([]);
-      setWishlist([]);
-      localStorage.removeItem("saajUser");
-      return;
-    }
-
-    const data = await res.json();
-    setUser(data.user);
-    localStorage.setItem("saajUser", JSON.stringify(data.user));
-
-    if (data.user?.cart) {
-      const formattedCart = data.user.cart.map((item) => ({
-        ...item.product,
-        quantity: item.quantity,
-      }));
-      setCart(formattedCart);
-    } else {
-      setCart([]);
-    }
-
-    if (data.user?.wishlist) {
-      setWishlist(data.user.wishlist);
-    } else {
-      setWishlist([]);
-    }
-
-  } catch (err) {
-    // fail silently for guest users
-    setUser(null);
-    setCart([]);
-    setWishlist([]);
-    localStorage.removeItem("saajUser");
-  }
-}, []);
-
-
-
- const logoutUser = async () => {
+  // Forgot Password (Not Logged In)
+  const forgotPassword = async (email) => {
     try {
-      await fetch("https://saajriwaaj.onrender.com/user/userlogout", { credentials: "include" });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/forgot-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
+      const data = await res.json();
+      return {
+        ok: res.ok,
+        message:
+          data.message ||
+          (res.ok ? "Password reset link sent!" : "Something went wrong."),
+      };
+    } catch (err) {
+      return { ok: false, message: "Network error, please try again!" };
+    }
+  };
+
+  // Reset Password (Logged In)
+  const resetPassword = async (token, password) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/reset-password/${token}`,
+        {
+          method: "PUT",
+
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password }),
+        }
+      );
+      const data = await res.json();
+      return {
+        ok: res.ok,
+        message:
+          data.message ||
+          (res.ok
+            ? "Password updated successfully!"
+            : "Failed to update password."),
+      };
+    } catch (err) {
+      return { ok: false, message: "Network error, please try again!" };
+    }
+  };
+
+  const fetchUser = useCallback(async () => {
+    try {
+      // hit your backend
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user`, {
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        // not logged in or cookie expired
+        setUser(null);
+        setCart([]);
+        setWishlist([]);
+        localStorage.removeItem("saajUser");
+        return;
+      }
+
+      const data = await res.json();
+      setUser(data.user);
+      localStorage.setItem("saajUser", JSON.stringify(data.user));
+
+      if (data.user?.cart) {
+        const formattedCart = data.user.cart.map((item) => ({
+          ...item.product,
+          quantity: item.quantity,
+        }));
+        setCart(formattedCart);
+      } else {
+        setCart([]);
+      }
+
+      if (data.user?.wishlist) {
+        setWishlist(data.user.wishlist);
+      } else {
+        setWishlist([]);
+      }
+    } catch (err) {
+      // fail silently for guest users
       setUser(null);
+      setCart([]);
+      setWishlist([]);
       localStorage.removeItem("saajUser");
-      router.refresh();
+    }
+  }, []);
+
+  const logoutUser = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/userlogout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      // manual cookie clear for frontend domain
+      document.cookie =
+        "userToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      setUser(null);
+      setCart([]); 
+      setWishlist([]); 
+      localStorage.removeItem("saajUser");
+      localStorage.removeItem("saajToken");
+      window.location.reload();
     } catch (err) {
       console.error("User logout failed", err);
     }
   };
 
-
-
- const fetchAdmin = useCallback(async () => {
+  const fetchAdmin = useCallback(async () => {
     try {
-      const res = await fetch("https://saajriwaaj.onrender.com/user/admin", { credentials: "include" });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/admin`,
+        {
+          credentials: "include",
+        }
+      );
       const data = await res.json();
       if (res.ok) {
         setAdmin(data.user);
@@ -132,21 +156,25 @@ const fetchUser = useCallback(async () => {
       } else {
         setAdmin(null);
         localStorage.removeItem("saajAdmin");
-      localStorage.removeItem("saajAdminToken");
-
+        localStorage.removeItem("saajAdminToken");
       }
     } catch (err) {
       setAdmin(null);
       localStorage.removeItem("saajAdmin");
       localStorage.removeItem("saajAdminToken");
-
-      
     }
   }, []);
 
   const logoutAdmin = async () => {
     try {
-      await fetch("https://saajriwaaj.onrender.com/user/adminlogout", { credentials: "include" });
+      await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/adminlogout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      // manual cookie clear for frontend domain
+      document.cookie =
+        "userToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      setUser(null);
       setAdmin(null);
       localStorage.removeItem("saajAdmin");
       router.replace("/admin/auth");
@@ -155,176 +183,179 @@ const fetchUser = useCallback(async () => {
     }
   };
 
+  const isLoggedIn = !!user;
 
-
-
-const isLoggedIn = !!user;
-
-// Inside your component
-const addToWishlist = async (productId) => {
-  if (!user) {
-    setIsAuthOpen(true);
-    setAuthTab("login");
-    return;
-  }
-
-  try {
-    const res = await fetch("https://saajriwaaj.onrender.com/user/wishlist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ productId }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      setWishlist(data.wishlist);
-    } else {
-      console.error("Failed to add to wishlist");
+  // Inside your component
+  const addToWishlist = async (productId) => {
+    if (!user) {
+      setIsAuthOpen(true);
+      setAuthTab("login");
+      return;
     }
-  } catch (err) {
-    console.error("Add to wishlist error:", err);
-  }
-};
 
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/wishlist`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ productId }),
+        }
+      );
 
-
-
-const removeFromWishlist = async (productId) => {
-  if (!user) {
-    setIsWishlistOpen(true);
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      `https://saajriwaaj.onrender.com/user/wishlist/${productId}`,
-      {
-        method: "DELETE",
-        credentials: "include",
+      if (res.ok) {
+        const data = await res.json();
+        setWishlist(data.wishlist);
+      } else {
+        console.error("Failed to add to wishlist");
       }
-    );
-
-    if (res.ok) {
-      const data = await res.json();
-      setWishlist(data.wishlist);
-    } else {
-      console.error("Failed to remove from wishlist");
+    } catch (err) {
+      console.error("Add to wishlist error:", err);
     }
-  } catch (err) {
-    console.error("Remove from wishlist error:", err);
-  }
-};
+  };
 
+  const removeFromWishlist = async (productId) => {
+    if (!user) {
+      setIsWishlistOpen(true);
+      return;
+    }
 
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/wishlist/${productId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        setWishlist(data.wishlist);
+      } else {
+        console.error("Failed to remove from wishlist");
+      }
+    } catch (err) {
+      console.error("Remove from wishlist error:", err);
+    }
+  };
 
   const addToCart = async (product) => {
-  if (!user) {
-   setIsAuthOpen(true);
-   setAuthTab("login");
-   return;
-  }
-
-  // Logged-in user: Call backend
-  try {
-    const res = await fetch("https://saajriwaaj.onrender.com/user/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        productId: product._id,
-        quantity: 1,
-      }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      // Get updated cart from backend and update state
-      const updatedCart = data.cart.map((item) => ({
-        ...item.product,
-        quantity: item.quantity,
-      }));
-      setCart(updatedCart);
-    } else {
-      console.error("Failed to add to cart");
+    if (!user) {
+      setIsAuthOpen(true);
+      setAuthTab("login");
+      return;
     }
-  } catch (err) {
-    console.error("Add to cart error:", err);
-  }
-};
 
+    // Logged-in user: Call backend
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            productId: product._id,
+            quantity: 1,
+          }),
+        }
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        // Get updated cart from backend and update state
+        const updatedCart = data.cart.map((item) => ({
+          ...item.product,
+          quantity: item.quantity,
+        }));
+        setCart(updatedCart);
+      } else {
+        console.error("Failed to add to cart");
+      }
+    } catch (err) {
+      console.error("Add to cart error:", err);
+    }
+  };
 
   const removeFromCart = async (productId) => {
-  if (!user) {
-    // force login first
-    setIsAuthOpen(true);
-    setAuthTab("login");
-    return;
-  }
-
-  try {
-    const res = await fetch(`https://saajriwaaj.onrender.com/user/cart/${productId}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      const updatedCart = data.cart.map((item) => ({
-        ...item.product,
-        quantity: item.quantity,
-      }));
-      setCart(updatedCart);
-    } else {
-      console.error("Failed to remove from cart");
+    if (!user) {
+      // force login first
+      setIsAuthOpen(true);
+      setAuthTab("login");
+      return;
     }
-  } catch (err) {
-    console.error("Remove from cart error:", err);
-  }
-};
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart/${productId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        const updatedCart = data.cart.map((item) => ({
+          ...item.product,
+          quantity: item.quantity,
+        }));
+        setCart(updatedCart);
+      } else {
+        console.error("Failed to remove from cart");
+      }
+    } catch (err) {
+      console.error("Remove from cart error:", err);
+    }
+  };
 
   const updateQty = async (productId, qty) => {
-  if (!user) {
-    // force login first
-    setIsAuthOpen(true);
-    setAuthTab("login");
-    return;
-  }
-
-  try {
-    const res = await fetch("https://saajriwaaj.onrender.com/user/cart", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ productId, quantity: qty }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      const updatedCart = data.cart.map((item) => ({
-        ...item.product,
-        quantity: item.quantity,
-      }));
-      setCart(updatedCart);
-    } else {
-      console.error("Failed to update quantity");
+    if (!user) {
+      // force login first
+      setIsAuthOpen(true);
+      setAuthTab("login");
+      return;
     }
-  } catch (err) {
-    console.error("Update quantity error:", err);
-  }
-};
 
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ productId, quantity: qty }),
+        }
+      );
 
+      if (res.ok) {
+        const data = await res.json();
+        const updatedCart = data.cart.map((item) => ({
+          ...item.product,
+          quantity: item.quantity,
+        }));
+        setCart(updatedCart);
+      } else {
+        console.error("Failed to update quantity");
+      }
+    } catch (err) {
+      console.error("Update quantity error:", err);
+    }
+  };
 
   const fetchFeaturedProducts = useCallback(async () => {
     try {
-      const res = await fetch("https://saajriwaaj.onrender.com/product/featured");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/featured`
+      );
       const data = await res.json();
       // console.log(data)
       setFeaturedProducts(Array.isArray(data) ? data : []);
@@ -336,7 +367,7 @@ const removeFromWishlist = async (productId) => {
 
   // Fetch categories
   const fetchCategories = useCallback(async () => {
-    const res = await fetch("https://saajriwaaj.onrender.com/category/");
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/category`);
     const data = await res.json();
     setCategories(data.cats || []);
     return data.cats || [];
@@ -344,7 +375,7 @@ const removeFromWishlist = async (productId) => {
 
   // Fetch Tags
   const fetchTags = useCallback(async () => {
-    const res = await fetch("https://saajriwaaj.onrender.com/tag/");
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/tag/`);
     const data = await res.json();
     // console.log(data.tags)
     setTags(data.tags || []);
@@ -356,7 +387,7 @@ const removeFromWishlist = async (productId) => {
     const results = await Promise.all(
       cats.map(async (cat) => {
         const res = await fetch(
-          `https://saajriwaaj.onrender.com/subcategory/category/${cat._id}`
+          `${process.env.NEXT_PUBLIC_LOCAL_PORT}/subcategory/category/${cat._id}`
         );
         const data = await res.json();
         return { [cat._id]: data };
@@ -370,7 +401,7 @@ const removeFromWishlist = async (productId) => {
   const fetchAllProducts = useCallback(async () => {
     try {
       // const res = await fetch(`${Apiurl}/products`);
-      const res = await fetch("https://saajriwaaj.onrender.com/product/");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/`);
       const data = await res.json();
       // console.log(Object.keys(data.products).length)
 
@@ -392,7 +423,7 @@ const removeFromWishlist = async (productId) => {
   const fetchProductsByCategory = async (categoryId) => {
     try {
       const res = await fetch(
-        `https://saajriwaaj.onrender.com/product/category/${categoryId}`
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/category/${categoryId}`
       );
       const data = await res.json();
       const shuffled = Array.isArray(data)
@@ -409,7 +440,9 @@ const removeFromWishlist = async (productId) => {
 
   const fetchProductById = useCallback(async (id) => {
     try {
-      const res = await fetch(`https://saajriwaaj.onrender.com/product/id/${id}`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/id/${id}`
+      );
       if (!res.ok) throw new Error("Failed to fetch product");
 
       const data = await res.json();
@@ -420,30 +453,27 @@ const removeFromWishlist = async (productId) => {
     }
   }, []);
 
-
-
   // Initial fetch
   useEffect(() => {
-   const savedUser = localStorage.getItem("saajUser");
+    const savedUser = localStorage.getItem("saajUser");
     const savedAdmin = localStorage.getItem("saajAdmin");
 
     if (savedUser) setUser(JSON.parse(savedUser));
     if (savedAdmin) setAdmin(JSON.parse(savedAdmin));
 
-  if (savedUser) {
-    fetchUser();
-  }
+    if (savedUser) {
+      fetchUser();
+    }
 
-  if (window.location.pathname.startsWith("/admin") && savedAdmin) {
-    fetchAdmin();
-  }
+    if (window.location.pathname.startsWith("/admin") && savedAdmin) {
+      fetchAdmin();
+    }
     (async () => {
       const cats = await fetchCategories();
       if (cats.length) await fetchSubCategories(cats);
       await fetchAllProducts();
       await fetchFeaturedProducts();
       await fetchTags();
-     
     })();
   }, [
     fetchCategories,
@@ -452,7 +482,7 @@ const removeFromWishlist = async (productId) => {
     fetchTags,
     fetchFeaturedProducts,
     fetchUser,
-    fetchAdmin
+    fetchAdmin,
   ]);
   return (
     <GlobalContext.Provider
@@ -478,7 +508,7 @@ const removeFromWishlist = async (productId) => {
         isAuthOpen,
         setIsAuthOpen,
         authTab,
-        setAuthTab, 
+        setAuthTab,
         user,
         admin,
         setUser,
@@ -491,9 +521,9 @@ const removeFromWishlist = async (productId) => {
         refetchAllProducts: fetchAllProducts,
         refetchProductById: fetchProductById,
         refetchFeaturedProducts: fetchFeaturedProducts,
-    refetchUser:fetchUser,
-   refetchAdmin: fetchAdmin,
-   logoutAdmin
+        refetchUser: fetchUser,
+        refetchAdmin: fetchAdmin,
+        logoutAdmin,
       }}
     >
       {children}

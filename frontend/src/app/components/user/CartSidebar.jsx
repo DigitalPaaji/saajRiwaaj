@@ -18,7 +18,7 @@ const handleApplyCoupon = async () => {
   if (!code) return;
 
   try {
-    const res = await fetch(`https://saajriwaaj.onrender.com/coupon/${code}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/coupon/${code}`);
     const data = await res.json();
 
     if (res.ok && data.valid) {
@@ -41,7 +41,6 @@ const handleApplyCoupon = async () => {
 
   return (
     <>
-    <ToastContainer />
     {isCartOpen && (
   <div
     className="fixed inset-0 bg-black/50 z-[998]"

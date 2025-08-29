@@ -61,7 +61,7 @@ export default function CheckoutSidebar({
             : total,
       };
 
-      const res = await fetch("https://saajriwaaj.onrender.com/order", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -88,7 +88,7 @@ export default function CheckoutSidebar({
           : total;
 
       const res = await fetch(
-        "https://saajriwaaj.onrender.com/order/razorpay",
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/order/razorpay`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -109,7 +109,7 @@ export default function CheckoutSidebar({
         order_id: data.id,
         handler: async function (response) {
           // success handler : place order in DB
-          await fetch("https://saajriwaaj.onrender.com/order", {
+          await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/order`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

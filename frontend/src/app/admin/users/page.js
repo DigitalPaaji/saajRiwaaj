@@ -14,7 +14,7 @@ export default function UsersList() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await fetch("https://saajriwaaj.onrender.com/user/all", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/all`, {
         method: "GET",
         credentials: "include", // send cookies if required
       });

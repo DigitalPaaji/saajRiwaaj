@@ -103,7 +103,7 @@ export default function AddProductPage() {
 
 const fetchSubCategoriesByCategory = useCallback(async (categoryId) => {
   try {
-    const res = await fetch(`https://saajriwaaj.onrender.com/subcategory/category/${categoryId}`); 
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/subcategory/category/${categoryId}`); 
     const data = await res.json();
    
     setSubCategories(data || []);
@@ -116,7 +116,7 @@ const fetchSubCategoriesByCategory = useCallback(async (categoryId) => {
 
     const fetchCategories = useCallback(async () => {
     try {
-      const res = await fetch("https://saajriwaaj.onrender.com/category/");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/category`);
       const data = await res.json();
     //   console.log(data)
       setCategories(data.cats || []);
@@ -130,7 +130,7 @@ const fetchSubCategoriesByCategory = useCallback(async (categoryId) => {
 
   const fetchTags = useCallback(async () => {
     try {
-      const res = await fetch("https://saajriwaaj.onrender.com/tag/");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/tag`);
       const data = await res.json();
     //   console.log(data)
       setTags(data.tags || []);
@@ -238,7 +238,7 @@ const handleInputChange = (e) => {
   }
         setIsSubmitting(true);
         try {
-            const response = await fetch('https://saajriwaaj.onrender.com/product/add', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/add`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...product, finalPrice: parseFloat(finalPrice) }),

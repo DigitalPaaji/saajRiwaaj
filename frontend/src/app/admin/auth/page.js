@@ -46,7 +46,7 @@ export default function AuthSidebar() {
     }
   };
   const loginAdmin = async ({email,password})=>{
-    const res = await fetch("https://saajriwaaj.onrender.com/user/loginAdmin",{
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/loginAdmin`,{
       method:'POST',
       headers:{"Content-Type": "application/json"},
       body: JSON.stringify({ email, password }),

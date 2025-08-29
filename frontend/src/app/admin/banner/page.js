@@ -32,7 +32,7 @@ export default function BannerManager() {
   // Fetch banners
   const fetchBanners = useCallback(async () => {
     try {
-      const res = await fetch("https://saajriwaaj.onrender.com/banner");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/banner`);
       const data = await res.json();
       setBanners(data);
     } catch (err) {
@@ -110,7 +110,7 @@ export default function BannerManager() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("https://saajriwaaj.onrender.com/banner/", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/banner/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ desktopImage, mobileImage }),
@@ -140,7 +140,7 @@ export default function BannerManager() {
     if (!deleteBannerId) return toast.error("No banner ID to delete.");
     try {
       const res = await fetch(
-        `https://saajriwaaj.onrender.com/banner/${deleteBannerId}`,
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/banner/${deleteBannerId}`,
         {
           method: "DELETE",
         }

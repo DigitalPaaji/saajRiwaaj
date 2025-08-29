@@ -66,7 +66,7 @@ export default function AuthSidebar() {
   };
 
   const signupUser = async ({ name, email, password }) => {
-    const res = await fetch("https://saajriwaaj.onrender.com/user/signup", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
@@ -144,7 +144,7 @@ export default function AuthSidebar() {
   };
 
   const loginUser = async ({ email, password }) => {
-    const res = await fetch("https://saajriwaaj.onrender.com/user/loginUser", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/loginUser`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

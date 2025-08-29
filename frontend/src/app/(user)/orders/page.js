@@ -13,7 +13,7 @@ export default function OrdersPage() {
   // Fetch user orders
   const fetchOrders = useCallback(async () => {
     try {
-      const res = await fetch("https://saajriwaaj.onrender.com/order/my", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/order/my`, {
         credentials: "include",
       });
 
@@ -36,7 +36,7 @@ export default function OrdersPage() {
     async (id) => {
       try {
         const res = await fetch(
-          `https://saajriwaaj.onrender.com/order/cancel/${id}`,
+          `${process.env.NEXT_PUBLIC_LOCAL_PORT}/order/cancel/${id}`,
           {
             method: "PUT",
             credentials: "include",
