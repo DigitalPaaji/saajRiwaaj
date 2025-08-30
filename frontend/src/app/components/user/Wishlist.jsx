@@ -20,7 +20,7 @@ export default function CartSidebar() {
  
     <div
       className={`fixed top-0 right-0 min-h-screen 
-         w-[70%] md:w-[40%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
+         w-[90%] md:w-[45%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
         isWishlistOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
@@ -75,7 +75,7 @@ export default function CartSidebar() {
     {/* <span className="lg:text-md text-stone-500">({item.discount}% OFF)</span> */}
   </div>
 
-     <button onClick={() => addToCart(item)} className="lg:opacity-0  duration-300 lg:group-hover:opacity-100 cursor-pointer w-full flex items-center justify-center gap-2 bg-[#B67032] text-white px-4 py-2 rounded hover:bg-[#a95c2e] transition text-sm font-medium tracking-wide">
+     <button onClick={() => addToCart(item)} className="lg:opacity-0  duration-300 lg:group-hover:opacity-100 cursor-pointer w-full flex items-center justify-center gap-1 xl:gap-2 bg-[#B67032] text-white px-4 py-2 rounded hover:bg-[#a95c2e] transition text-sm font-medium tracking-wide">
       <ShoppingCart className="w-4 h-4" />
       Add to Cart
     </button>

@@ -44,7 +44,7 @@ export default function EarringsMarquee() {
 
   const loop = filteredProducts;
   return (
-    <section className="py-16 px-4 sm:px-8 lg:px-16 bg-[#fff8f1]">
+    <section className="py-16 px-4 sm:px-8 lg:px-16 ">
       {" "}
       <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
         <div className="max-w-xl">
@@ -110,7 +110,7 @@ export default function EarringsMarquee() {
                 <SwiperSlide key={idx}>
                   <Link
                     href={`/product/${item.name}/${item._id}`}
-                    className="group flex-shrink-0 w-full bg-white rounded-xl overflow-hidden shadow hover:shadow-md transition-shadow"
+                    className="group flex-shrink-0 w-full rounded-xl overflow-hidden shadow hover:shadow-md transition-shadow"
                   >
                     <div className="w-full h-[300px] relative">
                       <img

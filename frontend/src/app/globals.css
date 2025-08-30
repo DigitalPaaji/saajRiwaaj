@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
+/* Register the font */
+@font-face {
+  font-family: "Mosetta";
+  src: url("/fonts/Mosetta-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
 
+/* Add to Tailwind’s theme system */
+@theme {
+  --font-mosetta: "Mosetta", serif;
+}
 
 /* Neumorphism base */
 /* .neumorphic-btn {
@@ -90,3 +101,4 @@
 button{
   cursor: pointer;
 }
+

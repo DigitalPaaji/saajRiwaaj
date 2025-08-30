@@ -173,7 +173,7 @@ export default function CheckoutSidebar({
         />
       )}
       <div
-        className={`fixed top-0 right-0 min-h-screen w-[70%] md:w-[40%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
+        className={`fixed top-0 right-0 min-h-screen w-[90%] md:w-[40%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
