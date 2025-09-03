@@ -136,7 +136,7 @@ if (data.user.role.includes("admin")) {
 
         {/* Title */}
         <div className="px-6 py-4 border-b border-[#E6D3C1]">
-          <h2 className="text-3xl font-serif font-bold text-[#6B3B1A] tracking-wide text-center">
+          <h2 className="text-3xl font-mosetta  font-bold text-[#99571d] tracking-wide text-center">
             Admin Panel
           </h2>
         </div>

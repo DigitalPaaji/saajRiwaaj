@@ -3,7 +3,7 @@
 /* Register the font */
 @font-face {
   font-family: "Mosetta";
-  src: url("/fonts/Mosetta-Regular.otf") format("opentype");
+  src: local("Mosetta"), url("/fonts/mosseta.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
 }
@@ -12,7 +12,6 @@
 @theme {
   --font-mosetta: "Mosetta", serif;
 }
-
 /* Neumorphism base */
 /* .neumorphic-btn {
   background: #e0e0e0;
@@ -27,8 +26,8 @@
 
 
 .neumorphic-btn1 {
-  background: #e0e0e02c;
-  box-shadow: 6px 6px 12px #bebebe75, -6px -6px 12px #ffffff2d;
+  /* background: #e0e0e02c; */
+  /* box-shadow: 6px 6px 12px #bebebe75, -6px -6px 12px #ffffff2d; */
   border-radius: 12px;
   transition: all 0.3s ease;
 }

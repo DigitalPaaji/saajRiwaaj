@@ -55,8 +55,17 @@ const handleApplyCoupon = async () => {
         isCartOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
-      <div className="flex justify-between items-center px-4 py-6 border-b border-[#4b4b4b]">
-        <h2 className="text-xl font-semibold">Cart</h2>
+              <div className="absolute bottom-0 right-0 opacity-20">
+                    <Image
+                      alt=""
+                      src={"/Images/bg1.png"}
+                      width={360}
+                      height={360}
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+      <div className="flex justify-between items-center px-4 py-6 border-b-[1px] border-[#99571d]">
+        <h2 className="text-xl font-mosetta font-medium text-[#99571d]">Cart</h2>
         <button className="cursor-pointer" onClick={() => setIsCartOpen(false)}>
           <X className="w-5 h-5" />
         </button>
@@ -64,7 +73,7 @@ const handleApplyCoupon = async () => {
 
       {cart.length === 0 ? (
        <div className="flex items-center justify-center h-full w-full text-center text-gray-500 px-6">
-   <div className="flex flex-col items-center justify-center">
+   <div className="flex flex-col my-24 items-center justify-center">
   <img
     src="/Images/cart.gif" 
     alt="Empty Cart"
@@ -124,7 +133,7 @@ const handleApplyCoupon = async () => {
       placeholder="Enter coupon"
       value={coupon}
       onChange={(e) => setCoupon(e.target.value.toUpperCase())}
-      className="flex-1 border-b border-[#4b4b4b]   text-md  outline-none"
+      className="flex-1 border-b-[1px] border-[#99571d]   text-md  outline-none"
     />
     <button
       onClick={handleApplyCoupon}

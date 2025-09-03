@@ -57,7 +57,7 @@ function formatCategoryLabel(name) {
 const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   return (
     <header
-      className="bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm "
+      className="bg-[#faf8eae0]  backdrop-blur-md sticky top-0 z-[99] shadow-sm "
       onMouseLeave={() => setActiveMegaMenu(null)}
     >
       <div className=" mx-4 md:mx-12 xl:mx-24  ">
@@ -93,7 +93,7 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
       >
         <Link
            href={categoryPath}
-          className="flex items-center text-stone-700 hover:text-[#B67032] font-medium transition"
+          className="flex items-center text-stone-700 hover:text-[#99571d] font-bold font-mosetta transition "
         >
           {categoryLabel}
           {hasSubCats && (
@@ -175,7 +175,7 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
       {/* Mobile Sidebar Menu */}
       <div
-        className={`fixed inset-0 z-50 transition-transform lg:hidden ${{
+        className={`fixed inset-0 z-[99] transition-transform lg:hidden ${{
           true: "translate-x-0",
           false: "-translate-x-full",
         }[isMobileMenuOpen]}`}

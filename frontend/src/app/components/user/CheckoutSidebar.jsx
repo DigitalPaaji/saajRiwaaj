@@ -178,8 +178,8 @@ export default function CheckoutSidebar({
         }`}
       >
         {/* Header */}
-        <div className="flex justify-between items-center px-5 py-4 border-b-[1px]">
-          <h2 className="text-xl font-semibold">
+        <div className="flex justify-between items-center px-5 py-4 border-b-[1px] border-[#99571d]">
+          <h2 className="text-xl font-mosetta font-medium text-[#99571d]">
             {success ? "Success!" : "Delivery Details"}
           </h2>
           <button onClick={() => setIsOpen(false)}>
@@ -193,7 +193,7 @@ export default function CheckoutSidebar({
             <div className="min-h-screen flex flex-col items-center space-y-5  py-20 text-center ">
               <Image src={'/Images/success.gif'} alt="" width={400} height={400} className="w-full h-40 object-contain"/>
             
-              <h3 className="text-green-600 text-xl font-semibold text-center">
+              <h3 className="text-green-600 text-xl font-mosetta font-medium text-center">
                 Order placed successfully! 🎉
               </h3>
               <Link

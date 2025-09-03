@@ -20,15 +20,15 @@ export default function CartSidebar() {
  
     <div
       className={`fixed top-0 right-0 min-h-screen 
-         w-[90%] md:w-[45%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
+          w-[90%] md:w-[40%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
         isWishlistOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
 
 
 
-      <div className="flex justify-between items-center px-4 py-6 border-b">
-        <h2 className="text-xl font-semibold">Wishlist</h2>
+      <div className="flex justify-between items-center px-4 py-6 border-b-[1px] border-[#99571d]">
+        <h2 className="text-xl font-mosetta font-medium text-[#99571d]">Wishlist</h2>
         <button className="cursor-pointer" onClick={() => setIsWishlistOpen(false)}>
           <X className="w-5 h-5" />
         </button>
@@ -36,7 +36,7 @@ export default function CartSidebar() {
 
       {wishlist.length === 0 ? (
        <div className="flex items-center justify-center h-full w-full text-center text-gray-500 px-6">
-   <div className="flex flex-col items-center justify-center">
+   <div className="flex flex-col my-24 items-center justify-center">
   <img
     src="/Images/cart.gif" 
     alt="Empty Cart"

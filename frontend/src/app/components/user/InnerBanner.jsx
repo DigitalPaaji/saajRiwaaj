@@ -17,7 +17,7 @@ export default function Banner({ title = '', image = '' }) {
 
       {/* Text Content */}
       <div className="relative z-10 text-center px-4">
-        <h1 className="text-2xl md:text-4xl font-bold font-serif capitalize">  {title.split('-').join(' ')}</h1>
+        <h1 className="text-2xl md:text-4xl font-mosetta font-medium text-[#99571d]  capitalize">  {title.split('-').join(' ')}</h1>
         <div className="mt-2 text-sm md:text-base text-gray-800 space-x-1">
           <Link href="/" className="hover:underline">Home</Link>
           <span>/</span>

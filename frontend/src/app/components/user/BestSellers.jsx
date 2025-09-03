@@ -25,18 +25,18 @@ export default function ShopByCategory() {
 
   return (
     <section className="relative py-12 px-4 sm:px-6 lg:px-8">
-      <div className="absolute -top-32 -right-40 opacity-20">
+      <div className="absolute -top-32 -right-40 opacity-20 ">
         <Image
           alt=""
-          src={"/Images/bg.webp"}
+          src={"/Images/bg2.png"}
           width={360}
           height={360}
           className="w-full h-auto object-cover"
         />
       </div>
       <div>
-        <h2 className="text-3xl md:text-4xl font-mosetta text-center">
-          Whereas a common 
+        <h2 className="text-3xl md:text-4xl font-mosetta text-center font-medium text-[#99571d]">
+          Best Sellers 
         </h2>
         <p className="text-md md:text-xl text-stone-500 font-serif text-center mt-4">
           The favorites everyone's talking about. Timeless picks loved by all.

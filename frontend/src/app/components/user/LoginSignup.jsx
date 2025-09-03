@@ -213,7 +213,7 @@ export default function AuthSidebar() {
 
         {isLoggedIn && <Account />}
 
-        <div className="flex justify-between items-center px-4 py-6 border-b">
+        <div className="flex justify-between items-center px-4 py-6 border-b-[1px] border-[#99571d]">
           <h2 className="text-xl font-semibold">
             {authTab === "login" ? "Customer Login" : "Create New Account"}
           </h2>

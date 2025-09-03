@@ -90,7 +90,7 @@ const handleMouseLeave = () => {
 
   return (
     <div>
- <div className="relative flex flex-col items-center lg:flex-row lg:items-start justify-center flex-wrap lg:flex-nowrap gap-6 px-4 md:px-12 xl:px-40 py-12 bg-[#fffaf7]">
+ <div className="relative flex flex-col items-center lg:flex-row lg:items-start justify-center flex-wrap lg:flex-nowrap gap-6 px-4 md:px-12 xl:px-40 py-12 ">
       {/* Left: Sticky Images */}
       <div className="w-full xl:w-1/2 lg:sticky lg:top-24  ">
         <div className="flex flex-col md:flex-row items-center gap-4">

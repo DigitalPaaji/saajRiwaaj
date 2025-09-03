@@ -61,8 +61,8 @@ function Account() {
   return (
     <div className="bg-[#b87d4921] flex flex-col h-full pb-6">
       {/* Header */}
-      <div className="flex justify-between items-center px-4 py-6 border-b">
-        <h2 className="text-xl font-semibold">My Profile</h2>
+      <div className="flex justify-between items-center px-4 py-6 border-b-[1px] border-[#99571d]">
+        <h2 className="text-xl font-mosetta font-medium text-[#99571d]">My Profile</h2>
         <button onClick={() => setIsAuthOpen(false)}>
           <X className="w-5 h-5" />
         </button>

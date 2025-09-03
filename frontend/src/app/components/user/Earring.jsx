@@ -7,6 +7,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { useGlobalContext } from "../context/GlobalContext";
 import { Heart } from "lucide-react";
+import Image from "next/image";
 
 export default function EarringsMarquee() {
   const { subCategoriesMap, wishlist, refetchProductsByCategory } = useGlobalContext();
@@ -44,12 +45,21 @@ export default function EarringsMarquee() {
 
   const loop = filteredProducts;
   return (
-    <section className="py-16 px-4 sm:px-8 lg:px-16 ">
+    <section className="relative z-50 -py-16 px-4 sm:px-8 lg:px-16 ">
+       <div className="absolute z-0 top-0  right-1/2 opacity-40">
+        <Image
+          alt=""
+          src={"/Images/bg1.png"}
+          width={220}
+          height={220}
+          className="w-full h-auto rotate-x-0 object-cover"
+        />
+      </div>
       {" "}
-      <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
+      <div className="z-50 flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
         <div className="max-w-xl">
           {" "}
-          <h2 className="text-3xl md:text-4xl font-serif">Shop Earrings</h2>
+          <h2 className="text-3xl md:text-4xl font-mosetta font-medium text-[#99571d]">Shop Earrings</h2>
           <p className="text-md md:text-xl text-stone-500 font-serif mt-4">
             From timeless studs to graceful chandbalis, find your perfect pair.
           </p>
@@ -69,7 +79,7 @@ export default function EarringsMarquee() {
           ))}
         </ul>
       </div>
-      <div className="overflow-x-auto scrollbar-hide">
+      <div className="z-50 overflow-x-auto scrollbar-hide">
         {loading ? (
           <div className="flex gap-4 overflow-x-auto scrollbar-hide">
             {Array.from({ length: 6 }).map((_, idx) => (

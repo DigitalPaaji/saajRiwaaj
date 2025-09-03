@@ -61,8 +61,19 @@ export default function ShopByCategory() {
   ];
 
   return (
-    <section className="py-12 ">
-      <div className="px-4 sm:px-6 lg:px-8">
+    <section className="py-12 z-50 relative">
+
+        <div className="absolute -top-32 right-0 opacity-20">
+              <Image
+                alt=""
+                src={"/Images/bg1.png"}
+                width={360}
+                height={360}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+
+      <div className="px-4 sm:px-6 lg:px-8 z-50">
         {/* <div>
           <h2 className="text-3xl md:text-4xl font-serif text-center">Saaj Riwaaj Exclusive</h2>
           <p className="text-md md:text-xl text-stone-500 font-serif text-center mt-4">
@@ -77,10 +88,10 @@ export default function ShopByCategory() {
     style={{ backgroundImage: "url('/Images/exclusive2.webp')" }}
   >
     <div className="relative z-10 px-4 sm:px-6 max-w-full sm:max-w-md w-full">
-      <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-[#7a4a26] mb-3 leading-snug">
+      <h3 className="text-xl sm:text-2xl md:text-3xl font-mosetta  font-medium text-[#B67032] mb-3 leading-snug">
         Discover Timeless Elegance with Saaj Riwaaj
       </h3>
-      <p className="text-sm sm:text-base md:text-lg text-[#5c3b22] mb-4 leading-normal">
+      <p className="text-sm sm:text-base md:text-md text-[#5c3b22] mb-4 leading-normal">
         Unveil our handpicked exclusive jewellery pieces that blend tradition with royalty.
       </p>
       <Link href={'/category/saaj-riwaaj-exclusive/688321125c75af760aa800e7'} className="bg-[#7a4a26] text-white px-4 sm:px-5 py-2 rounded-xl hover:bg-[#5c3b22] transition duration-300 text-md">

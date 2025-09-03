@@ -45,10 +45,19 @@ useEffect(() => {
   const loop = filteredProducts;
 
   return (
-    <section className="py-16 px-4 sm:px-8 lg:px-16 ">
+    <section className=" relative py-16 px-4 sm:px-8 lg:px-16 ">
+              <div className="absolute -top-32 left-0 opacity-20">
+                    <Image
+                      alt=""
+                      src={"/Images/bg1.png"}
+                      width={360}
+                      height={360}
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
       <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
         <div className="max-w-xl">
-          <h2 className="text-3xl md:text-4xl font-[Mosetta]">Shop Neckwear</h2>
+          <h2 className="text-3xl md:text-4xl font-mosetta font-medium text-[#99571d]">Shop Neckwear</h2>
           <p className="text-md md:text-xl text-stone-500 font-serif mt-4">
             From timeless studs to graceful chandbalis, find your perfect pair.
           </p>
