@@ -136,7 +136,7 @@ export default function EarringsMarquee() {
                     </div>
                     <div className="p-4 flex flex-col justify-between">
                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-stone-800 group-hover:text-[#B67032] transition-colors text-md truncate">
+                        <h4 className="font-serif font-medium text-stone-800 group-hover:text-[#B67032] transition-colors text-md truncate">
                         {item.name}
                       </h4>
                       

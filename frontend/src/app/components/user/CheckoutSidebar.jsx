@@ -168,15 +168,18 @@ export default function CheckoutSidebar({
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[998]"
+          className="fixed inset-0 bg-black/50 z-[999]"
           onClick={() => setIsOpen(false)}
         />
       )}
+
       <div
-        className={`fixed top-0 right-0 min-h-screen w-[90%] md:w-[40%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
+        className={`fixed top-0 right-0   min-h-screen w-[90%] md:w-[40%] xl:w-[25%] bg-white shadow-lg z-[999] transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
+           
+        
         {/* Header */}
         <div className="flex justify-between items-center px-5 py-4 border-b-[1px] border-[#99571d]">
           <h2 className="text-xl font-mosetta font-medium text-[#99571d]">

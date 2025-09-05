@@ -209,7 +209,7 @@ export default function AuthSidebar() {
           isAuthOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <ToastContainer />
+        {/* <ToastContainer /> */}
 
         {isLoggedIn && <Account />}
 

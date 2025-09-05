@@ -63,13 +63,13 @@ export default function ShopByCategory() {
   return (
     <section className="py-12 z-50 relative">
 
-        <div className="absolute -top-32 right-0 opacity-20">
+        <div className="absolute -top-24 -right-12 opacity-20">
               <Image
                 alt=""
                 src={"/Images/bg1.png"}
                 width={360}
                 height={360}
-                className="w-full h-auto object-cover"
+                className="w-full h-auto rotate-[300deg] object-cover"
               />
             </div>
 
@@ -145,7 +145,7 @@ export default function ShopByCategory() {
                         />
                       </div>
                     {/* </div> */}
-                    <h3 className="mt-4 font-semibold text-lg text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
+                    <h3 className="mt-4 font-serif font-medium text-lg text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
                       {product.name}
                     </h3>
                    {product.description?.paragraphs?.[0] && (

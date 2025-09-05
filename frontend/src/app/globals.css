@@ -6,6 +6,7 @@
   src: local("Mosetta"), url("/fonts/mosseta.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
+  letter-spacing: 2px;
 }
 
 /* Add to Tailwind’s theme system */
