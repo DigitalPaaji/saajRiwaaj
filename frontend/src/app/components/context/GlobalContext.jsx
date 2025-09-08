@@ -19,6 +19,8 @@ export const GlobalProvider = ({ children }) => {
   const [productsByCategory, setProductsByCategory] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isOrderOpen, setIsOrderOpen] = useState(false);
+
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [wishlist, setWishlist] = useState([]);
 
@@ -27,6 +29,8 @@ export const GlobalProvider = ({ children }) => {
   const [authTab, setAuthTab] = useState("login"); // or 'signup'
   const [user, setUser] = useState(null);
   const [admin, setAdmin] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
 
   // Forgot Password (Not Logged In)
   const forgotPassword = async (email) => {
@@ -420,6 +424,35 @@ export const GlobalProvider = ({ children }) => {
     }
   }, []);
 
+
+
+ const fetchOrders = useCallback(async () => {
+    try {
+      setLoadingOrders(true);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/order/`, {
+        credentials: "include",
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        toast.error("Admin access required");
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error("Failed to load orders");
+      }
+
+      const data = await res.json();
+      setOrders(data.orders || []);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      toast.error("Failed to load orders");
+    } finally {
+      setLoadingOrders(false);
+    }
+  }, []);
+
+
   const fetchProductsByCategory = async (categoryId) => {
     try {
       const res = await fetch(
@@ -501,6 +534,8 @@ export const GlobalProvider = ({ children }) => {
         updateQty,
         isCartOpen,
         setIsCartOpen,
+        isOrderOpen,
+        setIsOrderOpen,
         isWishlistOpen,
         setIsWishlistOpen,
         addToWishlist,
@@ -524,6 +559,10 @@ export const GlobalProvider = ({ children }) => {
         refetchUser: fetchUser,
         refetchAdmin: fetchAdmin,
         logoutAdmin,
+        fetchOrders,
+        orders,
+        loadingOrders,
+  
       }}
     >
       {children}

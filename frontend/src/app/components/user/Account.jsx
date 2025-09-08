@@ -1,168 +1,3 @@
-// "use client";
-// import { X } from "lucide-react";
-// import React, { useEffect, useState } from "react";
-// import { useGlobalContext } from "../context/GlobalContext";
-// import { toast } from "react-toastify";
-
-// function Account() {
-//   const { user, setIsAuthOpen, logoutUser, refetchUser } = useGlobalContext();
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     phone: "",
-//     addressLine: "",
-//     city: "",
-//     state: "",
-//     country: "",
-//     pincode: "",
-//   });
-
-//   useEffect(() => {
-//     refetchUser();
-//   }, [refetchUser]);
-
-//   useEffect(() => {
-//     if (user) {
-//       setFormData({
-//         name: user.name || "",
-//         phone: user.phone || "",
-//         addressLine: user.address?.addressLine || "",
-//         city: user.address?.city || "",
-//         state: user.address?.state || "",
-//         country: user.address?.country || "",
-//         pincode: user.address?.pincode || "",
-//       });
-//     }
-//   }, [user]);
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSave = async () => {
-//     try {
-//       const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/update`, {
-//         method: "PUT",
-//         headers: { "Content-Type": "application/json" },
-//         credentials: "include",
-//         body: JSON.stringify(formData),
-//       });
-//       const data = await res.json();
-//       if (res.ok) {
-//         toast.success("Profile updated!");
-//         refetchUser();
-//       } else {
-//         toast.error(data.message);
-//       }
-//     } catch (err) {
-//       toast.error("Update failed!");
-//     }
-//   };
-
-//   return (
-//     <div className="bg-[#b87d4921] flex flex-col h-full pb-6">
-//       {/* Header */}
-      // <div className="flex justify-between items-center px-4 py-6 border-b-[1px] border-[#99571d]">
-      //   <h2 className="text-xl font-mosetta font-medium text-[#99571d]">My Profile</h2>
-      //   <button onClick={() => setIsAuthOpen(false)}>
-      //     <X className="w-5 h-5" />
-      //   </button>
-      // </div>
-
-//       {/* Profile Form */}
-//       <div className="p-5 space-y-4">
-//         <input
-//           type="text"
-//           name="name"
-//           placeholder="Full Name"
-//           value={formData.name}
-//           onChange={handleChange}
-//           className="w-full border p-2 rounded"
-//         />
-//         <input
-//           type="text"
-//           name="phone"
-//           placeholder="Phone Number"
-//           value={formData.phone}
-//           onChange={handleChange}
-//           className="w-full border p-2 rounded"
-//         />
-//         <input
-//           type="text"
-//           name="addressLine"
-//           placeholder="Address Line"
-//           value={formData.addressLine}
-//           onChange={handleChange}
-//           className="w-full border p-2 rounded"
-//         />
-//         <div className="grid grid-cols-2 gap-3">
-//           <input
-//             type="text"
-//             name="city"
-//             placeholder="City"
-//             value={formData.city}
-//             onChange={handleChange}
-//             className="w-full border p-2 rounded"
-//           />
-//           <input
-//             type="text"
-//             name="state"
-//             placeholder="State"
-//             value={formData.state}
-//             onChange={handleChange}
-//             className="w-full border p-2 rounded"
-//           />
-//         </div>
-//         <div className="grid grid-cols-2 gap-3">
-//           <input
-//             type="text"
-//             name="country"
-//             placeholder="Country"
-//             value={formData.country}
-//             onChange={handleChange}
-//             className="w-full border p-2 rounded"
-//           />
-//           <input
-//             type="text"
-//             name="pincode"
-//             placeholder="Pincode"
-//             value={formData.pincode}
-//             onChange={handleChange}
-//             className="w-full border p-2 rounded"
-//           />
-//         </div>
-
-//         <button
-//           className="w-full bg-[#B67032] text-white py-2 rounded"
-//           onClick={handleSave}
-//         >
-//           Save Changes
-//         </button>
-//       </div>
-
-//       {/* Logout */}
-//       <div className="w-full text-right px-5">
-//         <button
-//           className="mt-2 bg-red-500 text-white px-4 py-2 rounded"
-//           onClick={logoutUser}
-//         >
-//           Logout
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Account;
-        
-
-
-
-
-
-
-
-
-
 "use client";
 import React, { useEffect, useState } from "react";
 import {
@@ -171,16 +6,18 @@ import {
   User,
   Mail,
   Phone,
-  MapPin,
   Loader2,
   LogOut,
+  MapPin, Building2, Map, Globe, Hash,
+  Package, Heart, ShoppingCart
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../context/GlobalContext";
+import Link from "next/link";
 const Apiurl = process.env.NEXT_PUBLIC_LOCAL_PORT;
 
 function Account() {
-  const { user, setIsAuthOpen, logoutUser, refetchUser } = useGlobalContext();
+  const { user, setIsAuthOpen, logoutUser, refetchUser, setIsWishlistOpen, setIsOrderOpen, setIsCartOpen } = useGlobalContext();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -219,9 +56,9 @@ function Account() {
 const handleSave = async () => {
   try {
     setIsSaving(true);
-
+    const clean = (val) => (val === "" ? null : val); 
     const payload = {
-      phone: formData.phone,
+      phone: clean(formData.phone),
       address: {
         addressLine: formData.addressLine,
         city: formData.city,
@@ -256,45 +93,11 @@ const handleSave = async () => {
   }
 };
 
-
-
-  // const handleSave = async () => {
-  //   try {
-  //     setIsSaving(true);
-  //     const payload = {
-  //       phone: formData.phone,
-  //       address: {
-  //         addressLine: formData.addressLine,
-  //         city: formData.city,
-  //         state: formData.state,
-  //         country: formData.country,
-  //         pincode: formData.pincode,
-  //       },
-  //     };
-
-  //     const res = await fetch("https://saajriwaaj.onrender.com/user/update", {
-  //       method: "PUT",
-  //       headers: { "Content-Type": "application/json" },
-  //       credentials: "include",
-  //       body: JSON.stringify(payload),
-  //     });
-  //     const data = await res.json();
-  //     if (res.ok) {
-  //       toast.success("Profile updated!");
-  //       setIsEditing(false);
-  //       refetchUser();
-  //     } else {
-  //       toast.error(data.message || "Update failed!");
-  //     }
-  //   } catch {
-  //     toast.error("Something went wrong!");
-  //   } finally {
-  //     setIsSaving(false);
-  //   }
-  // };
-
   return (
-    <div className="bg-white h-full w-full max-w-sm flex flex-col">
+    <div
+     className="bg-white h-full w-full  flex flex-col"
+
+    >
       {/* Header */}
            <div className="flex justify-between items-center px-4 py-6 border-b-[1px] border-[#99571d]">
         <h2 className="text-xl font-mosetta font-medium text-[#99571d]">My Profile</h2>
@@ -323,12 +126,39 @@ const handleSave = async () => {
                     : "-"
                 }
               />
+
+
+
+
+
               <button
                 className="flex items-center gap-1 px-3 py-1 bg-[#B67032] text-white text-sm rounded mt-2"
                 onClick={() => setIsEditing(true)}
               >
                 <Pencil className="w-4 h-4" /> Edit
               </button>
+
+
+                <div className="mt-6 space-y-3 border-t border-stone-200 pt-4">
+          <button onClick={()=>{
+           setIsAuthOpen(false)
+           setIsOrderOpen(true)
+           }} className="flex items-center gap-3 text-stone-700 hover:text-[#B67032] transition-colors">
+            <Package className="w-5 h-5 text-[#99571db7]" />
+            <span className="text-md font-medium">My Orders</span>
+          </button>
+          <button onClick={()=>setIsWishlistOpen(true)} className="flex items-center gap-3 text-stone-700 hover:text-[#B67032] transition-colors">
+            <Heart className="w-5 h-5 text-[#99571db7]" />
+            <span className="text-md font-medium">Wishlist</span>
+          </button>
+          <button onClick={()=>{
+           setIsAuthOpen(false)
+           setIsCartOpen(true)
+          }} className="flex items-center gap-3 text-stone-700 hover:text-[#B67032] transition-colors">
+            <ShoppingCart className="w-5 h-5 text-[#99571db7]" />
+            <span className="text-md font-medium">Cart</span>
+          </button>
+        </div>
             </>
           ) : (
             <>
@@ -347,28 +177,28 @@ const handleSave = async () => {
                 onChange={handleChange}
               />
               <EditableRow
-                icon={<MapPin className="text-[#99571db7]"/>}
+                icon={<Building2  className="text-[#99571db7]"/>}
                 label="City"
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
               />
               <EditableRow
-                icon={<MapPin className="text-[#99571db7]"/>}
+                icon={<Map  className="text-[#99571db7]"/>}
                 label="State"
                 name="state"
                 value={formData.state}
                 onChange={handleChange}
               />
               <EditableRow
-                icon={<MapPin className="text-[#99571db7]"/>}
+                icon={<Globe  className="text-[#99571db7]"/>}
                 label="Country"
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
               />
               <EditableRow
-                icon={<MapPin className="text-[#99571db7]"/>}
+                icon={<Hash  className="text-[#99571db7]"/>}
                 label="Pincode"
                 name="pincode"
                 value={formData.pincode}

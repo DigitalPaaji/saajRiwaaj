@@ -26,6 +26,8 @@ const navItems = [
   { name: 'users', href: '/admin/users', icon: PlusSquare },
   { name: 'Account', href: '/admin/account', icon: User },
   { name: 'Coupon', href: '/admin/coupon', icon: User },
+  { name: 'Orders', href: '/admin/orders', icon: User },
+
 
 
 

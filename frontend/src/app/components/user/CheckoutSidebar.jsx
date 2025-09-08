@@ -9,11 +9,12 @@ import Link from "next/link";
 export default function CheckoutSidebar({
   isOpen,
   setIsOpen,
+  
   cart,
   total,
   discountPercent,
 }) {
-  const { user, setCart } = useGlobalContext();
+  const { user, setCart, setIsOrderOpen } = useGlobalContext();
   const [address, setAddress] = useState({
     name: "",
     email: "",
@@ -199,13 +200,18 @@ export default function CheckoutSidebar({
               <h3 className="text-green-600 text-xl font-mosetta font-medium text-center">
                 Order placed successfully! 🎉
               </h3>
-              <Link
-                href="/orders"
-               onClick={() => setIsOpen(false)}
+              <button
+          
+               onClick={() => {
+                setIsOpen(false)
+                setIsOrderOpen(true)
+               }
+
+               }
                 className="px-5 py-3 w-fit bg-[#B67032] text-white rounded-md"
               >
                 View Order Details
-              </Link>
+              </button>
             </div>
           ) : (
             <div className="space-y-6">

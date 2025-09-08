@@ -9,6 +9,7 @@ import LoginSignup from "../components/user/LoginSignup";
 import Wishlist from '../components/user/Wishlist'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import OrderSidebar from '../components/user/OrderSidebar'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
                       <CartSidebar/>
                       <LoginSignup/>
                       <Wishlist/>
+                      <OrderSidebar/>
                 
         {children}
 
