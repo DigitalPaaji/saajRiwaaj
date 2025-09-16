@@ -83,7 +83,7 @@ const CouponPage = () => {
   return (
     <div className="w-full">
       <ToastContainer />
-      <h2 className="text-2xl font-bold mb-6 text-[#4d4c4b] drop-shadow-sm">
+      <h2 className="text-2xl font-bold mb-6 font-mosetta  text-[#99571d] drop-shadow-sm">
         Manage Coupons
       </h2>
 
@@ -118,7 +118,7 @@ const CouponPage = () => {
       <div className="overflow-x-auto rounded-lg">
         <table className="min-w-full text-left">
           <thead className="bg-[#4d4c4b] text-white text-xl font-medium">
-            <tr className="text-sm">
+            <tr className="text-sm font-mosetta">
               <th className="px-4 py-3">#</th>
               <th className="px-4 py-3">Code</th>
               <th className="px-4 py-3">Discount</th>

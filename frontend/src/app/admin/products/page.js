@@ -69,7 +69,7 @@ const ProductsList = () => {
    <div className=" w-full">
     <ToastContainer className={'z-[9999]'}/>
       <div className="  flex justify-between items-center mb-6 flex-wrap gap-4">
-        <h2 className="text-2xl font-bold text-[#4d4c4b] drop-shadow-sm">
+        <h2 className="text-2xl font-bold font-mosetta  text-[#99571d]  drop-shadow-sm">
           All Products
         </h2>
         <Link
@@ -111,7 +111,7 @@ const ProductsList = () => {
       </td>
     </tr>
   ) :(allProducts.map((product, idx) => (
-                <tr key={product._id} className=" rounded-xl hover:bg-[#d6d6d6]  transition">
+                <tr key={product._id} className=" rounded-xl hover:bg-[#f3f2f1]  transition">
                   <td className="px-4 py-3">{idx + 1} </td>
                   <td className="px-4 py-3"><Image alt='' width={220} height={220}  src={product.images?.[0]} className="w-16 h-16 object-cover"/></td>
                   <td className="px-4 py-3">{product.name}</td>

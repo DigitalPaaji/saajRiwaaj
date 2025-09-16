@@ -52,7 +52,7 @@ export default function UsersList() {
         ) : (
           <table className="min-w-full text-left">
             <thead className="bg-[#4d4c4b] text-white text-xl font-medium">
-              <tr className="text-sm">
+              <tr className="text-sm font-mosetta">
                 <th className="px-4 py-3">#</th>
                 <th className="px-4 py-3">NAME</th>
                 <th className="px-4 py-3">EMAIL</th>
@@ -72,7 +72,7 @@ export default function UsersList() {
                 users.map((user, idx) => (
                   <tr
                     key={user._id}
-                    className="hover:bg-[#d6d6d6] transition"
+                    className="hover:bg-[#f3f2f1] transition"
                   >
                     <td className="px-4 py-3">{idx + 1}</td>
                     <td className="px-4 py-3">{user.name}</td>

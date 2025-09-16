@@ -191,7 +191,7 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
             
               src="/Images/logo.webp"
               alt="Saaj Riwaaj Logo"
-              className="h-10 w-auto lg:h-12 transition-transform group-hover:scale-105"
+              className="h-10 w-auto lg:h-12 "
             />
           </Link>
             <button onClick={() => setIsMobileMenuOpen(false)} className="cursor-pointer p-2">

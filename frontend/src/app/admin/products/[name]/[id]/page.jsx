@@ -358,7 +358,7 @@ export default function AddProductPage() {
         {/* {product.map((product, idx) => ( */}
         <form onSubmit={handleUpdate}>
           <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-            <h1 className="text-2xl font-bold text-[#4d4c4b] drop-shadow-sm">
+            <h1 className="text-2xl font-bold font-mosetta  text-[#99571d] drop-shadow-sm">
               Product Information
             </h1>
             {isViewMode ? (

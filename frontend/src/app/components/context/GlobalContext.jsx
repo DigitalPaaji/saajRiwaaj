@@ -425,7 +425,26 @@ export const GlobalProvider = ({ children }) => {
   }, []);
 
 
+const fetchOrderById = useCallback(async (orderId) => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/order/${orderId}`, {
+      credentials: "include",
+    });
 
+    console.log("Response status:", res.status);
+    const data = await res.json();
+    console.log("Order data:", data);
+
+    if (!res.ok) throw new Error("Failed to fetch order");
+    return data.order;
+  } catch (err) {
+    console.error("Error fetching order by ID:", err);
+    return null;
+  }
+}, []);
+
+
+  
  const fetchOrders = useCallback(async () => {
     try {
       setLoadingOrders(true);
@@ -560,6 +579,7 @@ export const GlobalProvider = ({ children }) => {
         refetchAdmin: fetchAdmin,
         logoutAdmin,
         fetchOrders,
+        fetchOrderById,
         orders,
         loadingOrders,
   

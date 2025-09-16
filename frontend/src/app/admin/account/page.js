@@ -1,44 +1,49 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../../components/context/GlobalContext";
 import { toast } from "react-toastify";
 import PopupModal from "@/app/components/admin/ConfirmPopup";
+
 function Account() {
-    const {admin,logoutAdmin, refetchAdmin } = useGlobalContext()
-    const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-    useEffect(() => {
+  const { admin, logoutAdmin, refetchAdmin } = useGlobalContext();
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+
+  useEffect(() => {
     refetchAdmin();
-    }, [refetchAdmin]);
+  }, [refetchAdmin]);
 
   return (
-  <div className="flex flex-col  justify-between h-full pb-6">
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="flex justify-between items-center border-b pb-4 mb-4">
+        <h2 className="text-xl font-mosetta text-[#99571d] font-semibold">
+          Welcome, {admin?.name || "Admin"} 
+        </h2>
+      </div>
 
-<div>
-          <div className="flex justify-between items-center px-4 py-6 border-b">
-  <h2 className="text-xl font-semibold">
-    Welcome, {admin?.name}!
-  </h2>
-   
-   </div>
-<div className="p-5 space-y-2">
-  
-  <h4 className="text-lg text-gray-700 font-serif capitalize">{admin?.name}</h4>
+      {/* Account Info */}
+      <div className="flex flex-col gap-3 text-gray-700 mb-6">
+        <div>
+          <p className="text-sm font-medium text-gray-500">Name</p>
+          <p className="text-lg font-semibold capitalize">{admin?.name}</p>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-gray-500">Email</p>
+          <p className="text-md">{admin?.email}</p>
+        </div>
+      </div>
 
-  <h4 className="text-md text-gray-700 ">{admin?.email}</h4>
-      
-</div>
+      {/* Logout Button */}
+      <div className="mt-auto flex justify-end">
+        <button
+          className="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-sm transition"
+          onClick={() => setShowLogoutPopup(true)}
+        >
+          Logout
+        </button>
+      </div>
 
-</div>
-
-<div className="w-full text-right ">
- <button
-                  className=" mt-2 bg-red-500 text-white px-4 py-2 rounded"
-                   onClick={() => setShowLogoutPopup(true)}
-                >
-                  Logout
-                </button>
-</div>
-   {/* Logout confirmation popup */}
+      {/* Logout confirmation popup */}
       {showLogoutPopup && (
         <PopupModal
           title="Are you sure you want to logout?"
@@ -54,8 +59,8 @@ function Account() {
           showCancel
         />
       )}
-      </div>
-  )
+    </div>
+  );
 }
 
-export default Account
+export default Account;

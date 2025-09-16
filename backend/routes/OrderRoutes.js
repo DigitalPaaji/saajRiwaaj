@@ -10,6 +10,7 @@ router.put("/cancel/:id", userAuth, orderController.cancelOrder);
 
 // admin routes
 router.get("/", adminAuth, orderController.getAllOrders);
+router.get("/:id", adminAuth, orderController.getOrderById);
 router.put("/:id", adminAuth, orderController.updateOrderStatus);
 
 module.exports = router;

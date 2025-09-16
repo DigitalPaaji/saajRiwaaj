@@ -64,6 +64,26 @@ const getAllOrders = async (req, res) => {
   }
 };
 
+const getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate("userId", "name email phone address")
+      .populate("items.product");
+
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    // Normalize phone field (fallback for old docs)
+    const userPhone = order.userId?.phone || order.userId?.address?.phone || "";
+
+    res.status(200).json({ order: { ...order.toObject(), userPhone } });
+  } catch (err) {
+    console.error("Get order by ID error:", err);
+    res.status(500).json({ message: "Failed to fetch order" });
+  }
+};
+
+
+
 // ADMIN: update order status
 const updateOrderStatus = async (req, res) => {
   try {
@@ -83,5 +103,6 @@ module.exports = {
   getUserOrders,
   cancelOrder,
   getAllOrders,
+  getOrderById,
   updateOrderStatus,
 };

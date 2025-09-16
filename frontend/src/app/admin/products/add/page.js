@@ -15,8 +15,8 @@ const CLOUDINARY_UPLOAD_PRESET = "saajRiwaajProducts";
 const inputClasses = "w-full px-3 py-2 text-gray-800 bg-gray-50 border border-gray-300 rounded-lg  transition duration-200 shadow-sm appearance-none";
 const labelClasses = "block mb-1 text-sm font-medium text-gray-700";
 const buttonClasses = {
-    primary: "px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none  transition-colors duration-200 disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center",
-    destructive: "h-6 w-6 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-700 transition-opacity",
+    primary: "px-4 py-2 bg-[#4d4c4b] hover:bg-[#272625] text-white font-semibold rounded-lg shadow-sm focus:outline-none  transition-colors duration-200 disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center",
+    destructive: "h-6 w-6 rounded-full bg-red-600 text-white flex items-center justify-center transition-opacity",
 };
 const cardClasses = "bg-white p-6 rounded-xl shadow-sm border border-gray-200";
 
@@ -274,7 +274,7 @@ console.log("API Response:", result);
                 
                    
                     <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-                        <h1 className="text-2xl font-bold text-[#4d4c4b] drop-shadow-sm">Add New Product</h1>
+                        <h1 className="text-2xl font-bold font-mosetta  text-[#99571d] drop-shadow-sm">Add New Product</h1>
                         <button type="submit" disabled={isSubmitting} className='cursor-pointer bg-[#4d4c4b] hover:bg-[#272625] text-white px-4 py-2 rounded-xl shadow transition duration-300 flex items-center'>
                          <FaPlus className="mr-2" />     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             {isSubmitting ? "Submitting..." : "Add Product"}

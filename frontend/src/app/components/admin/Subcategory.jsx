@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { FaPlus } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import PopupModal from "../../components/admin/ConfirmPopup";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import PopupModal from "./ConfirmPopup";
 
 const TagsPage = () => {
   const [tags, setTags] = useState([]);
@@ -96,14 +97,14 @@ const TagsPage = () => {
     <div className="w-full">
       <ToastContainer className="z-[9999]" autoClose={2000} />
 
-           <h2 className="text-2xl font-bold mb-6 text-[#4d4c4b] drop-shadow-sm">Manage subcategories</h2>
+           <h2 className="text-2xl font-serif capitalize mb-6 text-[#4d4c4b] drop-shadow-sm">Manage subcategories</h2>
 
       <div className=" my-6 ">
-        <form onSubmit={handleAddTag} className="flex gap-2 justify-between flex-wrap">
+        <form onSubmit={handleAddTag} className="flex gap-2 justify-between flex-wrap xl:flex-nowrap">
          <select
   value={selectedCategory}
   onChange={(e) => setSelectedCategory(e.target.value)}
-  className="border px-3 py-2 w-full rounded-xl mb-2"
+  className="border px-3 py-2 w-full rounded-xl "
 >
   <option value="">Select Category</option>
   {categories.map((cat) => (
@@ -131,9 +132,9 @@ const TagsPage = () => {
       </div>
 
       <div className="overflow-x-auto rounded-lg">
-        <table className="min-w-full text-left">
+        <table className="min-w-full text-left ">
           <thead className="bg-[#4d4c4b] text-white text-xl font-medium">
-            <tr className="text-sm">
+            <tr className="font-mosetta text-sm">
               <th className="px-4 py-3">#</th>
               <th className="px-4 py-3">Sub Category</th>
               <th className="px-4 py-3">Category</th>
@@ -166,9 +167,9 @@ const TagsPage = () => {
                         setShowDeletePopup(true);
                         setTagToDelete(tag);
                       }}
-                      className="bg-[#dd4747e7] text-white cursor-pointer px-3 py-1 rounded hover:bg-[#ec4242e7] transition"
+                      className="text-[#dd4747e7] cursor-pointer "
                     >
-                      Delete
+                      <MdOutlineDeleteForever className="w-6 h-6"/>
                     </button>
                   </td>
                 </tr>
