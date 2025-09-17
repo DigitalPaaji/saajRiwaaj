@@ -30,13 +30,13 @@ const totalUsers = allUsers?.length || 0;
   return (
     <div className="flex min-h-screen font-mosetta">
       {/* Main Content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-3 xl:p-6">
         <h1 className="text-2xl font-bold text-[#99571d] mb-6">
           Dashboard Overview
         </h1>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="flex items-center gap-6 justify-start flex-wrap lg:flex-nowrap  mb-8">
           <SummaryCard
             icon={<Package className="w-6 h-6 text-[#99571d]" />}
             title="Total Products"
@@ -60,7 +60,7 @@ const totalUsers = allUsers?.length || 0;
         </div>
 
         {/* Orders Table */}
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-white shadow-md rounded-lg p-3 xl:p-6">
           <h2 className="text-lg font-semibold mb-4">Recent Orders</h2>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -127,7 +127,7 @@ const totalUsers = allUsers?.length || 0;
 // Summary Card Component
 function SummaryCard({ icon, title, value }) {
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md flex items-center gap-4">
+    <div className="w-full bg-white p-4 rounded-xl shadow-md flex items-center gap-4 ">
       <div className="p-3 bg-[#f3e7dc] rounded-full">{icon}</div>
       <div>
         <p className="text-sm text-gray-500">{title}</p>
