@@ -7,6 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
 
 const GlobalContext = createContext();
 
@@ -31,6 +32,7 @@ export const GlobalProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
+    const [allUsers, setAllUsers] = useState([]);
 
   // Forgot Password (Not Logged In)
   const forgotPassword = async (email) => {
@@ -80,6 +82,26 @@ export const GlobalProvider = ({ children }) => {
       return { ok: false, message: "Network error, please try again!" };
     }
   };
+
+
+    const fetchAllUsers = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/all`, {
+          method: "GET",
+          credentials: "include", // send cookies if required
+        });
+        const data = await res.json();
+  
+        if (res.ok) {
+          setAllUsers(data.users || []);
+        } else {
+          toast.error(data.message || "Failed to load users");
+        }
+      } catch (err) {
+        console.error("Fetch users error:", err);
+      } 
+    };
+
 
   const fetchUser = useCallback(async () => {
     try {
@@ -522,19 +544,21 @@ const fetchOrderById = useCallback(async (orderId) => {
     }
     (async () => {
       const cats = await fetchCategories();
-      if (cats.length) await fetchSubCategories(cats);
+      if (cats?.length) await fetchSubCategories(cats);
       await fetchAllProducts();
       await fetchFeaturedProducts();
       await fetchTags();
+      await fetchAllUsers();
     })();
   }, [
-    fetchCategories,
-    fetchSubCategories,
-    fetchAllProducts,
-    fetchTags,
-    fetchFeaturedProducts,
-    fetchUser,
-    fetchAdmin,
+    // fetchCategories,
+    // fetchSubCategories,
+    // fetchAllProducts,
+    // fetchTags,
+    // fetchFeaturedProducts,
+    // fetchAllUsers,
+    // fetchUser,
+    // fetchAdmin,
   ]);
   return (
     <GlobalContext.Provider
@@ -582,7 +606,7 @@ const fetchOrderById = useCallback(async (orderId) => {
         fetchOrderById,
         orders,
         loadingOrders,
-  
+  allUsers,
       }}
     >
       {children}

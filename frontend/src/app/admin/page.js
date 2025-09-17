@@ -10,11 +10,12 @@ import {
   Users,
   DollarSign,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
-  const { orders, fetchOrders, loadingOrders, allProducts, user } =
+  const { allUsers, orders, fetchOrders, loadingOrders, allProducts, user } =
     useGlobalContext();
-
+  const router = useRouter();
   // Fetch orders when dashboard loads
   useEffect(() => {
     fetchOrders();
@@ -22,7 +23,7 @@ export default function AdminDashboard() {
 
   // ✅ calculate summary values
   const totalProducts = allProducts?.length || 0;
-  const totalUsers = Array.isArray(user) ? user.length : 1; // adjust if you have fetchAllUsers later
+const totalUsers = allUsers?.length || 0;
   const totalOrders = orders?.length || 0;
   const totalSales = orders?.reduce((sum, o) => sum + (o.amount || 0), 0) || 0;
 
@@ -81,7 +82,9 @@ export default function AdminDashboard() {
                   </tr>
                 ) : orders?.length > 0 ? (
                   orders.slice(0, 5).map((order) => (
-                    <tr key={order._id} className="text-sm hover:bg-gray-50">
+                    <tr key={order._id} 
+                        onClick={() => router.push(`/admin/orders/${order._id}`)}
+                    className="text-sm hover:bg-gray-50 cursor-pointer">
                       <td className="p-3 border-b">{order._id}</td>
                       <td className="p-3 border-b">
                         {order.shippingAddress?.name || "N/A"}

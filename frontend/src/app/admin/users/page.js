@@ -5,37 +5,38 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useGlobalContext } from "@/app/components/context/GlobalContext";
 export default function UsersList() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { allUsers } = useGlobalContext()
+  // const [users, setUsers] = useState([]);
+  // const [loading, setLoading] = useState(true);
 
-  // Fetch all users
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/all`, {
-        method: "GET",
-        credentials: "include", // send cookies if required
-      });
-      const data = await res.json();
+  // // Fetch all users
+  // const fetchUsers = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/all`, {
+  //       method: "GET",
+  //       credentials: "include", // send cookies if required
+  //     });
+  //     const data = await res.json();
 
-      if (res.ok) {
-        setUsers(data.users || []);
-      } else {
-        toast.error(data.message || "Failed to load users");
-      }
-    } catch (err) {
-      console.error("Fetch users error:", err);
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (res.ok) {
+  //       setUsers(data.users || []);
+  //     } else {
+  //       toast.error(data.message || "Failed to load users");
+  //     }
+  //   } catch (err) {
+  //     console.error("Fetch users error:", err);
+  //     toast.error("Something went wrong");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  // useEffect(() => {
+  //   fetchUsers();
+  // }, []);
 
   return (
     <div className="w-full">
@@ -47,9 +48,9 @@ export default function UsersList() {
       </div>
 
       <div className="overflow-x-auto rounded-lg">
-        {loading ? (
+        {/* {userLoading ? (
           <Skeleton count={5} height={40} className="mb-2 rounded" />
-        ) : (
+        ) : ( */}
           <table className="min-w-full text-left">
             <thead className="bg-[#4d4c4b] text-white text-xl font-medium">
               <tr className="text-sm font-mosetta">
@@ -62,14 +63,14 @@ export default function UsersList() {
             </thead>
 
             <tbody className="text-sm font-medium">
-              {users.length === 0 ? (
+              {allUsers.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center py-6 text-gray-500">
                     No users found.
                   </td>
                 </tr>
               ) : (
-                users.map((user, idx) => (
+                allUsers.map((user, idx) => (
                   <tr
                     key={user._id}
                     className="hover:bg-[#f3f2f1] transition"
@@ -84,7 +85,7 @@ export default function UsersList() {
               )}
             </tbody>
           </table>
-        )}
+        {/* )} */}
       </div>
     </div>
   );
