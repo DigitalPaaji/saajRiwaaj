@@ -70,12 +70,17 @@ const loginUser = async (req, res) => {
     res
       .status(200)
       .cookie("userToken", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "Lax",
+         httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // production me true
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", 
         maxAge: 24 * 60 * 60 * 1000,
-        path:'/',
-        domain: "localhost",
+        path: "/"
+        // httpOnly: true,
+        // secure: false,
+        // sameSite: "Lax",
+        // maxAge: 24 * 60 * 60 * 1000,
+        // path:'/',
+        // domain: "localhost",
       })
       .json({
         message: "Login Successful",
@@ -115,11 +120,10 @@ const loginAdmin = async (req, res) => {
       .status(200)
       .cookie("adminToken", token, {
         httpOnly: true,
-        secure: false,
-        path:'/',
-        domain: "localhost",
-        sameSite: "Lax",
+        secure: process.env.NODE_ENV === "production", // production me true
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", 
         maxAge: 24 * 60 * 60 * 1000,
+        path: "/"
      
       })
       .json({
@@ -137,10 +141,9 @@ const loginAdmin = async (req, res) => {
 const logoutUser = (req, res) => {
   res.clearCookie("userToken", {
     httpOnly: true,
-    secure: false,
-    sameSite: "Lax",
-    path: '/',
-    domain: "localhost"
+    secure: process.env.NODE_ENV === "production", 
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    path: "/",
     
   });
   return res.status(200).json({ message: "Logged out" });
@@ -148,11 +151,10 @@ const logoutUser = (req, res) => {
 
 const logoutAdmin = (req, res) => {
   res.clearCookie("adminToken", {
-    httpOnly: true,
-    secure: false,
-    sameSite: "Lax",
-    path: '/',
-    domain: "localhost"
+httpOnly: true,
+    secure: process.env.NODE_ENV === "production", 
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    path: "/",
   
   });
   return res.status(200).json({ message: "Admin Logged out Successfully." });
