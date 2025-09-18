@@ -62,7 +62,7 @@ export default function PrivacyPage() {
 
       {/* Content */}
       <div className="py-16 px-4 sm:px-8 lg:px-24 xl:px-60 mx-auto my-16">
-        {privacyData.map((section, index) => (
+        {termsData.map((section, index) => (
           <div key={index} className="mb-10">
             <h2 className="text-xl font-semibold mb-3 text-[#111]">{section.heading}</h2>
             <p className="text-gray-700 leading-7">{section.para}</p>
