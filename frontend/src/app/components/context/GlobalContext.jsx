@@ -95,7 +95,8 @@ export const GlobalProvider = ({ children }) => {
         if (res.ok) {
           setAllUsers(data.users || []);
         } else {
-          toast.error(data.message || "Failed to load users");
+          // toast.error(data.message || "Failed to load users");
+           setAllUsers([]);
         }
       } catch (err) {
         console.error("Fetch users error:", err);
