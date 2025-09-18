@@ -1,9 +1,9 @@
 'use client';
 
-import LeftFilterSidebar from '../../../../components/user/Filter';
+import LeftFilterSidebar from '../../../../components/user/LeftFilterSidebar';
 import Collection from '../../../../components/user/Collection';
 import InnerBanner from '../../../../components/user/InnerBanner';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
 
 export default function FilterLayout() {
