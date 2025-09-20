@@ -26,15 +26,16 @@ const iconOptions = [
 ];
 import MegaMenu from "./MegaMenu";
 import { useGlobalContext } from "../context/GlobalContext";
-
+import SearchBar from "./Searchbar";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
-  const {  user, refetchUser, isLoggedIn, wishlist, setAuthTab, setIsWishlistOpen, setIsAuthOpen, categories, subCategoriesMap, cart, setIsCartOpen } = useGlobalContext();
-    useEffect(() => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { allProducts , user, refetchUser, isLoggedIn, products, wishlist, setAuthTab, setIsWishlistOpen, setIsAuthOpen, categories, subCategoriesMap, cart, setIsCartOpen } = useGlobalContext();
+  useEffect(() => {
     refetchUser();
-    }, []);
+  }, []);
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
     return () => {
@@ -65,7 +66,7 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="lg:hidden p-2 text-stone-700 hover:text-[#B67032]"
+            className="xl:hidden p-2 text-stone-700 hover:text-[#B67032]"
           >
             <Menu className="w-6 h-6" />
           </button>
@@ -75,12 +76,12 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
             <img
               src="/Images/logo.webp"
               alt="Saaj Riwaaj Logo"
-              className="h-10 w-auto lg:h-12 "
+              className="h-10 w-auto xl:h-12 "
             />
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center space-x-10">
+          <nav className="hidden xl:flex items-center space-x-10">
   {categories.map((cat) => {
     const hasSubCats = subCategoriesMap[cat._id]?.length > 0;
     const categoryPath = `/category/${formatCategoryPath(cat.name)}/${formatCategoryPath(cat._id)}`;
@@ -121,9 +122,24 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
-            <button className="hidden md:block p-2 text-stone-700 hover:text-[#B67032]">
+            {/* Search Button */}
+      <button
+        onClick={() => setIsSearchOpen(true)}
+        className="hidden md:block p-2 text-stone-700 hover:text-[#B67032]"
+      >
+        <Search className="w-5 h-5" />
+      </button>
+
+      {/* Search Modal */}
+      {isSearchOpen && (
+        <SearchBar products={allProducts} onClose={() => setIsSearchOpen(false)} />
+      )}
+           
+           
+           
+            {/* <button className="hidden md:block p-2 text-stone-700 hover:text-[#B67032]">
               <Search className="w-5 h-5" />
-            </button>
+            </button> */}
             <button 
              onClick={() => {
               setIsWishlistOpen(true);
@@ -136,14 +152,7 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
         </span>
       )}
             </button>
-            <button 
-            onClick={() => {
-              setAuthTab("login"); // or signup
-              setIsAuthOpen(true);
-            }}
-            className='p-2 text-stone-700 hover:text-[#B67032] '>
-              {isLoggedIn? (<span className="w-8 h-8 flex items-center justify-center bg-[#77481f] text-white rounded-full font-semibold">{user?.name?.substr(0,1).toUpperCase()}</span>) : ( <User className="w-5 h-5" />)}
-            </button>
+  
               <button
       onClick={() => setIsCartOpen(true)}
       className="p-2 text-stone-700 hover:text-[#B67032] relative"
@@ -155,6 +164,15 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
         </span>
       )}
     </button>
+
+              <button 
+            onClick={() => {
+              setAuthTab("login"); // or signup
+              setIsAuthOpen(true);
+            }}
+            className='p-2 text-stone-700 hover:text-[#B67032] '>
+              {isLoggedIn? (<span className="w-8 h-8 flex items-center justify-center bg-[#77481f] text-white rounded-full font-semibold">{user?.name?.substr(0,1).toUpperCase()}</span>) : ( <User className="w-5 h-5" />)}
+            </button>
           </div>
         </div>
       </div>
@@ -175,7 +193,7 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
       {/* Mobile Sidebar Menu */}
       <div
-        className={`fixed inset-0 z-[99] transition-transform lg:hidden ${{
+        className={`fixed inset-0 z-[99] transition-transform xl:hidden ${{
           true: "translate-x-0",
           false: "-translate-x-full",
         }[isMobileMenuOpen]}`}
@@ -191,7 +209,7 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
             
               src="/Images/logo.webp"
               alt="Saaj Riwaaj Logo"
-              className="h-10 w-auto lg:h-12 "
+              className="h-10 w-auto xl:h-12 "
             />
           </Link>
             <button onClick={() => setIsMobileMenuOpen(false)} className="cursor-pointer p-2">

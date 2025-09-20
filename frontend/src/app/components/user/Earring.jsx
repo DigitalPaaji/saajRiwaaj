@@ -71,7 +71,7 @@ export default function EarringsMarquee() {
               href={"/category/earrings/6880c122e9e1dc327b67e304"}
             >
               <li>
-                <div className="neumorphic-btn1 p-2 transition-all text-[#B67032]">
+                <div className="hover:bg-[#B67032] hover:text-white rounded-xl p-2 transition-all duration-300 text-[#B67032]">
                   {sub.name.toUpperCase()}
                 </div>
               </li>
