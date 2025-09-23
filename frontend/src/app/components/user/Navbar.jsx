@@ -61,7 +61,7 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
       className="bg-[#faf8eae0]  backdrop-blur-md sticky top-0 z-[99] shadow-sm "
       onMouseLeave={() => setActiveMegaMenu(null)}
     >
-      <div className=" mx-4 md:mx-12 xl:mx-24  ">
+      <div className=" sm:mx-4 md:mx-12 xl:mx-24  ">
         <div className="flex justify-between items-center h-20">
           {/* Mobile Menu Button */}
           <button
@@ -121,14 +121,17 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 </nav>
 
           {/* Right Icons */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center sm:space-x-2 md:space-x-4">
             {/* Search Button */}
-      <button
-        onClick={() => setIsSearchOpen(true)}
-        className="hidden md:block p-2 text-stone-700 hover:text-[#B67032]"
-      >
-        <Search className="w-5 h-5" />
-      </button>
+          <button
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            className={`p-2 rounded-md ${
+              isSearchOpen ? "bg-[#B67032] text-white" : "text-stone-700 hover:text-[#B67032]"
+            }`}
+          >
+            <Search className="w-5 h-5" />
+          </button>
+
 
       {/* Search Modal */}
       {isSearchOpen && (

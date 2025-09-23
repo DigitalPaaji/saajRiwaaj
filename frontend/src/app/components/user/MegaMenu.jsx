@@ -23,7 +23,7 @@ function formatCategoryLabel(name) {
 }
 
   return (
-    <div className="absolute top-full left-0 w-full bg-white shadow-lg border-t animate-[fadeIn_0.3s_ease-out] z-50">
+    <div className="absolute top-full left-0 w-full bg-[#faf8ea] shadow-lg border-t animate-[fadeIn_0.3s_ease-out] z-[99]">
       <div className="max-w-screen-2xl mx-auto px-8 py-10 grid grid-cols-4 gap-8">
         {/* Categories */}
         <div className="col-span-1">

@@ -230,41 +230,57 @@ const handleInputChange = (e) => {
         setProduct(prev => ({ ...prev, colorVariants: prev.colorVariants.filter((_, i) => i !== indexToRemove) }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-          if (product.images.length === 0) {
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (product.images.length === 0) {
     toast.error("Please upload at least one product image.");
     return;
   }
-        setIsSubmitting(true);
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/add`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...product, finalPrice: parseFloat(finalPrice) }),
-            });
-            const result = await response.json(); // log this to debug
-console.log("API Response:", result);
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            toast.success('Product added successfully!');
-        
-              setProduct({
-        name: '', category: '', subcategory: '',description: {
-  paragraphs: [''],
-  bulletPoints: ['']
-}, tags: [],
-        isFeatured: false, isNewArrival: false, price: '', discount: '',
-        images: [], colorVariants: []
-    })
 
-        } catch (error) {
-            toast.error('Failed to add product. Check console for details.');
-            console.error('Submission Error:', error);
-        } finally {
-            setIsSubmitting(false);
-          
-        }
-    };
+  // if no subcategories exist, remove subcategory value
+  const productToSubmit = {
+    ...product,
+    subcategory: subCategories.length > 0 ? product.subcategory : null,
+    finalPrice: parseFloat(finalPrice)
+  };
+
+  setIsSubmitting(true);
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(productToSubmit),
+    });
+
+    const result = await response.json();
+    console.log("API Response:", result);
+
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    toast.success('Product added successfully!');
+
+    setProduct({
+      name: '',
+      category: '',
+      subcategory: '',
+      description: { paragraphs: [''], bulletPoints: [''] },
+      tags: [],
+      isFeatured: false,
+      isNewArrival: false,
+      price: '',
+      discount: '',
+      images: [],
+      colorVariants: []
+    });
+
+  } catch (error) {
+    toast.error('Failed to add product. Check console for details.');
+    console.error('Submission Error:', error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
     return (
         <div className="">
@@ -311,17 +327,21 @@ console.log("API Response:", result);
 </div>
 
                                                                              <div>
+<div>
   <label htmlFor="subcategory" className={labelClasses}>Sub Category</label>
   <select
     name="subcategory"
     value={product.subcategory}
     onChange={handleInputChange}
-    required
-    disabled={!product.category}
+    // only require if there are subcategories
+    required={subCategories.length > 0}
+    disabled={!product.category || subCategories.length === 0}
     className={inputClasses}
   >
-    <option value="" disabled>
-          {product.category ? "Select a Sub Category" : "Select category first"}
+    <option value="">
+      {subCategories.length > 0
+        ? "Select a Sub Category"
+        : "No subcategory available"}
     </option>
     {subCategories.map((cat) => (
       <option key={cat._id} value={cat._id}>
@@ -329,6 +349,8 @@ console.log("API Response:", result);
       </option>
     ))}
   </select>
+</div>
+
 </div>
                                     </div>
                                 {/* --- Paragraphs Section --- */}

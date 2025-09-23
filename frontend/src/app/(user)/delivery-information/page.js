@@ -66,7 +66,7 @@ export default function PrivacyPage() {
   return (
     <div>
       {/* Banner */}
-      <Banner title="Privacy Policy" />
+      <Banner title="Delivery Information" />
 
       {/* Content */}
       <div className=" px-4 sm:px-8 lg:px-24 xl:px-60 mx-auto my-16">

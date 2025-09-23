@@ -44,21 +44,21 @@ function formatCategoryLabel(name) {
           <div>
             <h3 className="text-[#f3ecdf] text-md font-semibold mb-2">Useful Links</h3>
             <ul className=" text-stone-200">
-              <li><Link href={"About"} className="hover:text-[#B67032]">
+              <li><Link href={"/delivery-information"} className="hover:text-[#B67032]">
 Delivery Information</Link></li>
-              <li><Link href={"refund-policy"} className="hover:text-[#B67032]">Return/Refund Policy</Link></li>
-              <li><Link href={"privacy-policy"} className="hover:text-[#B67032]">Privacy Policy</Link></li>
-              <li><Link href={"terms-and-conditions"} className="hover:text-[#B67032]">Terms & Conditions</Link></li>
+              <li><Link href={"/refund-policy"} className="hover:text-[#B67032]">Return/Refund Policy</Link></li>
+              <li><Link href={"/privacy-policy"} className="hover:text-[#B67032]">Privacy Policy</Link></li>
+              <li><Link href={"/terms-and-conditions"} className="hover:text-[#B67032]">Terms & Conditions</Link></li>
 
             </ul>
           </div>
           <div>
             <h3 className="text-[#f3ecdf] text-md font-semibold mb-2">Customer Service</h3>
             <ul className=" text-stone-200">
-              <li><Link href={"Contact"} className="hover:text-[#B67032]">Contact Us</Link></li>
-              <li><Link href={"FAQ"} className="hover:text-[#B67032]">FAQ</Link></li>
-              <li><Link href={"Shipping"} className="hover:text-[#B67032]">About Us</Link></li>
-              <li><Link href={"Returns"} className="hover:text-[#B67032]">Returns</Link></li>
+              <li><Link href={"/contact"} className="hover:text-[#B67032]">Contact Us</Link></li>
+              <li><Link href={"/faq"} className="hover:text-[#B67032]">FAQ</Link></li>
+              <li><Link href={"/about"} className="hover:text-[#B67032]">About Us</Link></li>
+              <li><Link href={"/returns"} className="hover:text-[#B67032]">Returns</Link></li>
             </ul>
           </div>
           {/* <div className="col-span-2 md:col-span-4 lg:col-span-1">

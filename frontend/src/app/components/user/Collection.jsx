@@ -102,7 +102,7 @@ export default function Collection({ Pid, filters = { subCategories: [], tags: [
                     </div>
                   </div>
                   <div className="flex items-center justify-between flex-wrap mt-4">
-                    <h3 className="font-semibold text-lg text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
+                    <h3 className="font-semibold text-md text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
                       {product.name}
                     </h3>
                     <h3 className="flex items-center font-semibold text-md text-[#B67032] transition-colors duration-300">

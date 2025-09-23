@@ -17,8 +17,18 @@ exports.getCategories = async (req, res) => {
 
 
 exports.deleteCategory = async (req, res) => {
-    await Category.findByIdAndDelete(req.params.id);
-    await ProductModel.updateMany({category:req.params.id},{$unset:{category:""}})
-    res.json({ message: "Category Deleted successfully" });
+  try {
+    // Delete the category
+    const deletedCategory = await Category.findByIdAndDelete(req.params.id);
+    if (!deletedCategory) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Delete all products that belong to this category
+    await ProductModel.deleteMany({ category: req.params.id });
+
+    res.json({ message: "Category and its products deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
-        

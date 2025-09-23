@@ -18,20 +18,22 @@ export default function FilterLayout() {
   return (
     <div>
       <InnerBanner title={collection} image="/Images/banner.webp" />
-      <div className="relative flex flex-col md:flex-row md:gap-6 px-4 md:px-12 xl:px-24 py-12">
+      <div className="relative flex flex-wrap-reverse lg:flex-nowrap gap-6 px-4 md:px-12 xl:px-24 py-12">
         {/* Left Filter Sidebar */}
-        <div className='w-full md:w-64'>
+                  <div className='w-full md:w-64'>
           <LeftFilterSidebar
        
             Pid={id}
             onFilterChange={setFilters}
           />
         </div>
+   
 
         {/* Right Content */}
-        <main className="flex-1 w-full">
+     <main className="flex-1 w-full">
           <Collection Pid={id} filters={filters} />
         </main>
+      
       </div>
     </div>
   );

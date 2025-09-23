@@ -54,7 +54,7 @@ const handleMouseLeave = () => {
     }
   }, [id, refetchProductById]);
 
-  if (!product) return  <div className="flex flex-col lg:flex-row gap-6 px-4 md:px-12 xl:px-40 py-12 bg-[#fffaf7]">
+  if (!product) return  <div className="flex flex-col lg:flex-row gap-6 px-4 md:px-12 xl:px-40 py-12 ">
       {/* Left: Image Skeleton */}
       <div className="w-full xl:w-1/2 space-y-4">
         <div className="flex gap-4">
@@ -90,7 +90,7 @@ const handleMouseLeave = () => {
 
   return (
     <div>
- <div className="relative flex flex-col items-center lg:flex-row lg:items-start justify-center flex-wrap lg:flex-nowrap gap-6 px-4 md:px-12 xl:px-40 py-12 ">
+ <div className="relative flex flex-col items-center lg:flex-row lg:items-start justify-center flex-wrap lg:flex-nowrap gap-6 px-4 md:px-12 xl:px-24 py-12 ">
       {/* Left: Sticky Images */}
       <div className="w-full xl:w-1/2 lg:sticky lg:top-24  ">
         <div className="flex flex-col md:flex-row items-center gap-4">
@@ -141,7 +141,7 @@ const handleMouseLeave = () => {
  <div className="flex justify-between items-start">
   {/* LEFT SIDE (name + category) */}
   <div>
-    <h1 className="text-2xl md:text-3xl font-serif text-stone-900">
+    <h1 className="text-2xl md:text-4xl font-serif text-stone-900">
       {product.name}
     </h1>
     <p className="lg:text-md text-stone-500 mt-2 capitalize">
@@ -190,10 +190,10 @@ const handleMouseLeave = () => {
   {/* Price Section */}
   <div className="flex flex-col gap-1">
     <div className="flex items-end gap-3">
-      <span className="text-[#B67032] text-xl font-bold tracking-wide">₹{product.finalPrice}</span>
+      <span className="text-[#B67032] text-2xl font-bold tracking-wide">₹{product.finalPrice}</span>
       {product.discount > 0 && (
         <>
-          <span className="line-through text-stone-600 lg:text-md">₹{product.price}</span>
+          <span className="line-through text-stone-600 lg:text-xl">₹{product.price}</span>
           <span className="text-green-600 lg:text-md ">({product.discount}% OFF)</span>
         </>
       )}

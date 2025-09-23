@@ -61,7 +61,7 @@ export default function PrivacyPage() {
       <Banner title="Terms & Conditions" />
 
       {/* Content */}
-      <div className="py-16 px-4 sm:px-8 lg:px-24 xl:px-60 mx-auto my-16">
+      <div className="px-4 sm:px-8 lg:px-24 xl:px-60 mx-auto my-16">
         {termsData.map((section, index) => (
           <div key={index} className="mb-10">
             <h2 className="text-xl font-semibold mb-3 text-[#111]">{section.heading}</h2>
