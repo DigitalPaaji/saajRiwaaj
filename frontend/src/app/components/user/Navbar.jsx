@@ -94,7 +94,7 @@ const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
       >
         <Link
            href={categoryPath}
-          className="flex items-center text-stone-700 hover:text-[#99571d] font-bold font-mosetta transition "
+          className="flex items-center text-shadow-stone-950 hover:text-[#99571d] font-bold font-mosetta transition "
         >
           {categoryLabel}
           {hasSubCats && (

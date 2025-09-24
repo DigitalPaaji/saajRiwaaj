@@ -22,6 +22,60 @@ import {
 import { FaHeart } from 'react-icons/fa';
 
 export default function ProductDetail() {
+
+   const [flipped, setFlipped] = useState([false, false, false]);
+
+  const toggleFlip = (index) => {
+    setFlipped((prev) =>
+      prev.map((f, i) => (i === index ? !f : f))
+    );
+  };
+
+  const cards = [
+    {
+      img: "/Images/shipping.webp",
+      frontTitle: "Shipping Policy",
+      frontSubtitle: "Free shipping on orders above ₹499",
+      backContent: (
+        <div className="list-disc list-inside text-sm space-y-1">
+          <p>International delivery in 8-10 days</p>
+          <p>Order Rakhi early to ensure timely delivery</p>
+          <p className="italic text-stone-700">
+            *Delivery times may vary by location
+          </p>
+        </div>
+      ),
+    },
+    {
+      img: "/Images/return.webp",
+      frontTitle: "Returns & Refunds",
+      frontSubtitle: "Easy 10-day returns",
+      backContent: (
+        <div className="list-disc list-inside text-sm space-y-1">
+          <p>Rakhi items are non-returnable</p>
+          <p>Lab-grown jewellery requires quality check</p>
+          <p>All items with certificate & box must be returned</p>
+        </div>
+      ),
+    },
+    {
+      img: "/Images/care.webp",
+      frontTitle: "Care Instructions",
+      frontSubtitle: "Handle with love & care",
+      backContent: (
+        <div className="list-disc list-inside text-sm space-y-1">
+          <p>Avoid water, perfume, and hairspray</p>
+          <p>Store in a dry, cool place separately</p>
+          <p>Clean gently with a soft cloth</p>
+          <p>Remove before physical activity</p>
+        </div>
+      ),
+    },
+  ];
+
+
+
+
   const { id } = useParams();
   const { refetchProductById, wishlist, addToWishlist, removeFromWishlist, addToCart } = useGlobalContext();
   const [product, setProduct] = useState(null);
@@ -144,7 +198,7 @@ const handleMouseLeave = () => {
     <h1 className="text-2xl md:text-4xl font-serif text-stone-900">
       {product.name}
     </h1>
-    <p className="lg:text-md text-stone-500 mt-2 capitalize">
+    <p className="lg:text-md text-stone-700 mt-2 capitalize">
       {product.category?.name}{" "}
       {product.subcategory?.name && `→ ${product.subcategory.name}`}
     </p>
@@ -160,9 +214,9 @@ const handleMouseLeave = () => {
   className="cursor-pointer"
 >
   {wishlist?.some((w) => w._id === product._id) ? (
-    <FaHeart className="w-5 h-5 text-red-500" /> // filled icon
+    <FaHeart className="w-6 h-6 text-red-500" /> // filled icon
   ) : (
-    <Heart className="w-5 h-5 text-stone-700" /> // outline icon
+    <Heart className="w-6 h-6 text-stone-700" /> // outline icon
   )}
 </button>
 </div>
@@ -199,7 +253,7 @@ const handleMouseLeave = () => {
       )}
     </div>
 
-    <span className="lg:text-md text-stone-500">Inclusive of all taxes</span>
+    <span className="lg:text-md text-stone-700">Inclusive of all taxes</span>
   </div>
   {/* CTA Buttons */}
   <div className="flex flex-col md:flex-row gap-4">
@@ -216,8 +270,13 @@ const handleMouseLeave = () => {
 {(product.description?.paragraphs?.length > 0 || product.description?.bulletPoints?.length > 0) && (
   <div className="mt-4">
   <div className="flex items-center gap-2 text-stone-800">
-    <Info className="w-5 h-5" />
-    <h3 className="text-md lg:text-xl">About Product</h3>
+    <h3 className="text-lg font-mosetta font-semibold text-[#B67032] tracking-wide">Description</h3>
+
+    
+
+
+
+    
   </div>
 
   {/* Paragraphs */}
@@ -251,7 +310,7 @@ const handleMouseLeave = () => {
         {product.colorVariants.map((v, i) => (
           <button
             key={i}
-            className="border px-3 py-1 rounded-full bg-white text-gray-700 hover:bg-[#fff5f0] transition"
+            className="border px-3 py-1 rounded-full bg-white text-gray-800 hover:bg-[#fff5f0] transition"
           >
             {v.colorName}
           </button>
@@ -261,50 +320,62 @@ const handleMouseLeave = () => {
   )}
 
 
-  {/* Shipping Info */}
-  <div className="space-y-2">
-    
-    <div className="flex items-center gap-2 text-stone-800">
-      <PackageSearch className="w-5 h-5" />
-      <h3 className="text-md lg:text-xl  ">Shipping Policy</h3>
-    </div>
-      <h5 className='lg:text-lg text-[#240b41d7] font-semibold mt-2'>Free shipping on orders above ₹499 within India</h5>
-    <ul className="list-disc list-inside lg:text-md leading-relaxed ">
-      <li>International delivery in 8-10 days</li>
-      <li>Order your Rakhi early to ensure timely delivery</li>
-      <li className="text-sm italic text-stone-500">*Delivery times may vary by location</li>
-    </ul>
-  </div>
+{/* Shipping Info Section */}
+<div
+  className="relative bg-cover md:bg-contain py-4"
+  // style={{ backgroundImage: "url('/Images/bg4.png')" }}
+>
+  {/* Overlay for readability */}
+  {/* <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#ffffff1c]"></div> */}
 
-  {/* Return Policy */}
-  <div className="space-y-2">
-    
-    <div className="flex items-center gap-2 text-stone-800">
-      <RefreshCcw className="w-5 h-5" />
-      <h3 className="text-md lg:text-xl  ">Returns & Refunds</h3>
-    </div>
-      <h5 className='lg:text-lg text-[#240b41d7] font-semibold mt-2'>10-day return from date of delivery</h5>
-    <ul className="list-disc list-inside lg:text-md leading-relaxed">
-      <li>Rakhi items are non-returnable</li>
-      <li>Lab-grown diamond jewellery requires quality check</li>
-      <li>All items including certificate & box must be returned</li>
-    </ul>
-  </div>
+  {/* Content */}
+  <div className="relative z-10 grid md:grid-cols-3 mx-auto">
+    {cards.map((card, i) => (
+      <div
+        key={i}
+        className="group perspective cursor-pointer"
+        onClick={() => toggleFlip(i)}
+      >
+        <div 
+          className={`relative w-full h-52 transition-transform duration-700 preserve-3d ${
+            flipped[i] ? "rotate-y-180" : ""
+          } md:group-hover:rotate-y-180`}
+        >
+          {/* Front */}
+          <div className="absolute inset-0 flex flex-col items-center justify-end  rounded-2xl backface-hidden p-6 text-center text-white">
+            <img
+              src={card.img}
+              alt={card.frontTitle}
+              className="w-24 h-auto object-cover mb-4"
+            />
+            <h3 className="text-md md:text-lg  font-mosetta text-black tracking-wide">
+              {card.frontTitle}
+            </h3>
+            <p className="mt-2 text-sm text-gray-800">
+              {card.frontSubtitle}
+            </p>
+          </div>
 
-  {/* Care Instructions */}
-  <div className="space-y-2">
-    
-    <div className="flex items-center gap-2 text-stone-800">
-      <ShieldCheck className="w-5 h-5" />
-      <h3 className="text-md lg:text-xl  ">Care Instructions</h3>
-    </div>
-      <h5 className='lg:text-lg text-[#240b41d7] font-semibold mt-2'>Avoid water, perfume, and hairspray</h5>
-    <ul className="list-disc list-inside lg:text-md leading-relaxed">
-      <li>Store in a dry, cool place separately</li>
-      <li>Clean gently with a soft cloth</li>
-      <li>Remove before physical activity</li>
-    </ul>
+          {/* Back */}
+          <div className="absolute inset-0  rounded-2xl backface-hidden rotate-y-180 p-6 flex flex-col items-center justify-end text-white">
+{/*            
+                 <img
+              src={card.img}
+              alt={card.frontTitle}
+              className="w-24 h-auto object-cover mb-4"
+            /> */}
+                     <h3 className="text-lg  font-mosetta text-black tracking-wide">
+              {card.frontTitle}
+            </h3>
+            <p className="text-sm leading-relaxed text-gray-800">
+              {card.backContent}
+            </p>
+          </div>
+        </div>
+      </div>
+    ))}
   </div>
+</div>
 
 
 
