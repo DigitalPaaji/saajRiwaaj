@@ -289,7 +289,9 @@ export const GlobalProvider = ({ children }) => {
           credentials: "include",
           body: JSON.stringify({
             productId: product._id,
-            quantity: 1,
+            quantity: product.selectedQty || 1,
+            color: product.selectedColor?.colorName || null,
+            
           }),
         }
       );
@@ -300,6 +302,10 @@ export const GlobalProvider = ({ children }) => {
         const updatedCart = data.cart.map((item) => ({
           ...item.product,
           quantity: item.quantity,
+           color: item.color,
+             stock: item.color
+          ? item.product.colorVariants.find(c => c.colorName === item.color)?.quantity
+          : item.product.quantity,
         }));
         setCart(updatedCart);
       } else {
@@ -342,7 +348,7 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
-  const updateQty = async (productId, qty) => {
+  const updateQty = async (productId, qty, color) => {
     if (!user) {
       // force login first
       setIsAuthOpen(true);
@@ -359,7 +365,7 @@ export const GlobalProvider = ({ children }) => {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify({ productId, quantity: qty }),
+          body: JSON.stringify({ productId, quantity: qty, color }),
         }
       );
 
@@ -368,6 +374,11 @@ export const GlobalProvider = ({ children }) => {
         const updatedCart = data.cart.map((item) => ({
           ...item.product,
           quantity: item.quantity,
+          color: item.color,
+          stock: item.color
+          ? item.product.colorVariants.find(c => c.colorName === item.color)?.quantity
+          : item.product.quantity
+
         }));
         setCart(updatedCart);
       } else {

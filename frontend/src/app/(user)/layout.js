@@ -10,6 +10,7 @@ import Wishlist from '../components/user/Wishlist'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OrderSidebar from '../components/user/OrderSidebar'
+import Icon from "../components/user/Icons";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,7 +43,7 @@ export default function RootLayout({ children }) {
                       <OrderSidebar/>
                 
         {children}
-
+<Icon/>
               <Footer />
         </GlobalProvider>
         <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
