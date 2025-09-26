@@ -12,13 +12,13 @@ function Icons() {
               className=" text-white  flex items-center justify-center  "
             >
               <Image
-                src={"/Images/watsapp.gif"}
+                src={"/Images/whatsapp.gif"}
                 // src={"/Images/services/whIcon.webp"}
 
                 width={200}
                 height={200}
                 alt="img"
-                className="w-12 h-w-12"
+                className="w-16 h-w-16"
 
               />
             </Link>

@@ -13,15 +13,11 @@ export default function Banner({ title = '', image = '' }) {
         backgroundRepeat: 'no-repeat',
       }}
     >
-
-
       {/* Text Content */}
       <div className="relative z-10 text-center px-4">
         <h1 className="text-2xl md:text-4xl font-mosetta font-medium text-[#99571d]  capitalize">  {title.split('-').join(' ')}</h1>
         <div className="mt-2 text-sm md:text-base text-gray-800 space-x-1">
           <Link href="/" className="hover:underline">Home</Link>
-          <span>/</span>
-          <Link href="/collections" className="hover:underline">Category</Link>
           <span>/</span>
           <span className="capitalize">{title}</span>
         </div>
