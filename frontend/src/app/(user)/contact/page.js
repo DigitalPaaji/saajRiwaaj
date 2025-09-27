@@ -20,13 +20,35 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+
+   // email & phone validation
+  const validateForm = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^(\+91)?[6-9]\d{9}$/; // allows 10 digits, starts with 6-9, optional +91
+
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address!");
+      return false;
+    }
+
+    if (!phoneRegex.test(formData.phone)) {
+      toast.error("Please enter a valid phone number (10 digits)!");
+      return false;
+    }
+
+    return true;
+  };
+
+
+
   // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+      if (!validateForm()) return; 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("https://digital-paaji.onrender.com/send-mail", {
+      const response = await fetch("http://localhost:5000/api/send-mail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -48,17 +70,17 @@ export default function ContactPage() {
   };
 
   return (
-    <div>
+    <div className="bg">
       {/* Banner */}
       {/* <Banner title="Contact Us" image="/contact-banner.jpg" /> */}
 
       {/* Content */}
-      <div className="px-4 sm:px-8 lg:px-24 xl:px-60 mx-auto my-16">
+      <div className="px-4 sm:px-8 lg:px-24 xl:px-60 mx-auto py-16">
         <div className="max-w-3xl mx-auto">
           {/* Heading */}
-          <h3 className="text-3xl font-semibold mb-8 text-center text-[#B67032]">
+          <h3 className="text-2xl font-semibold mb-8 text-center text-[#B67032]">
             Any Questions? <br />
-            <span className="text-gray-700 font-normal">Let Us Know!</span>
+            <span className="text-gray-700 text-4xl font-normal">Let Us Know!</span>
           </h3>
 
           <ToastContainer />
@@ -129,7 +151,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-[#d4af37] text-white px-10 py-3 rounded-xl hover:bg-[#c29b2e] transition duration-300 shadow-md"
+                className="bg-[#b67032e8] text-white px-10 py-3 rounded-xl hover:bg-[#B67032] transition duration-300 shadow-md"
               >
                 {isSubmitting ? "Submitting..." : "Send Message"}
               </button>

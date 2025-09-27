@@ -9,7 +9,7 @@ import Neckwear from "./Neckwear";
 import Image from "next/image";
 export default function Home() {
   return (
-    <div className="min-h-screen  bg-[#faf8ea] text-stone-800 overflow-hidden ">
+    <div className="min-h-screen   text-stone-800 overflow-hidden ">
       {/* <AnnouncementBar /> */}
       {/* <Navbar/> */}
       

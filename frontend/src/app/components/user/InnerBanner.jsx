@@ -5,13 +5,13 @@ import Link from 'next/link';
 export default function Banner({ title = '', image = '' }) {
   return (
     <div
-      className="relative w-full h-[250px] md:h-[400px] flex items-center justify-center  text-[#B67032]  bg-[#b6703234]"
-      style={{
-        backgroundImage: `url(${image})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
+      className="bgBanner relative w-full h-[250px] md:h-[400px] flex items-center justify-center  text-[#B67032]  bg-[#b6703234]"
+      // style={{
+      //   backgroundImage: `url(${image})`,
+      //   backgroundSize: 'cover',
+      //   backgroundPosition: 'center',
+      //   backgroundRepeat: 'no-repeat',
+      // }}
     >
       {/* Text Content */}
       <div className="relative z-10 text-center px-4">

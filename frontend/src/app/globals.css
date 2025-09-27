@@ -13,6 +13,42 @@
 @theme {
   --font-mosetta: "Mosetta", serif;
 }
+
+
+body {
+  background-color: #faf8ea;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(182,112,50,0.04),
+    rgba(182,112,50,0.04) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.bgBanner{
+  background-color: #b6703244;
+  background-image: repeating-conic-gradient(
+    from 45deg,
+    rgba(250, 248, 234, 0.171) 0deg 15deg, /* lighter */
+    transparent 15deg 30deg
+  );
+  background-size: 80px 80px;
+
+}
+.bg{
+  background-color: #faf8ea;
+  background-image: repeating-conic-gradient(
+    from 45deg,
+    rgba(182,112,50,0.04) 0deg 15deg, /* lighter */
+    transparent 15deg 30deg
+  );
+  background-size: 80px 80px;
+
+}
+
+
+
 /* Neumorphism base */
 /* .neumorphic-btn {
   background: #e0e0e0;

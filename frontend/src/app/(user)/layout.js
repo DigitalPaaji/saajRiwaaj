@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         // style={{ backgroundImage: "url('/Images/homeBG.webp')" }}
-        className={`${geistSans.variable} ${geistMono.variable} bg-[#faf8ea] antialiased  `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased  `}
       >
         <GlobalProvider>
             <AnnouncementBar />
