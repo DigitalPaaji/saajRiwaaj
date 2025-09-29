@@ -13,14 +13,15 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../context/GlobalContext";
-import Link from "next/link";
+import PopupModal from "../admin/ConfirmPopup";
+
 const Apiurl = process.env.NEXT_PUBLIC_LOCAL_PORT;
 
 function Account() {
   const { user, setIsAuthOpen, logoutUser, refetchUser, setIsWishlistOpen, setIsOrderOpen, setIsCartOpen } = useGlobalContext();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
   const [formData, setFormData] = useState({
     phone: "",
     addressLine: "",
@@ -98,6 +99,8 @@ const handleSave = async () => {
      className="bg-white h-full w-full  flex flex-col"
 
     >
+      
+
       {/* Header */}
            <div className="flex justify-between items-center px-4 py-6 border-b-[1px] border-[#99571d]">
         <h2 className="text-xl font-mosetta font-medium text-[#99571d]">My Profile</h2>
@@ -231,14 +234,27 @@ const handleSave = async () => {
       <div className="border-t px-4 py-3">
         <button
           className="flex items-center gap-2 w-full justify-center bg-red-500 text-white py-2 rounded text-sm"
-          onClick={async () => {
-            await logoutUser();
-            toast.success("Logged out!");
-          }}
+           onClick={() => setShowLogoutPopup(true)}
         >
           <LogOut className="w-4 h-4" /> Logout
         </button>
       </div>
+
+        {showLogoutPopup && (
+        <PopupModal
+          title="Are you sure you want to logout?"
+          onCancel={() => setShowLogoutPopup(false)}
+          onConfirm={async () => {
+            setShowLogoutPopup(false);
+            await logoutAdmin();
+            toast.success("Logged out!");
+          }}
+          confirmText="Logout"
+          cancelText="Cancel"
+          type="delete"
+          showCancel
+        />
+      )}
     </div>
   );
 }

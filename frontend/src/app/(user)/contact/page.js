@@ -44,7 +44,7 @@ export default function ContactPage() {
   // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-      if (!validateForm()) return; 
+      if (!validateForm()) return;
     setIsSubmitting(true);
 
     try {

@@ -200,18 +200,18 @@ export default function CheckoutSidebar({
               <h3 className="text-green-600 text-xl font-mosetta font-medium text-center">
                 Order placed successfully! 🎉
               </h3>
-              <button
+              <Link href={'/orders'}
           
                onClick={() => {
                 setIsOpen(false)
-                setIsOrderOpen(true)
+                // setIsOrderOpen(true)
                }
 
                }
                 className="px-5 py-3 w-fit bg-[#B67032] text-white rounded-md"
               >
                 View Order Details
-              </button>
+              </Link>
             </div>
           ) : (
             <div className="space-y-6">

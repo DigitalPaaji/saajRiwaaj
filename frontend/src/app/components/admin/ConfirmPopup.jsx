@@ -28,7 +28,7 @@ const PopupModal = ({
       className="fixed inset-0 flex items-center justify-center bg-[#4d4c4b54] bg-opacity-30 z-[9999]"
     >
       <div className="bg-white rounded-xl shadow-md p-6 mx-4 sm:mx-12 max-w-md w-full">
-        <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+        <h2 className="text-lg font-medium text-gray-700">{title}</h2>
         
 
         <div className="flex justify-end mt-6 gap-3">

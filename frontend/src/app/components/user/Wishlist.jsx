@@ -24,6 +24,15 @@ export default function CartSidebar() {
         isWishlistOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
+            <div className="absolute bottom-0 right-0 opacity-20">
+                    <Image
+                      alt=""
+                      src={"/Images/bg1.png"}
+                      width={360}
+                      height={360}
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
       <div className="flex justify-between items-center px-4 py-6 border-b-[1px] border-[#99571d]">
         <h2 className="text-xl font-mosetta font-medium text-[#99571d]">Wishlist</h2>
         <button className="cursor-pointer" onClick={() => setIsWishlistOpen(false)}>

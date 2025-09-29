@@ -4,6 +4,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Account from "./Account";
+import Image from "next/image";
 
 export default function AuthSidebar() {
   const {

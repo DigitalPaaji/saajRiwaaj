@@ -58,7 +58,7 @@ Delivery Information</Link></li>
               <li><Link href={"/contact"} className="hover:text-[#B67032]">Contact Us</Link></li>
               <li><Link href={"/faq"} className="hover:text-[#B67032]">FAQ</Link></li>
               <li><Link href={"/about"} className="hover:text-[#B67032]">About Us</Link></li>
-              <li><Link href={"/returns"} className="hover:text-[#B67032]">Returns</Link></li>
+              {/* <li><Link href={"/returns"} className="hover:text-[#B67032]">Returns</Link></li> */}
             </ul>
           </div>
           {/* <div className="col-span-2 md:col-span-4 lg:col-span-1">
