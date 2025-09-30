@@ -19,7 +19,7 @@ import Link from "next/link";
 const Apiurl = process.env.NEXT_PUBLIC_LOCAL_PORT;
 
 function Account() {
-  const { user, setIsAuthOpen, logoutUser, refetchUser, setIsWishlistOpen, setIsOrderOpen, setIsCartOpen } = useGlobalContext();
+  const { user, setIsAuthOpen, logoutUser, refetchUser, setIsWishlistOpen, setIsOrderOpen, setIsCartOpen, logoutAdmin } = useGlobalContext();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);

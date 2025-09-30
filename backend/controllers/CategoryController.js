@@ -16,19 +16,41 @@ exports.getCategories = async (req, res) => {
 };
 
 
+
 exports.deleteCategory = async (req, res) => {
   try {
-    // Delete the category
-    const deletedCategory = await Category.findByIdAndDelete(req.params.id);
-    if (!deletedCategory) {
+    // Find category
+    const category = await Category.findById(req.params.id);
+    if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
 
-    // Delete all products that belong to this category
+    // Find products belonging to this category
+    const productsToDelete = await ProductModel.find({ category: req.params.id });
+    const productIds = productsToDelete.map((p) => p._id);
+
+    // Delete products
     await ProductModel.deleteMany({ category: req.params.id });
+
+    // Remove deleted products from users' cart & wishlist
+    if (productIds.length > 0) {
+      await User.updateMany(
+        {},
+        {
+          $pull: {
+            "cart": { product: { $in: productIds } },
+            "wishlist": { $in: productIds },
+          },
+        }
+      );
+    }
+
+    // Delete the category
+    await Category.findByIdAndDelete(req.params.id);
 
     res.json({ message: "Category and its products deleted successfully" });
   } catch (err) {
+    console.error("Delete category error:", err);
     res.status(500).json({ error: err.message });
   }
 };
