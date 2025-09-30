@@ -14,6 +14,7 @@ import {
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../context/GlobalContext";
 import PopupModal from "../admin/ConfirmPopup";
+import Link from "next/link";
 
 const Apiurl = process.env.NEXT_PUBLIC_LOCAL_PORT;
 
@@ -143,13 +144,13 @@ const handleSave = async () => {
 
 
                 <div className="mt-6 space-y-3 border-t border-stone-200 pt-4">
-          <button onClick={()=>{
+          <Link href={'/orders'} onClick={()=>{
            setIsAuthOpen(false)
-           setIsOrderOpen(true)
+          //  setIsOrderOpen(true)
            }} className="flex items-center gap-3 text-stone-700 hover:text-[#B67032] transition-colors">
             <Package className="w-5 h-5 text-[#99571db7]" />
             <span className="text-md font-medium">My Orders</span>
-          </button>
+          </Link>
           <button onClick={()=>setIsWishlistOpen(true)} className="flex items-center gap-3 text-stone-700 hover:text-[#B67032] transition-colors">
             <Heart className="w-5 h-5 text-[#99571db7]" />
             <span className="text-md font-medium">Wishlist</span>
