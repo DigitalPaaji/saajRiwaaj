@@ -100,23 +100,38 @@ const handleApplyCoupon = async () => {
                 <div className="flex-1 space-y-2">
                   <p className="  ">{item.name}</p>
                   <p className="">₹{item.price}</p>
-                  <div className="flex items-center gap-2 ">
-                    <button
-                      className="cursor-pointer px-2 text-md bg-gray-100"
-                      onClick={() =>
-                        updateQty(item._id, Math.max(1, item.quantity - 1))
-                      }
-                    >
-                      -
-                    </button>
-                    <span>{item.quantity}</span>
-                    <button
-                      className="cursor-pointer px-2 bg-gray-100"
-                      onClick={() => updateQty(item._id, item.quantity + 1)}
-                    >
-                      +
-                    </button>
-                  </div>
+                <div className="flex items-center gap-2 ">
+  {/* Decrease */}
+  <button
+    className="cursor-pointer px-2 text-md bg-gray-100"
+    onClick={() =>
+      updateQty(item._id, Math.max(1, item.quantity - 1))
+    }
+    disabled={item.quantity <= 1}
+  >
+    -
+  </button>
+
+  <span>{item.quantity}</span>
+
+  {/* Increase */}
+  <button
+    className={`cursor-pointer px-2 bg-gray-100 ${
+      item.quantity >= (item.stock ?? 1)
+        ? "opacity-40 cursor-not-allowed"
+        : ""
+    }`}
+    onClick={() => {
+      if (item.quantity < (item.stock ?? 1)) {
+        updateQty(item._id, item.quantity + 1);
+      }
+    }}
+    disabled={item.quantity >= (item.stock ?? 1)}
+  >
+    +
+  </button>
+</div>
+
                 </div>
                 <button onClick={() => removeFromCart(item._id)} className="cursor-pointer">
                   <X className="w-4 h-4 text-red-500" />

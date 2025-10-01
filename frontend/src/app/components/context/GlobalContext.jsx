@@ -298,18 +298,27 @@ export const GlobalProvider = ({ children }) => {
 
       if (res.ok) {
         const data = await res.json();
-        // Get updated cart from backend and update state
-        const updatedCart = data.cart.map((item) => ({
+        setCart(data.cart.map((item) => ({
           ...item.product,
           quantity: item.quantity,
            color: item.color,
              stock: item.color
           ? item.product.colorVariants.find(c => c.colorName === item.color)?.quantity
           : item.product.quantity,
-        }));
-        setCart(updatedCart);
+        })));
+        // Get updated cart from backend and update state
+        // const updatedCart = data.cart.map((item) => ({
+        //   ...item.product,
+        //   quantity: item.quantity,
+        //    color: item.color,
+        //      stock: item.color
+        //   ? item.product.colorVariants.find(c => c.colorName === item.color)?.quantity
+        //   : item.product.quantity,
+        // }));
+        // setCart(updatedCart);
       } else {
-        console.error("Failed to add to cart");
+        const error = await res.json();
+        toast.error(error.message || "Failed to add to cart");
       }
     } catch (err) {
       console.error("Add to cart error:", err);
@@ -441,7 +450,7 @@ export const GlobalProvider = ({ children }) => {
       // const res = await fetch(`${Apiurl}/products`);
       const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/`);
       const data = await res.json();
-      // console.log(Object.keys(data.products).length)
+      console.log(Object.values(data.products))
 
       // Check if data is array
       if (Array.isArray(data)) {

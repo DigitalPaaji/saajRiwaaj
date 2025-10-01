@@ -303,29 +303,55 @@ const getAdmin = async (req, res) => {
 
 const addToCart = async (req, res) => {
   const userId = req.user._id;
-  const { productId, quantity } = req.body;
+  const { productId, quantity, color } = req.body;
 
   try {
     const user = await User.findById(userId);
 
+    // fetch product from DB
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // determine stock
+    let stock = product.quantity;
+    if (color) {
+      const variant = product.colorVariants.find(v => v.colorName === color);
+      if (!variant) return res.status(400).json({ message: "Invalid color selected" });
+      stock = variant.quantity;
+    }
+
+    // check if product already in cart
     const existing = user.cart.find(
-      (item) => item.product.toString() === productId
+      (item) =>
+        item.product.toString() === productId &&
+        (!color || item.color === color)
     );
 
     if (existing) {
+      if (existing.quantity + quantity > stock) {
+        return res.status(400).json({
+          message: "Cannot add more than available stock",
+          cart: user.cart,
+        });
+      }
       existing.quantity += quantity;
     } else {
-      user.cart.push({ product: productId, quantity });
+      if (quantity > stock) {
+        return res.status(400).json({ message: "Not enough stock available" });
+      }
+      user.cart.push({ product: productId, quantity, color });
     }
 
     await user.save();
     await user.populate("cart.product");
+
     res.status(200).json({ message: "Added to cart", cart: user.cart });
   } catch (err) {
     console.error("Add to cart error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 const addToWishlist = async (req, res) => {
   const userId = req.user._id;
