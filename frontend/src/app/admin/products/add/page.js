@@ -394,8 +394,8 @@ const handleSubmit = async (e) => {
       setProduct((prev) => ({
         ...prev,
         description: {
-          ...prev.description,
-          paragraphs: [...prev.description.paragraphs, ''],
+          // ...prev.description,
+          paragraphs: [],
         },
       }))
     }
@@ -403,6 +403,62 @@ const handleSubmit = async (e) => {
     + Add Paragraph
   </button>
 </div>
+
+{/* <div>
+  <label className={labelClasses}>Paragraphs</label>
+
+  
+  {product.description.paragraphs.map((para, index) => (
+    <div key={index} className="flex gap-2 mb-2">
+      <textarea
+        value={para}
+        onChange={(e) => {
+          const updated = [...product.description.paragraphs];
+          updated[index] = e.target.value;
+          setProduct((prev) => ({
+            ...prev,
+            description: { ...prev.description, paragraphs: updated },
+          }));
+        }}
+        className={inputClasses}
+        rows={2}
+        placeholder="Write a paragraph..."
+      />
+      <button
+        type="button"
+        className="text-red-500 font-bold"
+        onClick={() => {
+          const updated = product.description.paragraphs.filter((_, i) => i !== index);
+          setProduct((prev) => ({
+            ...prev,
+            description: { ...prev.description, paragraphs: updated },
+          }));
+        }}
+      >
+        ✕
+      </button>
+    </div>
+  ))}
+
+ 
+  <button
+    type="button"
+    className={buttonClasses.primary}
+    onClick={() =>
+      setProduct((prev) => ({
+        ...prev,
+        description: {
+          ...prev.description,
+          paragraphs: [...prev.description.paragraphs, ""],
+        },
+      }))
+    }
+  >
+    + Add Paragraph
+  </button>
+</div> */}
+
+
 
 {/* --- Bullet Points Section --- */}
 <div className="mt-6">
