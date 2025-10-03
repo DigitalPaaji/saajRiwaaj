@@ -78,6 +78,13 @@ export default function LeftFilterSidebar({ Pid, onFilterChange }) {
 
 
     <div className="space-y-6">
+           <FilterGroup
+        title="Price"
+        items={priceRanges}
+        selectedItems={selectedPrices}
+        type="price"
+        onChange={handleChange}
+      />
       {subCategories.length > 0 && (
         <FilterGroup
           title="Subcategories"
@@ -96,13 +103,7 @@ export default function LeftFilterSidebar({ Pid, onFilterChange }) {
         onChange={handleChange}
       />
 
-      <FilterGroup
-        title="Price"
-        items={priceRanges}
-        selectedItems={selectedPrices}
-        type="price"
-        onChange={handleChange}
-      />
+ 
     </div>
 
 </aside>

@@ -303,43 +303,45 @@ const getAdmin = async (req, res) => {
 
 const addToCart = async (req, res) => {
   const userId = req.user._id;
-  const { productId, quantity, color } = req.body;
+  const { productId, quantity } = req.body;
 
   try {
     const user = await User.findById(userId);
 
-    // fetch product from DB
-    const product = await Product.findById(productId);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    // // fetch product from DB
+    // const product = await Product.findById(productId);
+    // if (!product) return res.status(404).json({ message: "Product not found" });
 
-    // determine stock
-    let stock = product.quantity;
-    if (color) {
-      const variant = product.colorVariants.find(v => v.colorName === color);
-      if (!variant) return res.status(400).json({ message: "Invalid color selected" });
-      stock = variant.quantity;
-    }
+    // // determine stock
+    // let stock = product.quantity;
+    // if (color) {
+    //   const variant = product.colorVariants.find(v => v.colorName === color);
+    //   if (!variant) return res.status(400).json({ message: "Invalid color selected" });
+    //   stock = variant.quantity;
+    // }
 
-    // check if product already in cart
+    // // check if product already in cart
     const existing = user.cart.find(
-      (item) =>
-        item.product.toString() === productId &&
-        (!color || item.color === color)
+      (item) => item.product.toString() === productId
+      // (item) =>
+      //   item.product.toString() === productId &&
+      //   (!color || item.color === color)
     );
 
     if (existing) {
-      if (existing.quantity + quantity > stock) {
-        return res.status(400).json({
-          message: "Cannot add more than available stock",
-          cart: user.cart,
-        });
-      }
+      // if (existing.quantity + quantity > stock) {
+      //   return res.status(400).json({
+      //     message: "Cannot add more than available stock",
+      //     cart: user.cart,
+      //   });
+      // }
       existing.quantity += quantity;
     } else {
-      if (quantity > stock) {
-        return res.status(400).json({ message: "Not enough stock available" });
-      }
-      user.cart.push({ product: productId, quantity, color });
+        user.cart.push({ product: productId, quantity });
+      // if (quantity > stock) {
+      //   return res.status(400).json({ message: "Not enough stock available" });
+      // }
+      // user.cart.push({ product: productId, quantity, color });
     }
 
     await user.save();

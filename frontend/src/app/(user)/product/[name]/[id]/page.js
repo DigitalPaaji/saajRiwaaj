@@ -439,11 +439,11 @@ export default function ProductDetail() {
 
               {/* Bullet Points */}
               {product.description?.bulletPoints?.length > 0 && (
-                <ul className="list-disc ml-6 lg:text-md text-stone-800 marker:text-[#B67032]  space-y-2">
+                <div className="list-disc ml-6 lg:text-md text-stone-800 marker:text-[#B67032]  space-y-2">
                   {product.description.bulletPoints.map((point, idx) => (
-                    <li key={idx}>{point}</li>
+                    <h6 key={idx}>{point}</h6>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           )}

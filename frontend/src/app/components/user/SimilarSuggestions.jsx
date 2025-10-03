@@ -45,13 +45,13 @@ useEffect(() => {
 
   return (
     <section className="py-16 px-4 sm:px-8 lg:px-16">
-      <div className="flex items-center justify-between flex-wrap xl:flex-nowrap mb-8">
+      <div className="flex items-center justify-between gap-4 xl:gap-0 flex-wrap xl:flex-nowrap mb-8">
         <div className="max-w-xl">
           <h2 className="text-xl md:text-2xl font-mosetta  font-semibold text-[#99571d]  capitalize">You will also love these!
 </h2>
 
         </div>
-        <ul className="flex gap-4 mt-4 xl:mt-0 flex-wrap text-md font-medium">
+        <ul className="flex gap-4  flex-wrap text-md font-medium">
           {subCategories.map((sub) => (
             <Link key={sub._id} href={`/category/${categoryName}/${categoryId}`}>
             <li >
