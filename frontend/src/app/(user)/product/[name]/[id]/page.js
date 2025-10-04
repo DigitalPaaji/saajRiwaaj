@@ -29,6 +29,7 @@ export default function ProductDetail() {
     addToWishlist,
     removeFromWishlist,
     addToCart,
+    setIsCartOpen,
     updateQty,
     cart,
   } = useGlobalContext();
@@ -406,7 +407,45 @@ export default function ProductDetail() {
           )}
 
           {/* CTA Buttons */}
-          <div className="flex flex-col md:flex-row gap-4">
+          {/* CTA Buttons */}
+<div className="flex flex-col md:flex-row gap-4">
+  {cart.some(
+    (item) =>
+      item._id === product._id &&
+      item.color === selectedColor?.colorName
+  ) ? (
+    // If item already in cart → Go to Cart button
+    <button
+  onClick={() => setIsCartOpen(true)}
+      className="cursor-pointer w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700 transition text-sm font-medium tracking-wide"
+    >
+      <ShoppingCart className="w-4 h-4" />
+      Go to Cart
+    </button>
+  ) : (
+    // If item not in cart → Add to Cart button
+    <button
+      onClick={() => {
+        addToCart({ ...product, selectedColor, selectedQty });
+        setSelectedQty(1);
+      }}
+      className="cursor-pointer w-full flex items-center justify-center gap-2 bg-[#B67032] text-white px-4 py-3 rounded hover:bg-[#a95c2e] transition text-sm font-medium tracking-wide"
+    >
+      <ShoppingCart className="w-4 h-4" />
+      Add to Cart
+    </button>
+  )}
+
+  {/* Buy Now */}
+  <button className="w-full flex items-center justify-center gap-2 border border-[#B67032] text-[#B67032] px-4 py-3 rounded hover:bg-[#fff4ed] transition text-sm font-medium tracking-wide">
+    <CreditCard className="w-4 h-4" />
+    Buy Now
+  </button>
+</div>
+
+          
+          
+          {/* <div className="flex flex-col md:flex-row gap-4">
            <button
   onClick={() => {
     addToCart({ ...product, selectedColor, selectedQty });
@@ -421,7 +460,7 @@ export default function ProductDetail() {
               <CreditCard className="w-4 h-4" />
               Buy Now
             </button>
-          </div>
+          </div> */}
           {/* Description */}
           {(product.description?.paragraphs?.length > 0 ||
             product.description?.bulletPoints?.length > 0) && (
