@@ -32,7 +32,7 @@ export const GlobalProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-    const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
 
   // Forgot Password (Not Logged In)
   const forgotPassword = async (email) => {
@@ -83,26 +83,27 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
-
-    const fetchAllUsers = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/all`, {
+  const fetchAllUsers = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/all`,
+        {
           method: "GET",
           credentials: "include", // send cookies if required
-        });
-        const data = await res.json();
-  
-        if (res.ok) {
-          setAllUsers(data.users || []);
-        } else {
-          // toast.error(data.message || "Failed to load users");
-           setAllUsers([]);
         }
-      } catch (err) {
-        console.error("Fetch users error:", err);
-      } 
-    };
+      );
+      const data = await res.json();
 
+      if (res.ok) {
+        setAllUsers(data.users || []);
+      } else {
+        // toast.error(data.message || "Failed to load users");
+        setAllUsers([]);
+      }
+    } catch (err) {
+      console.error("Fetch users error:", err);
+    }
+  };
 
   const fetchUser = useCallback(async () => {
     try {
@@ -158,8 +159,8 @@ export const GlobalProvider = ({ children }) => {
       document.cookie =
         "userToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       setUser(null);
-      setCart([]); 
-      setWishlist([]); 
+      setCart([]);
+      setWishlist([]);
       localStorage.removeItem("saajUser");
       localStorage.removeItem("saajToken");
       window.location.reload();
@@ -270,60 +271,155 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
-  const addToCart = async (product) => {
-    if (!user) {
-      setIsAuthOpen(true);
-      setAuthTab("login");
+const addToCart = async (product) => {
+  if (!user) {
+    setIsAuthOpen(true);
+    setAuthTab("login");
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          productId: product._id,
+          quantity: product.selectedQty || 1,
+          color: product.selectedColor?.colorName || null,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      // if product already exists → show "view cart"
+      if (data.message === "Product already in cart") {
+        toast.custom(() => (
+          <div className="bg-white px-4 py-3 rounded shadow-md border flex items-center gap-3">
+            <span className="text-sm font-medium text-gray-800">
+              Product already in cart
+            </span>
+            <Link
+              href="/cart"
+              className="ml-2 px-3 py-1 text-xs font-medium text-white bg-[#B67032] rounded hover:bg-[#a95c2e]"
+            >
+              View Cart
+            </Link>
+          </div>
+        ));
+        return;
+      }
+      toast.error(data.message || "Failed to add to cart");
       return;
     }
 
-    // Logged-in user: Call backend
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            productId: product._id,
-            quantity: product.selectedQty || 1,
-            color: product.selectedColor?.colorName || null,
-            
-          }),
-        }
-      );
-
-      if (res.ok) {
-        const data = await res.json();
-        setCart(data.cart.map((item) => ({
-          ...item.product,
-          quantity: item.quantity,
-           color: item.color,
-             stock: item.color
-          ? item.product.colorVariants.find(c => c.colorName === item.color)?.quantity
+    // Update local cart state
+    setCart(
+      data.cart.map((item) => ({
+        ...item.product,
+        quantity: item.quantity,
+        color: item.color,
+        stock: item.color
+          ? item.product.colorVariants.find(
+              (c) => c.colorName === item.color
+            )?.quantity
           : item.product.quantity,
-        })));
-        // Get updated cart from backend and update state
-        // const updatedCart = data.cart.map((item) => ({
-        //   ...item.product,
-        //   quantity: item.quantity,
-        //    color: item.color,
-        //      stock: item.color
-        //   ? item.product.colorVariants.find(c => c.colorName === item.color)?.quantity
-        //   : item.product.quantity,
-        // }));
-        // setCart(updatedCart);
-      } else {
-        const error = await res.json();
-        toast.error(error.message || "Failed to add to cart");
-      }
-    } catch (err) {
-      console.error("Add to cart error:", err);
-    }
-  };
+      }))
+    );
+
+    toast.success("Added to cart ✅");
+  } catch (err) {
+    console.error("Add to cart error:", err);
+  }
+};
+
+
+  // const addToCart = async (product) => {
+  //   if (!user) {
+  //     setIsAuthOpen(true);
+  //     setAuthTab("login");
+  //     return;
+  //   }
+
+  //   // Check if product already in cart with same color
+  //   const alreadyInCart = cart.some(
+  //     (item) =>
+  //       item._id === product._id &&
+  //       (item.color || null) === (product.selectedColor?.colorName || null)
+  //   );
+
+  //   if (alreadyInCart) {
+  //     toast.custom((t) => (
+  //       <div className="bg-white px-4 py-3 rounded shadow-md border flex items-center gap-3">
+  //         <span className="text-sm font-medium text-gray-800">
+  //           Product already in cart
+  //         </span>
+  //         <Link
+  //           href="/cart"
+  //           className="ml-2 px-3 py-1 text-xs font-medium text-white bg-[#B67032] rounded hover:bg-[#a95c2e]"
+  //         >
+  //           View Cart
+  //         </Link>
+  //       </div>
+  //     ));
+  //     return;
+  //   }
+
+  //   // Logged-in user: Call backend
+  //   try {
+  //     const res = await fetch(
+  //       `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         credentials: "include",
+  //         body: JSON.stringify({
+  //           productId: product._id,
+  //           quantity: product.selectedQty || 1,
+  //           color: product.selectedColor?.colorName || null,
+  //         }),
+  //       }
+  //     );
+
+  //     if (res.ok) {
+  //       const data = await res.json();
+  //       setCart(
+  //         data.cart.map((item) => ({
+  //           ...item.product,
+  //           quantity: item.quantity,
+  //           color: item.color,
+  //           stock: item.color
+  //             ? item.product.colorVariants.find(
+  //                 (c) => c.colorName === item.color
+  //               )?.quantity
+  //             : item.product.quantity,
+  //         }))
+  //       );
+  //       // Get updated cart from backend and update state
+  //       // const updatedCart = data.cart.map((item) => ({
+  //       //   ...item.product,
+  //       //   quantity: item.quantity,
+  //       //    color: item.color,
+  //       //      stock: item.color
+  //       //   ? item.product.colorVariants.find(c => c.colorName === item.color)?.quantity
+  //       //   : item.product.quantity,
+  //       // }));
+  //       // setCart(updatedCart);
+  //       // toast.success("Added to cart ✅");
+  //     } else {
+  //       const error = await res.json();
+  //       toast.error(error.message || "Failed to add to cart");
+  //     }
+  //   } catch (err) {
+  //     console.error("Add to cart error:", err);
+  //   }
+  // };
 
   const removeFromCart = async (productId) => {
     if (!user) {
@@ -385,9 +481,9 @@ export const GlobalProvider = ({ children }) => {
           quantity: item.quantity,
           color: item.color,
           stock: item.color
-          ? item.product.colorVariants.find(c => c.colorName === item.color)?.quantity
-          : item.product.quantity
-
+            ? item.product.colorVariants.find((c) => c.colorName === item.color)
+                ?.quantity
+            : item.product.quantity,
         }));
         setCart(updatedCart);
       } else {
@@ -450,7 +546,7 @@ export const GlobalProvider = ({ children }) => {
       // const res = await fetch(`${Apiurl}/products`);
       const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/`);
       const data = await res.json();
-      console.log(Object.values(data.products))
+      console.log(Object.values(data.products));
 
       // Check if data is array
       if (Array.isArray(data)) {
@@ -467,28 +563,28 @@ export const GlobalProvider = ({ children }) => {
     }
   }, []);
 
+  const fetchOrderById = useCallback(async (orderId) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/order/${orderId}`,
+        {
+          credentials: "include",
+        }
+      );
 
-const fetchOrderById = useCallback(async (orderId) => {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/order/${orderId}`, {
-      credentials: "include",
-    });
+      console.log("Response status:", res.status);
+      const data = await res.json();
+      console.log("Order data:", data);
 
-    console.log("Response status:", res.status);
-    const data = await res.json();
-    console.log("Order data:", data);
+      if (!res.ok) throw new Error("Failed to fetch order");
+      return data.order;
+    } catch (err) {
+      console.error("Error fetching order by ID:", err);
+      return null;
+    }
+  }, []);
 
-    if (!res.ok) throw new Error("Failed to fetch order");
-    return data.order;
-  } catch (err) {
-    console.error("Error fetching order by ID:", err);
-    return null;
-  }
-}, []);
-
-
-  
- const fetchOrders = useCallback(async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoadingOrders(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/order/`, {
@@ -513,7 +609,6 @@ const fetchOrderById = useCallback(async (orderId) => {
       setLoadingOrders(false);
     }
   }, []);
-
 
   const fetchProductsByCategory = async (categoryId) => {
     try {
@@ -549,38 +644,41 @@ const fetchOrderById = useCallback(async (orderId) => {
   }, []);
 
   // Initial fetch
-  useEffect(() => {
-    const savedUser = localStorage.getItem("saajUser");
-    const savedAdmin = localStorage.getItem("saajAdmin");
+  useEffect(
+    () => {
+      const savedUser = localStorage.getItem("saajUser");
+      const savedAdmin = localStorage.getItem("saajAdmin");
 
-    if (savedUser) setUser(JSON.parse(savedUser));
-    if (savedAdmin) setAdmin(JSON.parse(savedAdmin));
+      if (savedUser) setUser(JSON.parse(savedUser));
+      if (savedAdmin) setAdmin(JSON.parse(savedAdmin));
 
-    if (savedUser) {
-      fetchUser();
-    }
+      if (savedUser) {
+        fetchUser();
+      }
 
-    if (window.location.pathname.startsWith("/admin") && savedAdmin) {
-      fetchAdmin();
-    }
-    (async () => {
-      const cats = await fetchCategories();
-      if (cats?.length) await fetchSubCategories(cats);
-      await fetchAllProducts();
-      await fetchFeaturedProducts();
-      await fetchTags();
-      await fetchAllUsers();
-    })();
-  }, [
-    // fetchCategories,
-    // fetchSubCategories,
-    // fetchAllProducts,
-    // fetchTags,
-    // fetchFeaturedProducts,
-    // fetchAllUsers,
-    // fetchUser,
-    // fetchAdmin,
-  ]);
+      if (window.location.pathname.startsWith("/admin") && savedAdmin) {
+        fetchAdmin();
+      }
+      (async () => {
+        const cats = await fetchCategories();
+        if (cats?.length) await fetchSubCategories(cats);
+        await fetchAllProducts();
+        await fetchFeaturedProducts();
+        await fetchTags();
+        await fetchAllUsers();
+      })();
+    },
+    [
+      // fetchCategories,
+      // fetchSubCategories,
+      // fetchAllProducts,
+      // fetchTags,
+      // fetchFeaturedProducts,
+      // fetchAllUsers,
+      // fetchUser,
+      // fetchAdmin,
+    ]
+  );
   return (
     <GlobalContext.Provider
       value={{
@@ -627,7 +725,7 @@ const fetchOrderById = useCallback(async (orderId) => {
         fetchOrderById,
         orders,
         loadingOrders,
-  allUsers,
+        allUsers,
       }}
     >
       {children}
