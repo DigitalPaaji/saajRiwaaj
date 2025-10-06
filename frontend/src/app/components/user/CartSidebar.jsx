@@ -86,8 +86,8 @@ const handleApplyCoupon = async () => {
       ) : (
         <div className="flex flex-col justify-between h-full">
           <div className="p-4 space-y-4 overflow-y-auto flex-1">
-            {cart.map((item) => (
-              <div  key={`${item._id}-${item.color || "default"}`}   className="flex items-start gap-4 text-md">
+            {cart.map((item,idx) => (
+              <div  key={idx}  className="flex items-start gap-4 text-md">
               <Link href={`/product/${item.name}/${item._id}`}>
                 <Image
                   src={item.images[0]}
@@ -152,15 +152,9 @@ const handleApplyCoupon = async () => {
 </div>
 
                 </div>
-             <button
-  onClick={() =>
-    removeFromCart(item._id, item.color || item.selectedColor?.colorName)
-  }
-  className="cursor-pointer"
->
-  <X className="w-4 h-4 text-red-500" />
-</button>
-
+                <button onClick={() => removeFromCart(item._id)} className="cursor-pointer">
+                  <X className="w-4 h-4 text-red-500" />
+                </button>
           </div>
             ))}
           </div>

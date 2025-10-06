@@ -272,119 +272,120 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
-const addToCart = async (product) => {
-  if (!user) {
-    setIsAuthOpen(true);
-    setAuthTab("login");
-    return;
-  }
-
-  // ✅ Case-insensitive check for same color product already in cart
-  const alreadyInCart = cart.some(
-    (item) =>
-      item._id === product._id &&
-      (item.color || "").toLowerCase() ===
-        (product.selectedColor?.colorName || "").toLowerCase()
-  );
-
-  if (alreadyInCart) {
-    toast.success((t) => (
-      <div>
-        <p className="font-medium text-gray-800">Product already in cart</p>
-        <button
-          onClick={() => setIsCartOpen(true)}
-          className="px-3 py-2 text-xs font-medium text-white bg-[#B67032] rounded hover:bg-[#a95c2e]"
-        >
-          View Cart
-        </button>
-      </div>
-    ));
-    return;
-  }
-
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        productId: product._id,
-        quantity: product.selectedQty || 1,
-        color: product.selectedColor?.colorName || null, // ✅ as discussed
-      }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-
-      // ✅ Rebuild cart with correct color stock mapping
-      setCart(
-        data.cart.map((item) => ({
-          ...item.product,
-          quantity: item.quantity,
-          color: item.color,
-          stock:
-            item.color &&
-            item.product.colorVariants.find(
-              (v) => v.colorName.toLowerCase() === item.color.toLowerCase()
-            )?.quantity,
-        }))
-      );
-
-      toast.success("Added to cart ✅");
-    } else {
-      const error = await res.json();
-      toast.error(error.message || "Failed to add to cart");
+  const addToCart = async (product) => {
+    if (!user) {
+      setIsAuthOpen(true);
+      setAuthTab("login");
+      return;
     }
-  } catch (err) {
-    console.error("Add to cart error:", err);
-    toast.error("Something went wrong");
-  }
-};
 
-
-const removeFromCart = async (productId, color) => {
-  if (!user) {
-    setIsAuthOpen(true);
-    setAuthTab("login");
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ productId, color }), // ✅ send color
-      }
+    // Check if product already in cart with same color
+    const alreadyInCart = cart.some(
+      (item) =>
+        item._id === product._id &&
+        (item.color || null) === (product.selectedColor?.colorName || null)
     );
 
-    if (res.ok) {
-      const data = await res.json();
-      const updatedCart = data.cart.map((item) => ({
-        ...item.product,
-        quantity: item.quantity,
-        color: item.color,
-        stock:
-          item.product.colorVariants.find(
-            (v) =>
-              v.colorName.toLowerCase() === (item.color || "").toLowerCase()
-          )?.quantity ?? 1,
-      }));
-      setCart(updatedCart);
-      toast.success("Item removed from cart 🛒");
-    } else {
-      const error = await res.json();
-      toast.error(error.message || "Failed to remove from cart");
+    if (alreadyInCart) {
+      toast.success((t) => (
+        <div className="">
+          <p className="font-medium text-gray-800 ">
+            Product already in cart
+          </p>
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className=" px-3 py-2 text-xs font-medium text-white bg-[#B67032] rounded hover:bg-[#a95c2e]"
+          >
+            View Cart
+          </button>
+        </div>
+      ));
+      return;
     }
-  } catch (err) {
-    console.error("Remove from cart error:", err);
-    toast.error("Something went wrong");
-  }
-};
 
+    // Logged-in user: Call backend
+    try {
+      console.log(product)
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            productId: product._id,
+            quantity: product.selectedQty || 1,
+            color: product.selectedColor?.colorName || null,
+          }),
+        }
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        setCart(
+          data.cart.map((item) => ({
+            ...item.product,
+            quantity: item.quantity,
+            color: item.color,
+           stock: item.color
+  ? item.product.colorVariants?.find(c => c.colorName === item.color)?.quantity || 0
+  : item.product.quantity || 0,
+
+          }))
+        );
+        // Get updated cart from backend and update state
+        // const updatedCart = data.cart.map((item) => ({
+        //   ...item.product,
+        //   quantity: item.quantity,
+        //    color: item.color,
+        //      stock: item.color
+        //   ? item.product.colorVariants.find(c => c.colorName === item.color)?.quantity
+        //   : item.product.quantity,
+        // }));
+        // setCart(updatedCart);
+        // toast.success("Added to cart ✅");
+      } else {
+        const error = await res.json();
+        toast.error(error.message || "Failed to add to cart");
+      }
+    } catch (err) {
+      console.error("Add to cart error:", err);
+    }
+  };
+
+  const removeFromCart = async (productId) => {
+    if (!user) {
+      // force login first
+      setIsAuthOpen(true);
+      setAuthTab("login");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart/${productId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        const updatedCart = data.cart.map((item) => ({
+          ...item.product,
+          quantity: item.quantity,
+        }));
+        setCart(updatedCart);
+      } else {
+        console.error("Failed to remove from cart");
+      }
+    } catch (err) {
+      console.error("Remove from cart error:", err);
+    }
+  };
 
 
 const updateQty = async (productId, qty, color) => {
@@ -405,16 +406,11 @@ const updateQty = async (productId, qty, color) => {
     if (res.ok) {
       const data = await res.json();
       setCart(
-        data.cart.map((item) => ({
+        data.cart.map(item => ({
           ...item.product,
           quantity: item.quantity,
           color: item.color,
-          stock:
-            item.product.colorVariants.find(
-              (v) =>
-                v.colorName.toLowerCase() ===
-                (item.color || "").toLowerCase() // ✅ prevent null crash
-            )?.quantity ?? 1,
+          stock: item.stock, // comes from backend
         }))
       );
     } else {
@@ -425,7 +421,6 @@ const updateQty = async (productId, qty, color) => {
     console.error("Update quantity error:", err);
   }
 };
-
 
   // const updateQty = async (productId, qty, color) => {
   //   if (!user) {
@@ -520,7 +515,7 @@ const updateQty = async (productId, qty, color) => {
       // const res = await fetch(`${Apiurl}/products`);
       const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/`);
       const data = await res.json();
-      console.log(Object.values(data.products));
+      // console.log(Object.values(data.products));
 
       // Check if data is array
       if (Array.isArray(data)) {
