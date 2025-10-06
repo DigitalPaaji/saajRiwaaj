@@ -105,7 +105,7 @@ const handleApplyCoupon = async () => {
   <button
     className="cursor-pointer px-2 text-md bg-gray-100"
     onClick={() =>
-      updateQty(item._id, Math.max(1, item.quantity - 1))
+    updateQty(item._id, Math.max(1, item.quantity - 1), item.color || item.selectedColor?.colorName)
     }
     disabled={item.quantity <= 1}
   >
@@ -115,7 +115,26 @@ const handleApplyCoupon = async () => {
   <span>{item.quantity}</span>
 
   {/* Increase */}
-  <button
+<button
+  disabled={item.quantity >= (item.stock ?? 1)}
+  className={`cursor-pointer px-2 bg-gray-100 ${
+    item.quantity >= (item.stock ?? 1)
+      ? "opacity-40 cursor-not-allowed"
+      : "hover:bg-gray-200"
+  }`}
+  onClick={() => {
+    if (item.quantity < (item.stock ?? 1)) {
+      updateQty(item._id, item.quantity + 1, item.color || item.selectedColor?.colorName);
+    }
+  }}
+>
+  +
+</button>
+
+
+
+
+  {/* <button
     className={`cursor-pointer px-2 bg-gray-100 ${
       item.quantity >= (item.stock ?? 1)
         ? "opacity-40 cursor-not-allowed"
@@ -123,13 +142,13 @@ const handleApplyCoupon = async () => {
     }`}
     onClick={() => {
       if (item.quantity < (item.stock ?? 1)) {
-        updateQty(item._id, item.quantity + 1);
+           updateQty(item._id, item.quantity + 1, item.color || item.selectedColor?.colorName);
       }
     }}
     disabled={item.quantity >= (item.stock ?? 1)}
   >
     +
-  </button>
+  </button> */}
 </div>
 
                 </div>

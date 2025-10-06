@@ -457,28 +457,71 @@ const removeFromCart = async (req, res) => {
 
 // Update cart quantity
 const updateCartQuantity = async (req, res) => {
-  const userId = req.user._id;
-  const { productId, quantity } = req.body;
-
   try {
-    const user = await User.findById(userId);
+    const userId = req.user._id;
+    const { productId, quantity } = req.body;
+
+    // Basic validation
+    if (!productId || typeof quantity !== "number" || quantity < 1) {
+      return res.status(400).json({ message: "Invalid product ID or quantity" });
+    }
+
+    const user = await User.findById(userId).populate("cart.product");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find cart item
     const item = user.cart.find(
-      (item) => item.product.toString() === productId
+      (item) => item.product._id.toString() === productId
     );
 
     if (!item) {
       return res.status(404).json({ message: "Item not found in cart" });
     }
 
+    // Update quantity
     item.quantity = quantity;
+
+    // Save changes
     await user.save();
-    await user.populate("cart.product");
-    res.status(200).json({ message: "Quantity updated", cart: user.cart });
+
+    // Return updated cart
+    res.status(200).json({
+      message: "Quantity updated successfully",
+      cart: user.cart,
+    });
+
   } catch (err) {
     console.error("Update quantity error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// const updateCartQuantity = async (req, res) => {
+//   const userId = req.user._id;
+//   const { productId, quantity } = req.body;
+
+//   try {
+//     const user = await User.findById(userId);
+//     const item = user.cart.find(
+//       (item) => item.product.toString() === productId
+//     );
+
+//     if (!item) {
+//       return res.status(404).json({ message: "Item not found in cart" });
+//     }
+
+//     item.quantity = quantity;
+//     await user.save();
+//     await user.populate("cart.product");
+//     res.status(200).json({ message: "Quantity updated", cart: user.cart });
+//   } catch (err) {
+//     console.error("Update quantity error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 // update user profile
 const updateUserProfile = async (req, res) => {

@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
+import Link from "next/link";
 
 const GlobalContext = createContext();
 
@@ -286,17 +287,17 @@ export const GlobalProvider = ({ children }) => {
     );
 
     if (alreadyInCart) {
-      toast.custom((t) => (
-        <div className="bg-white px-4 py-3 rounded shadow-md border flex items-center gap-3">
-          <span className="text-sm font-medium text-gray-800">
+      toast.success((t) => (
+        <div className="">
+          <p className="font-medium text-gray-800 ">
             Product already in cart
-          </span>
-          <Link
-            href="/cart"
-            className="ml-2 px-3 py-1 text-xs font-medium text-white bg-[#B67032] rounded hover:bg-[#a95c2e]"
+          </p>
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className=" px-3 py-2 text-xs font-medium text-white bg-[#B67032] rounded hover:bg-[#a95c2e]"
           >
             View Cart
-          </Link>
+          </button>
         </div>
       ));
       return;
@@ -386,46 +387,81 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
-  const updateQty = async (productId, qty, color) => {
-    if (!user) {
-      // force login first
-      setIsAuthOpen(true);
-      setAuthTab("login");
-      return;
-    }
 
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ productId, quantity: qty, color }),
-        }
-      );
+const updateQty = async (productId, qty, color) => {
+  if (!user) {
+    setIsAuthOpen(true);
+    setAuthTab("login");
+    return;
+  }
 
-      if (res.ok) {
-        const data = await res.json();
-        const updatedCart = data.cart.map((item) => ({
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ productId, quantity: qty, color }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setCart(
+        data.cart.map(item => ({
           ...item.product,
           quantity: item.quantity,
           color: item.color,
-          stock: item.color
-            ? item.product.colorVariants.find((c) => c.colorName === item.color)
-                ?.quantity
-            : item.product.quantity,
-        }));
-        setCart(updatedCart);
-      } else {
-        console.error("Failed to update quantity");
-      }
-    } catch (err) {
-      console.error("Update quantity error:", err);
+          stock: item.stock, // comes from backend
+        }))
+      );
+    } else {
+      const err = await res.json();
+      toast.error(err.message || "Failed to update quantity");
     }
-  };
+  } catch (err) {
+    console.error("Update quantity error:", err);
+  }
+};
+
+  // const updateQty = async (productId, qty, color) => {
+  //   if (!user) {
+  //     // force login first
+  //     setIsAuthOpen(true);
+  //     setAuthTab("login");
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await fetch(
+  //       `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
+  //       {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         credentials: "include",
+  //         body: JSON.stringify({ productId, quantity: qty, color }),
+  //       }
+  //     );
+
+  //     if (res.ok) {
+  //       const data = await res.json();
+  //       const updatedCart = data.cart.map((item) => ({
+  //         ...item.product,
+  //         quantity: item.quantity,
+  //         color: item.color,
+  //         stock: item.color
+  //           ? item.product.colorVariants.find((c) => c.colorName === item.color)
+  //               ?.quantity
+  //           : item.product.quantity,
+  //       }));
+  //       setCart(updatedCart);
+  //     } else {
+  //       console.error("Failed to update quantity");
+  //     }
+  //   } catch (err) {
+  //     console.error("Update quantity error:", err);
+  //   }
+  // };
 
   const fetchFeaturedProducts = useCallback(async () => {
     try {

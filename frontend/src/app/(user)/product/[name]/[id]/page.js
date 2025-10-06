@@ -406,27 +406,30 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* CTA Buttons */}
-          {/* CTA Buttons */}
+{/* CTA Buttons */}
 <div className="flex flex-col md:flex-row gap-4">
   {cart.some(
     (item) =>
       item._id === product._id &&
-      item.color === selectedColor?.colorName
+      item.color === selectedColor?.colorName // 👈 यह property match होनी चाहिए
   ) ? (
-    // If item already in cart → Go to Cart button
+    // If already in cart → Go to Cart
     <button
-  onClick={() => setIsCartOpen(true)}
+      onClick={() => setIsCartOpen(true)}
       className="cursor-pointer w-full flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700 transition text-sm font-medium tracking-wide"
     >
       <ShoppingCart className="w-4 h-4" />
       Go to Cart
     </button>
   ) : (
-    // If item not in cart → Add to Cart button
+    // If not in cart → Add to Cart
     <button
       onClick={() => {
-        addToCart({ ...product, selectedColor, selectedQty });
+        addToCart({
+          ...product,
+          color: selectedColor?.colorName, // 👈 हमेशा "color" नाम से save करो
+          qty: selectedQty,
+        });
         setSelectedQty(1);
       }}
       className="cursor-pointer w-full flex items-center justify-center gap-2 bg-[#B67032] text-white px-4 py-3 rounded hover:bg-[#a95c2e] transition text-sm font-medium tracking-wide"
@@ -437,11 +440,31 @@ export default function ProductDetail() {
   )}
 
   {/* Buy Now */}
-  <button className="w-full flex items-center justify-center gap-2 border border-[#B67032] text-[#B67032] px-4 py-3 rounded hover:bg-[#fff4ed] transition text-sm font-medium tracking-wide">
+  <button
+    onClick={() => {
+      if (
+        !cart.some(
+          (item) =>
+            item._id === product._id &&
+            item.color === selectedColor?.colorName
+        )
+      ) {
+        addToCart({
+          ...product,
+          color: selectedColor?.colorName, // 👈 same name maintain
+          qty: selectedQty,
+        });
+      }
+      setIsCartOpen(true);
+    }}
+    className="w-full flex items-center justify-center gap-2 border border-[#B67032] text-[#B67032] px-4 py-3 rounded hover:bg-[#fff4ed] transition text-sm font-medium tracking-wide"
+  >
     <CreditCard className="w-4 h-4" />
     Buy Now
   </button>
 </div>
+
+
 
           
           
