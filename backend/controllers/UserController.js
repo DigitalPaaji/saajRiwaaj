@@ -303,45 +303,25 @@ const getAdmin = async (req, res) => {
 
 const addToCart = async (req, res) => {
   const userId = req.user._id;
-  const { productId, quantity, color } = req.body;
+  const { productId, quantity, color } = req.body; // include color
 
   try {
     const user = await User.findById(userId);
     const product = await Product.findById(productId);
 
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
-    // ✅ Check if that color exists in product colorVariants
-    const selectedVariant = product.colorVariants.find(
-      (v) => v.colorName.toLowerCase() === (color || "").toLowerCase()
-    );
-
-    if (!selectedVariant) {
-      return res.status(400).json({ message: "Invalid color selected" });
-    }
-
-    // ✅ Check if same product + same color already exists in cart
     const existing = user.cart.find(
       (item) =>
         item.product.toString() === productId &&
-        (item.color || "").toLowerCase() === (color || "").toLowerCase()
+        (item.color || null) === (color || null)
     );
 
     if (existing) {
-      return res.status(400).json({
-        message: "Product with this color is already in cart",
-        cart: user.cart,
-      });
+      existing.quantity += quantity;
+    } else {
+      user.cart.push({ product: productId, quantity, color: color || null });
     }
-
-    // ✅ Push new variant
-    user.cart.push({
-      product: productId,
-      quantity: quantity || 1,
-      color: color || null,
-    });
 
     await user.save();
     await user.populate("cart.product");
@@ -349,7 +329,7 @@ const addToCart = async (req, res) => {
     res.status(200).json({ message: "Added to cart", cart: user.cart });
   } catch (err) {
     console.error("Add to cart error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: err.message || "Server error" });
   }
 };
 
@@ -435,106 +415,68 @@ const removeFromWishlist = async (req, res) => {
 };
 
 // Remove from cart
-// DELETE /user/cart
 const removeFromCart = async (req, res) => {
+  const userId = req.user._id;
+  const { productId } = req.params;
+
   try {
-    const userId = req.user._id;
-    const { productId, color } = req.body;
-
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    // ✅ Remove only the item with matching product + color
     user.cart = user.cart.filter(
-      (item) =>
-        !(
-          item.product.toString() === productId &&
-          (item.color || "").toLowerCase() === (color || "").toLowerCase()
-        )
+      (item) => item.product.toString() !== productId
     );
 
     await user.save();
-    await user.populate("cart.product");
 
-    res.status(200).json({ message: "Item removed", cart: user.cart });
+    await user.populate("cart.product");
+    res.status(200).json({ message: "Removed from cart", cart: user.cart });
   } catch (err) {
-    console.error("Remove cart error:", err);
+    console.error("Remove from cart error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
-// const removeFromCart = async (req, res) => {
-//   const userId = req.user._id;
-//   const { productId } = req.params;
-
-//   try {
-//     const user = await User.findById(userId);
-//     user.cart = user.cart.filter(
-//       (item) => item.product.toString() !== productId
-//     );
-
-//     await user.save();
-
-//     await user.populate("cart.product");
-//     res.status(200).json({ message: "Removed from cart", cart: user.cart });
-//   } catch (err) {
-//     console.error("Remove from cart error:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
 
 // Update cart quantity
 const updateCartQuantity = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { productId, quantity, color } = req.body;
+    const { productId, quantity } = req.body;
 
+    // Basic validation
     if (!productId || typeof quantity !== "number" || quantity < 1) {
-      return res
-        .status(400)
-        .json({ message: "Invalid product ID or quantity" });
+      return res.status(400).json({ message: "Invalid product ID or quantity" });
     }
 
     const user = await User.findById(userId).populate("cart.product");
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    const item = user.cart.find(
-      (item) =>
-        item.product._id.toString() === productId &&
-        (item.color || "").toLowerCase() === (color || "").toLowerCase()
-    );
-
-    if (!item) return res.status(404).json({ message: "Item not found" });
-
-    const product = await Product.findById(productId);
-    const variant = product.colorVariants.find(
-      (v) => v.colorName.toLowerCase() === (color || "").toLowerCase()
-    );
-
-    if (!variant)
-      return res.status(400).json({ message: "Color variant not found" });
-
-    if (quantity > variant.quantity) {
-      return res.status(400).json({
-        message: `Only ${variant.quantity} items available in stock for ${color}`,
-      });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    item.quantity = quantity;
-    await user.save();
-    await user.populate("cart.product");
+    // Find cart item
+    const item = user.cart.find(
+      (item) => item.product._id.toString() === productId
+    );
 
-    return res.status(200).json({
+    if (!item) {
+      return res.status(404).json({ message: "Item not found in cart" });
+    }
+
+    // Update quantity
+    item.quantity = quantity;
+
+    // Save changes
+    await user.save();
+
+    // Return updated cart
+    res.status(200).json({
       message: "Quantity updated successfully",
       cart: user.cart,
     });
+
   } catch (err) {
     console.error("Update quantity error:", err);
-    return res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 };
-
 
 
 // const updateCartQuantity = async (req, res) => {
