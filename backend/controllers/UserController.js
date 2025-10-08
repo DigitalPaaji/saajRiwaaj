@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/UserModel");
+const Product = require("../models/ProductModel");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
@@ -301,26 +302,37 @@ const getAdmin = async (req, res) => {
   res.status(200).json({ user: fullAdmin });
 };
 
+
 const addToCart = async (req, res) => {
   const userId = req.user._id;
-  const { productId, quantity, color } = req.body; // include color
+  const { productId, quantity, color } = req.body;
 
   try {
     const user = await User.findById(userId);
-    const product = await Product.findById(productId);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
+    const product = await Product.findById(productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
 
+    const colorKey = (color || "").trim().toLowerCase();
+
+    // ✅ Check for same product + same color
     const existing = user.cart.find(
       (item) =>
         item.product.toString() === productId &&
-        (item.color || null) === (color || null)
+        (item.color || "").trim().toLowerCase() === colorKey
     );
 
     if (existing) {
+      // ✅ Update quantity if same variant already exists
       existing.quantity += quantity;
     } else {
-      user.cart.push({ product: productId, quantity, color: color || null });
+      // ✅ Add as a new variant if different color
+      user.cart.push({
+        product: productId,
+        quantity,
+        color: color || null,
+      });
     }
 
     await user.save();
@@ -329,46 +341,12 @@ const addToCart = async (req, res) => {
     res.status(200).json({ message: "Added to cart", cart: user.cart });
   } catch (err) {
     console.error("Add to cart error:", err);
-    res.status(500).json({ message: err.message || "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 
 
-
-// const addToCart = async (req, res) => {
-//   const userId = req.user._id;
-//   const { productId, quantity, color } = req.body;
-
-//   try {
-//     const user = await User.findById(userId);
-
-//     // check if product already in cart (with same color if exists)
-//     const existing = user.cart.find(
-//       (item) =>
-//         item.product.toString() === productId &&
-//         (item.color || null) === (color || null)
-//     );
-
-//     if (existing) {
-//       return res.status(400).json({
-//         message: "Product already in cart",
-//         cart: user.cart,
-//       });
-//     }
-
-//     // add new item
-//     user.cart.push({ product: productId, quantity, color: color || null });
-
-//     await user.save();
-//     await user.populate("cart.product");
-
-//     res.status(200).json({ message: "Added to cart", cart: user.cart });
-//   } catch (err) {
-//     console.error("Add to cart error:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
 
 
 const addToWishlist = async (req, res) => {
@@ -417,16 +395,23 @@ const removeFromWishlist = async (req, res) => {
 // Remove from cart
 const removeFromCart = async (req, res) => {
   const userId = req.user._id;
-  const { productId } = req.params;
+  const { productId, color } = req.body; // ✅ take color from body
 
   try {
     const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const colorKey = (color || "").trim().toLowerCase();
+
     user.cart = user.cart.filter(
-      (item) => item.product.toString() !== productId
+      (item) =>
+        !(
+          item.product.toString() === productId &&
+          (item.color || "").trim().toLowerCase() === colorKey
+        )
     );
 
     await user.save();
-
     await user.populate("cart.product");
     res.status(200).json({ message: "Removed from cart", cart: user.cart });
   } catch (err) {
@@ -435,48 +420,44 @@ const removeFromCart = async (req, res) => {
   }
 };
 
+
 // Update cart quantity
 const updateCartQuantity = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { productId, quantity } = req.body;
+    const { productId, quantity, color } = req.body;
 
-    // Basic validation
     if (!productId || typeof quantity !== "number" || quantity < 1) {
       return res.status(400).json({ message: "Invalid product ID or quantity" });
     }
 
     const user = await User.findById(userId).populate("cart.product");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Find cart item
+    const colorKey = (color || "").trim().toLowerCase();
+
     const item = user.cart.find(
-      (item) => item.product._id.toString() === productId
+      (item) =>
+        item.product._id.toString() === productId &&
+        (item.color || "").trim().toLowerCase() === colorKey
     );
 
-    if (!item) {
-      return res.status(404).json({ message: "Item not found in cart" });
-    }
+    if (!item) return res.status(404).json({ message: "Item not found in cart" });
 
-    // Update quantity
     item.quantity = quantity;
 
-    // Save changes
     await user.save();
 
-    // Return updated cart
     res.status(200).json({
       message: "Quantity updated successfully",
       cart: user.cart,
     });
-
   } catch (err) {
     console.error("Update quantity error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 // const updateCartQuantity = async (req, res) => {

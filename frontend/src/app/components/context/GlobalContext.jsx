@@ -279,16 +279,19 @@ const addToCart = async (product) => {
     return;
   }
 
-  // ✅ Case-insensitive check for same color product already in cart
+  // Extract color and quantity properly
+  const selectedColor = product.selectedColor?.colorName || product.color || null;
+  const selectedQty = product.selectedQty || product.qty || 1;
+
+  // ✅ Check if same product + same color already exists
   const alreadyInCart = cart.some(
     (item) =>
       item._id === product._id &&
-      (item.color || "").toLowerCase() ===
-        (product.selectedColor?.colorName || "").toLowerCase()
+      (item.color || "").toLowerCase() === (selectedColor || "").toLowerCase()
   );
 
   if (alreadyInCart) {
-    toast.success((t) => (
+    toast.success(
       <div>
         <p className="font-medium text-gray-800">Product already in cart</p>
         <button
@@ -298,7 +301,7 @@ const addToCart = async (product) => {
           View Cart
         </button>
       </div>
-    ));
+    );
     return;
   }
 
@@ -309,28 +312,34 @@ const addToCart = async (product) => {
       credentials: "include",
       body: JSON.stringify({
         productId: product._id,
-        quantity: product.selectedQty || 1,
-        color: product.selectedColor?.colorName || null, // ✅ as discussed
+        quantity: selectedQty, // ✅ Send correct quantity
+        color: selectedColor,  // ✅ Send correct color
       }),
     });
 
     if (res.ok) {
       const data = await res.json();
 
-      // ✅ Rebuild cart with correct color stock mapping
+      // ✅ Rebuild the cart with color + quantity info
       setCart(
-        data.cart.map((item) => ({
-          ...item.product,
-          quantity: item.quantity,
-          color: item.color,
-          stock:
-            item.color &&
-            item.product.colorVariants.find(
-              (v) => v.colorName.toLowerCase() === item.color.toLowerCase()
-            )?.quantity,
-        }))
-      );
+        data.cart.map((item) => {
+          const prod = item.product || {};
+          const stock = item.color
+            ? prod.colorVariants?.find(
+                (v) => v.colorName.toLowerCase() === item.color.toLowerCase()
+              )?.quantity || 0
+            : prod.quantity || 0;
 
+          return {
+            ...prod,
+            cartItemId: item._id,
+            quantity: item.quantity,
+            color: item.color,
+            stock,
+          };
+        })
+      );
+console.log(cart)
       toast.success("Added to cart ✅");
     } else {
       const error = await res.json();
@@ -343,6 +352,8 @@ const addToCart = async (product) => {
 };
 
 
+
+
 const removeFromCart = async (productId, color) => {
   if (!user) {
     setIsAuthOpen(true);
@@ -352,7 +363,7 @@ const removeFromCart = async (productId, color) => {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
+      `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart/${productId}`,
       {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -427,46 +438,6 @@ const updateQty = async (productId, qty, color) => {
 };
 
 
-  // const updateQty = async (productId, qty, color) => {
-  //   if (!user) {
-  //     // force login first
-  //     setIsAuthOpen(true);
-  //     setAuthTab("login");
-  //     return;
-  //   }
-
-  //   try {
-  //     const res = await fetch(
-  //       `${process.env.NEXT_PUBLIC_LOCAL_PORT}/user/cart`,
-  //       {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         credentials: "include",
-  //         body: JSON.stringify({ productId, quantity: qty, color }),
-  //       }
-  //     );
-
-  //     if (res.ok) {
-  //       const data = await res.json();
-  //       const updatedCart = data.cart.map((item) => ({
-  //         ...item.product,
-  //         quantity: item.quantity,
-  //         color: item.color,
-  //         stock: item.color
-  //           ? item.product.colorVariants.find((c) => c.colorName === item.color)
-  //               ?.quantity
-  //           : item.product.quantity,
-  //       }));
-  //       setCart(updatedCart);
-  //     } else {
-  //       console.error("Failed to update quantity");
-  //     }
-  //   } catch (err) {
-  //     console.error("Update quantity error:", err);
-  //   }
-  // };
 
   const fetchFeaturedProducts = useCallback(async () => {
     try {
@@ -520,7 +491,7 @@ const updateQty = async (productId, qty, color) => {
       // const res = await fetch(`${Apiurl}/products`);
       const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_PORT}/product/`);
       const data = await res.json();
-      console.log(Object.values(data.products));
+      // console.log(Object.values(data.products));
 
       // Check if data is array
       if (Array.isArray(data)) {
