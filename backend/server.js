@@ -15,7 +15,7 @@ const mailRoutes = require("./routes/MailRoutes");
 
 const app = express()
 app.use(cors({
-    origin: [ process.env.FRONTEND_URL
+    origin: [ process.env.FRONTEND_URL,
         'https://saaj-riwaaj.vercel.app'
     ],
     credentials:true,
