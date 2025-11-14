@@ -31,7 +31,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        // style={{ backgroundImage: "url('/Images/homeBG.webp')" }}
         className={`${geistSans.variable} ${geistMono.variable} antialiased  `}
       >
         <GlobalProvider>
@@ -41,7 +40,7 @@ export default function RootLayout({ children }) {
                       <LoginSignup/>
                       <Wishlist/>
                       <OrderSidebar/>
-                
+                             
         {children}
 <Icon/>
               <Footer />

@@ -54,6 +54,15 @@ exports.getProductsByCategory = async (req, res) => {
 };
 
 
+exports.getProductsByOffer = async (req, res) => {
+  try {
+    const products = await Product.find({ offer: req.params.offerId });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching products for this offer" });
+  }
+};
+
 exports.deleteProductById = async (req,res)=>{
       try{
         const deleted = await Product.findByIdAndDelete(req.params.id)

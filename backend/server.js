@@ -12,6 +12,7 @@ const userRoutes = require('./routes/UserRoutes')
 const couponRoutes = require('./routes/CouponRoutes')
 const orderRoutes = require('./routes/OrderRoutes')
 const mailRoutes = require("./routes/MailRoutes");
+const offerRoutes = require('./routes/OfferRoute')
 
 const app = express()
 app.use(cors({
@@ -43,6 +44,7 @@ app.use('/user',userRoutes)
 app.use('/coupon',couponRoutes)
 app.use('/order',orderRoutes);
 app.use("/api", mailRoutes); 
+app.use('/offer', offerRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

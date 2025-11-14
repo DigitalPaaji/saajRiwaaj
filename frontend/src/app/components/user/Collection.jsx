@@ -71,52 +71,70 @@ export default function Collection({ Pid, filters = { subCategories: [], tags: [
   return (
     <section>
       <div className=" col-span-1 xl:col-span-8 flex flex-col justify-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {loading
             ? skeletons.map((_, idx) => (
                 <div key={idx} className="shadow-lg rounded-lg bg-gray-200 animate-pulse h-[400px]"></div>
               ))
             : filteredProducts.map((product, index) => (
-                <Link
-                  href={`/product/${product.name}/${product._id}`}
-                  key={product._id}
-                  className="group"
-                >
-                  <div
-                    className="group relative aspect-square overflow-hidden shadow-lg rounded-lg"
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    onMouseLeave={() => setHoveredIndex(null)}
-                  >
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={
-                          hoveredIndex === index && product.images?.[1]
-                            ? product.images[1]
-                            : product.images?.[0]
-                        }
-                        alt={product.name}
-                        fill
-                        className="object-cover rounded-xl transition-all duration-300"
-                        unoptimized
-                      />
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between flex-wrap mt-4">
-                    <h3 className="font-semibold text-md text-stone-700 group-hover:text-[#B67032] transition-colors duration-300">
-                      {product.name}
-                    </h3>
-                    <h3 className="flex items-center font-semibold text-md text-[#B67032] transition-colors duration-300">
-                      <span className="line-through mr-4 flex items-center">
-                        <FaRupeeSign size={14} />
-                        {product.price}
-                      </span>
-                      <FaRupeeSign size={14} /> {product.finalPrice}
-                    </h3>
-                  </div>
-                  <button onClick={() => addToCart(product)}  className="py-2 w-full cursor-pointer bg-[#B67032] rounded-lg text-white font-semibold mt-4">
-                    Add To Cart
-                  </button>
-                </Link>
+             <Link
+  href={`/product/${product.name}/${product._id}`}
+  key={product._id}
+  className="group block border border-stone-200 p-4 "
+>
+  <div
+    className="group relative aspect-square overflow-hidden hover:shadow-xl transition-all duration-300"
+    onMouseEnter={() => setHoveredIndex(index)}
+    onMouseLeave={() => setHoveredIndex(null)}
+  >
+    <div className="relative w-full h-full">
+      <Image
+        src={
+          hoveredIndex === index && product.images?.[1]
+            ? product.images[1]
+            : product.images?.[0]
+        }
+        alt={product.name}
+        fill
+        className="object-cover  transition-all duration-500 ease-in-out group-hover:scale-105"
+        unoptimized
+      />
+    </div>
+  </div>
+
+  <div className="flex items-center justify-between flex-wrap mt-4 px-1">
+      {/* <h3 className="font-semibold md:text-lg text-stone-800 group-hover:text-[#B67032] transition-colors duration-300 truncate max-w-[60%]">
+       {product.description?.paragraphs?.[0] && (
+                        <p className="text-sm text-stone-600 mt-1 line-clamp-2">
+                          {product.description.paragraphs[0]
+                            .split(" ")
+                            .slice(0, 10)
+                            .join(" ")}
+                          ...
+                        </p>
+                      )}
+    </h3> */}
+    <h3 className="font-semibold md:text-md text-gray-700 group-hover:text-[#B67032] transition-colors duration-300 truncate max-w-[60%]">
+      {product.name}
+    </h3>
+    <h3 className="flex items-center md:text-md font-semibold text-[#B67032] transition-colors duration-300">
+      <span className="line-through mr-3 flex items-center text-gray-700 text-sm">
+        <FaRupeeSign size={14} />
+        {product.price}
+      </span>
+      <FaRupeeSign size={16} /> {product.finalPrice}
+    </h3>
+  </div>
+  {/* <button 
+    onClick={(e) => {
+      e.preventDefault();
+      addToCart(product);
+    }}  
+    className="py-2 md:py-3 w-full cursor-pointer bg-[#B67032] hover:bg-[#9a5c28] rounded-xl text-white font-semibold mt-4 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg"
+  >
+    Add To Cart
+  </button> */}
+</Link>
               ))}
         </div>
       </div>

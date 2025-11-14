@@ -29,6 +29,11 @@ const productSchema = new mongoose.Schema({
       ref: "Tag",
     },
   ],
+  offer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Offer",
+    default: null,
+  },
   isFeatured: {
     type: Boolean,
     default: false,
@@ -64,7 +69,7 @@ productSchema.post("findOneAndDelete", async function (doc) {
       },
     }
   );
-  console.log(` Product ${doc._id} removed from all carts and wishlists.`)
+  console.log(` Product ${doc._id} removed from all carts and wishlists.`);
 });
 
 module.exports = mongoose.model("Product", productSchema);

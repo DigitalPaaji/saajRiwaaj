@@ -9,7 +9,7 @@ router.delete('/id/:id',productController.deleteProductById)
 router.put('/id/:id',productController.updateProductById)
 router.get('/category/:categoryId', productController.getProductsByCategory);
 router.get('/featured', productController.getFeaturedProducts);
-
+router.get("/offer/:offerId", productController.getProductsByOffer);
 
 
 
