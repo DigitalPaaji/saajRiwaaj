@@ -1,10 +1,16 @@
 const express = require("express");
-const { createOffer, getOffers, getOfferBySlug } = require("../controllers/OfferController");
+const { 
+  createOffer, 
+  getOffers, 
+  getOfferBySlug, 
+  deleteOffer 
+} = require("../controllers/OfferController");
 
 const router = express.Router();
 
-router.post("/", createOffer);          // Create
-router.get("/", getOffers);             // All
-router.get("/:slug", getOfferBySlug);   // Single by slug
+router.post("/", createOffer);               // Create offer
+router.get("/", getOffers);                  // Get all offers
+router.get("/:slug", getOfferBySlug);        // Get single offer
+router.delete("/:offerId", deleteOffer);     // Delete offer
 
 module.exports = router;
